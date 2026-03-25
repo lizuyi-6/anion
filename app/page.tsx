@@ -31,7 +31,7 @@ export default async function Home() {
           </Link>
         </section>
         <section className="panel">
-          <p className="panel-label">B / Singularity</p>
+          <p className="panel-label">B / 奇点</p>
           <h3>Accept Offer 状态切换</h3>
           <p className="hero-copy">
             当报告确认后，把冷峻考场切换成高科技中枢，系统目标从“找漏洞”改为“补短板并赢下战役”。
@@ -49,7 +49,7 @@ export default async function Home() {
       <section className="panel">
         <div className="section-head">
           <div>
-            <p className="panel-label">Recent Sessionsnt Sessions</p>
+            <p className="panel-label">最近会话</p>
             <h3>历史会话</h3>
           </div>
         </div>

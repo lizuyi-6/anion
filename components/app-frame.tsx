@@ -12,8 +12,8 @@ const navItems = [
 ];
 
 const workspaceLabels: Record<Viewer["workspaceMode"], string> = {
-  interview: "Interview Protocol",
-  command_center: "Command Center",
+  interview: "面试协议",
+  command_center: "指挥中心",
 };
 
 export type AppShellMode = "interview" | "command";
