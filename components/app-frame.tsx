@@ -52,7 +52,7 @@ export function AppFrame({
           </p>
         </div>
         <div className="topbar-meta">
-          <span className="status-pill">{viewer.isDemo ? "Demo Mode" : "Authenticated"}</span>
+          <span className="status-pill">{viewer.isDemo ? "演示模式" : "已认证"}</span>
           <span className="status-pill subtle">{workspaceLabel}</span>
           {!viewer.isDemo ? (
             <Link href="/auth/sign-out" className="nav-link">

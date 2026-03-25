@@ -32,13 +32,13 @@ export default async function Home() {
         </section>
         <section className="panel">
           <p className="panel-label">B / 奇点</p>
-          <h3>Accept Offer 状态切换</h3>
+          <h3>接受Offer 状态切换</h3>
           <p className="hero-copy">
             当报告确认后，把冷峻考场切换成高科技中枢，系统目标从“找漏洞”改为“补短板并赢下战役”。
           </p>
         </section>
         <section className="panel">
-          <p className="panel-label">C / Command Center</p>
+          <p className="panel-label">C / 指挥中心</p>
           <h3>工程 / 战略 / 沙盒</h3>
           <p className="hero-copy">
             工程副驾、可行性研究生成器和职场博弈沙盘共享同一份长期记忆图谱。

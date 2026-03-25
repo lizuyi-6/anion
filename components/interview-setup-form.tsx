@@ -121,7 +121,7 @@ export function InterviewSetupForm({
         </div>
         <div className="grid-two">
           <label className="field">
-            <span>目标公司 / 机构</span>
+            <span>目标公司</span>
             <input
               value={form.targetCompany}
               onChange={(event) =>
@@ -166,7 +166,7 @@ export function InterviewSetupForm({
           </label>
         </div>
         <label className="field">
-          <span>JD / 职位描述</span>
+          <span>职位描述</span>
           <textarea
             value={form.jobDescription}
             onChange={(event) =>

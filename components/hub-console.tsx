@@ -38,7 +38,7 @@ const defaultSandboxBrief: SandboxBrief = {
 function runLabel(mode: CommandMode) {
   switch (mode) {
     case "copilot":
-      return "Run Copilot";
+      return "运行副驾";
     case "strategy":
       return "Generate FSR";
     case "sandbox":
@@ -490,7 +490,7 @@ export function HubConsole({
           </div>
           <div className="stack-md">
             <article className="report-block">
-              <h4>Root Cause</h4>
+              <h4>根本原因</h4>
               <p>{artifact.rootCause}</p>
             </article>
             <article className="report-block">
@@ -506,7 +506,7 @@ export function HubConsole({
               </ul>
             </article>
             <article className="report-block">
-              <h4>Optional Refactors</h4>
+              <h4>可选重构</h4>
               <ul className="flat-list">
                 {artifact.optionalRefactors.map((item) => (
                   <li key={item}>{item}</li>
@@ -531,7 +531,7 @@ export function HubConsole({
         <div className="panel">
           <div className="section-head">
             <div>
-              <p className="panel-label">Game Theory Sandbox</p>
+              <p className="panel-label">博弈论沙盒</p>
               <h3>局势复盘</h3>
             </div>
           </div>

@@ -69,14 +69,14 @@ export function AcceptOfferButton({
 
   const label =
     status === "hub_active"
-      ? "Enter Command Center"
+      ? "进入指挥中心"
       : isPending
         ? phase === "accepting"
-          ? "Accepting Offer..."
+          ? "正在接受Offer..."
           : phase === "sequencing"
-            ? "Rewriting Protocol..."
-            : "Activating Command Center..."
-        : "Accept Offer";
+            ? "正在重写协议..."
+            : "正在激活指挥中心..."
+        : "接受Offer";
 
   return (
     <div className="stack-sm">
@@ -103,7 +103,7 @@ export function AcceptOfferButton({
             </p>
             <div className="protocol-steps">
               <div className={`protocol-step ${phase === "accepting" ? "active" : "done"}`}>
-                1. Lock Offer
+                1. 锁定Offer
               </div>
               <div
                 className={`protocol-step ${
