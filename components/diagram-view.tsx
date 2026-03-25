@@ -15,7 +15,7 @@ export function DiagramView({ spec }: { spec: DiagramSpec }) {
       <svg
         viewBox={`0 0 ${layout.width} ${layout.height}`}
         className="diagram-svg"
-        aria-label="strategy diagram"
+        aria-label="策略图"
       >
         {layout.edges.map((edge) => (
           <g key={`${edge.from}-${edge.to}`}>

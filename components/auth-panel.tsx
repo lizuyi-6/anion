@@ -74,7 +74,7 @@ export function AuthPanel({
           type="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          placeholder="you@example.com"
+          placeholder="your@email.com"
         />
       </label>
       <div className="action-row">

@@ -15,7 +15,7 @@ export function TimelineView({ spec }: { spec: TimelineSpec }) {
       <svg
         viewBox={`0 0 ${layout.width} ${layout.height}`}
         className="timeline-svg"
-        aria-label="timeline"
+        aria-label="时间线"
       >
         {Array.from({ length: layout.totalWeeks }).map((_, index) => (
           <g key={index}>

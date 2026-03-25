@@ -13,7 +13,7 @@ export function RadarChart({ report }: { report: DiagnosticReport }) {
           <h3>高维雷达图</h3>
         </div>
       </div>
-      <svg viewBox="-220 -220 440 440" className="radar-svg" aria-label="diagnostic radar">
+      <svg viewBox="-220 -220 440 440" className="radar-svg" aria-label="诊断雷达图">
         {[40, 80, 120, 160].map((radius) => (
           <circle key={radius} r={radius} fill="none" className="radar-ring" />
         ))}

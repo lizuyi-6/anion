@@ -20,7 +20,7 @@ export async function uploadFiles(files: FileList | File[]) {
   });
 
   if (!response.ok) {
-    throw new Error("Upload failed");
+    throw new Error("上传失败");
   }
 
   const payload = (await response.json()) as { uploads: UploadReference[] };
@@ -37,7 +37,7 @@ export async function createSession(config: SessionConfig) {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to create session");
+    throw new Error("创建会话失败");
   }
 
   return (await response.json()) as { sessionId: string };
@@ -131,7 +131,7 @@ export async function retryReport(sessionId: string) {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to retry report generation");
+    throw new Error("重试报告生成失败");
   }
 
   return response.json();
@@ -143,7 +143,7 @@ export async function acceptOffer(sessionId: string) {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to switch into command center mode");
+    throw new Error("切换指挥中心模式失败");
   }
 
   return response.json();
@@ -155,7 +155,7 @@ export async function activateHub(sessionId: string) {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to activate command center");
+    throw new Error("激活指挥中心失败");
   }
 
   return response.json();
@@ -176,7 +176,7 @@ export async function runCommandModeApi(params: {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to run command mode");
+    throw new Error("运行命令模式失败");
   }
 
   return (await response.json()) as {
