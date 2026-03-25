@@ -28,6 +28,7 @@ export function InterviewSetupForm({
     candidateName: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState("");
   const pack = useMemo(() => rolePacks[form.rolePack], [form.rolePack]);
 
@@ -59,16 +60,40 @@ export function InterviewSetupForm({
       return;
     }
 
-    const uploads = await uploadFiles(files);
-    setForm((current) => ({
-      ...current,
-      materials: [...current.materials, ...uploads],
-    }));
+    try {
+      setIsUploading(true);
+      const uploads = await uploadFiles(files);
+      setForm((current) => ({
+        ...current,
+        materials: [...current.materials, ...uploads],
+      }));
+    } catch (error) {
+      setError(error instanceof Error ? `上传失败: ${error.message}` : "上传失败");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
+
+    // 客户端验证
+    if (form.targetCompany.trim().length < 2) {
+      setError("目标公司名称至少需要 2 个字符");
+      return;
+    }
+
+    if (form.jobDescription.trim().length < 20) {
+      setError("职位描述至少需要 20 个字符");
+      return;
+    }
+
+    if (form.interviewers.length === 0) {
+      setError("请至少选择一位面试官");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -90,7 +115,7 @@ export function InterviewSetupForm({
       <div className="panel">
         <div className="section-head">
           <div>
-            <p className="panel-label">A1 / 上下文初始化</p>
+            <p className="panel-label">A1 上下文初始化</p>
             <h3>目标物设定</h3>
           </div>
         </div>
@@ -159,7 +184,7 @@ export function InterviewSetupForm({
       <div className="panel">
         <div className="section-head">
           <div>
-            <p className="panel-label">Role Packs</p>
+            <p className="panel-label">角色包</p>
             <h3>能力包装</h3>
           </div>
         </div>

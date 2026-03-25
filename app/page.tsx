@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export default async function Home() {
   const viewer = await requireViewer();
   const store = await getDataStore({ viewer });
-  const sessions = await store.listSessions(viewer.id);
+  const sessions = await store.listSessions(viewer.id) || [];
 
   return (
     <AppFrame

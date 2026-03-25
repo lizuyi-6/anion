@@ -34,7 +34,9 @@ export function AppFrame({
   shellMode?: AppShellMode;
 }) {
   const workspaceLabel =
-    shellMode === "command" ? "指挥中心" : workspaceLabels[viewer.workspaceMode];
+    shellMode === "command" 
+      ? "指挥中心" 
+      : workspaceLabels[viewer.workspaceMode] || "默认模式";
 
   return (
     <div className={cn("app-shell", `shell-${shellMode}`)} data-shell={shellMode}>
