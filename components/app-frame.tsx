@@ -4,11 +4,11 @@ import type { Viewer } from "@/lib/domain";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/", label: "Overview" },
-  { href: "/simulator/new", label: "Simulator" },
-  { href: "/hub/copilot", label: "Copilot" },
-  { href: "/hub/strategy", label: "Strategy" },
-  { href: "/hub/sandbox", label: "Sandbox" },
+  { href: "/", label: "概览" },
+  { href: "/simulator/new", label: "模拟器" },
+  { href: "/hub/copilot", label: "副驾" },
+  { href: "/hub/strategy", label: "战略" },
+  { href: "/hub/sandbox", label: "沙盒" },
 ];
 
 const workspaceLabels: Record<Viewer["workspaceMode"], string> = {
@@ -34,7 +34,7 @@ export function AppFrame({
   shellMode?: AppShellMode;
 }) {
   const workspaceLabel =
-    shellMode === "command" ? "Command Center" : workspaceLabels[viewer.workspaceMode];
+    shellMode === "command" ? "指挥中心" : workspaceLabels[viewer.workspaceMode];
 
   return (
     <div className={cn("app-shell", `shell-${shellMode}`)} data-shell={shellMode}>
@@ -45,8 +45,8 @@ export function AppFrame({
           </Link>
           <p className="eyebrow">
             {shellMode === "command"
-              ? "PERSONAL COMMAND CENTER"
-              : "INTERVIEW SIMULATOR + COMMAND CENTER"}
+              ? "个人指挥中心"
+              : "面试模拟器 + 指挥中心"}
           </p>
         </div>
         <div className="topbar-meta">
@@ -63,7 +63,7 @@ export function AppFrame({
       <div className="layout-grid">
         <aside className="sidebar">
           <div className="panel">
-            <p className="panel-label">Viewer</p>
+            <p className="panel-label">查看者</p>
             <h3>{viewer.displayName}</h3>
             <p className="muted-copy">Preferred Pack: {viewer.preferredRolePack}</p>
           </div>
@@ -83,7 +83,7 @@ export function AppFrame({
         <main className="content">
           <section className="hero-card">
             <p className="eyebrow">
-              {shellMode === "command" ? "SYSTEM PROTOCOL / LOYAL MODE" : "SYSTEM STATE"}
+              {shellMode === "command" ? "系统协议/忠诚模式" : "系统状态"}
             </p>
             <h1>{title}</h1>
             <p className="hero-copy">{subtitle}</p>

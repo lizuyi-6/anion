@@ -42,7 +42,7 @@ export default async function ReportPage({
             <section className="panel">
               <div className="section-head">
                 <div>
-                  <p className="panel-label">Evidence Anchors</p>
+                  <p className="panel-label">证据锚点</p>
                   <h3>带证据锚点的关键切片</h3>
                 </div>
               </div>
@@ -62,8 +62,8 @@ export default async function ReportPage({
           <section className="panel">
             <div className="section-head">
               <div>
-                <p className="panel-label">Findings</p>
-                <h3>Code / logic findings</h3>
+                <p className="panel-label">发现</p>
+                <h3>代码与逻辑发现</h3>
               </div>
             </div>
             <div className="stack-md">
@@ -93,20 +93,20 @@ export default async function ReportPage({
           <section className="card-grid">
             <div className="panel">
               <p className="panel-label">STAR</p>
-              <h3>Reverse-engineered highlights</h3>
+              <h3>逆向工程高光</h3>
               {report.starStories.map((story) => (
                 <article key={story.title} className="report-block">
                   <h4>{story.title}</h4>
-                  <p>S: {story.situation}</p>
-                  <p>T: {story.task}</p>
-                  <p>A: {story.action}</p>
-                  <p>R: {story.result}</p>
+                  <p>情境：{story.situation}</p>
+                  <p>任务：{story.task}</p>
+                  <p>行动：{story.action}</p>
+                  <p>结果：{story.result}</p>
                 </article>
               ))}
             </div>
             <div className="panel">
-              <p className="panel-label">Training Plan</p>
-              <h3>Next round training</h3>
+              <p className="panel-label">训练计划</p>
+              <h3>下一轮训练</h3>
               <ul className="flat-list">
                 {report.trainingPlan.map((item) => (
                   <li key={item}>{item}</li>
@@ -118,33 +118,33 @@ export default async function ReportPage({
           <section className="panel">
             <div className="section-head">
               <div>
-                <p className="panel-label">B1 / Memory Refactoring</p>
-                <h3>Extracted memory graph</h3>
+                <p className="panel-label">B1 / 记忆重构</p>
+                <h3>提取的记忆图谱</h3>
               </div>
             </div>
             {memoryProfile ? (
               <div className="stack-md">
                 <div className="card-grid">
                   <div className="metric-card wide">
-                    <strong>Skills</strong>
+                    <strong>技能</strong>
                     {memoryProfile.skills.map((item) => (
                       <p key={item.label}>{item.label}</p>
                     ))}
                   </div>
                   <div className="metric-card wide">
-                    <strong>Gaps</strong>
+                    <strong>差距</strong>
                     {memoryProfile.gaps.map((item) => (
                       <p key={item.label}>{item.label}</p>
                     ))}
                   </div>
                   <div className="metric-card wide">
-                    <strong>Traits</strong>
+                    <strong>特质</strong>
                     {memoryProfile.behaviorTraits.map((item) => (
                       <p key={item.label}>{item.label}</p>
                     ))}
                   </div>
                   <div className="metric-card wide">
-                    <strong>Wins</strong>
+                    <strong>成就</strong>
                     {memoryProfile.wins.map((item) => (
                       <p key={item.label}>{item.label}</p>
                     ))}
@@ -162,15 +162,15 @@ export default async function ReportPage({
                 ) : null}
               </div>
             ) : (
-              <p className="muted-copy">Memory profile has not been generated yet.</p>
+              <p className="muted-copy">记忆图谱尚未生成。</p>
             )}
           </section>
 
           <section className="panel transition-panel">
             <div className="section-head">
               <div>
-                <p className="panel-label">B2 / State Transition</p>
-                <h3>Accept Offer</h3>
+                <p className="panel-label">B2 / 状态转换</p>
+                <h3>接受 offer</h3>
               </div>
             </div>
             <p className="hero-copy">
@@ -179,7 +179,7 @@ export default async function ReportPage({
             <div className="action-row">
               <AcceptOfferButton sessionId={session.id} status={session.status} />
               <Link href="/hub/strategy" className="secondary-button inline-button">
-                Peek Command Center
+                查看指挥中心
               </Link>
             </div>
           </section>

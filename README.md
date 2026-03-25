@@ -1,38 +1,38 @@
 # Project Mobius
 
-Single-repo Next.js web app for:
+单仓库 Next.js Web 应用，包含以下功能：
 
-- The Interview Simulator
-- Diagnostic report, memory refactoring, and `Accept Offer` transition
-- Command Center modes: Engineering Copilot, Strategy Hub, and Game Theory Sandbox
+- 面试模拟器（The Interview Simulator）
+- 诊断报告、记忆重构和"接受Offer"转换功能
+- 命令中心模式：Engineering Copilot、Strategy Hub 和 Game Theory Sandbox
 
-## Stack
+## 技术栈
 
 - Next.js 16 App Router + TypeScript
 - React 19
-- Zod schemas for every AI-facing contract
-- OpenAI Responses API with mock fallback when `OPENAI_API_KEY` is absent
-- Supabase Auth/Postgres/Storage with demo fallback
-- Trigger.dev task scaffold for async interview analysis
-- Vitest for unit coverage
+- Zod schema 用于定义所有 AI 相关的接口契约
+- OpenAI Responses API（当未设置 `OPENAI_API_KEY` 时使用模拟数据）
+- Supabase Auth/Postgres/Storage（提供演示模式备用）
+- Trigger.dev 任务框架，用于异步面试分析
+- Vitest 单元测试覆盖
 
-## Runtime Modes
+## 运行时模式
 
-- `demo`: default when Supabase env is absent. Uses the in-memory store and mock AI output.
-- `supabase`: enabled when `SUPABASE_URL` and `SUPABASE_ANON_KEY` are present. Uses real auth, persistence, and private storage.
+- `demo`：当 Supabase 环境未配置时的默认模式。使用内存存储和模拟 AI 输出。
+- `supabase`：当 `SUPABASE_URL` 和 `SUPABASE_ANON_KEY` 存在时启用。使用真实的认证、持久化存储和私有存储。
 
-Trigger.dev is optional. When `TRIGGER_SECRET_KEY` and `TRIGGER_PROJECT_ID` are configured, interview analysis is queued as a background job. Otherwise it falls back to inline execution so local development still works.
+Trigger.dev 为可选配置。当配置了 `TRIGGER_SECRET_KEY` 和 `TRIGGER_PROJECT_ID` 时，面试分析会被作为后台任务排队执行。否则会回退到内联执行模式，确保本地开发仍能正常工作。
 
-## Local Run
+## 本地运行
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-Copy `.env.example` to `.env.local` if you want real model calls or Supabase mode.
+如果需要进行真实的模型调用或使用 Supabase 模式，请将 `.env.example` 复制为 `.env.local`。
 
-## Core Routes
+## 核心路由
 
 - `/simulator/new`
 - `/simulator/[sessionId]`
@@ -42,7 +42,7 @@ Copy `.env.example` to `.env.local` if you want real model calls or Supabase mod
 - `/hub/sandbox`
 - `/auth/sign-in`
 
-## Commands
+## 命令
 
 ```bash
 pnpm dev
@@ -51,8 +51,8 @@ pnpm test
 pnpm build
 ```
 
-## Notes
+## 备注
 
-- `supabase/migrations/0001_mobius.sql` contains the base schema and RLS setup.
-- `supabase/migrations/0002_phase2_runtime.sql` adds analysis state fields and the private `session-artifacts` storage bucket policies.
-- `trigger/interview-analysis.ts` is the background analysis task used in Supabase mode when Trigger.dev is configured.
+- `supabase/migrations/0001_mobius.sql` 包含基础数据库结构和 RLS（行级安全策略）配置。
+- `supabase/migrations/0002_phase2_runtime.sql` 添加了分析状态字段和私有 `session-artifacts` 存储桶策略。
+- `trigger/interview-analysis.ts` 是在配置了 Trigger.dev 的 Supabase 模式下使用的后台分析任务。

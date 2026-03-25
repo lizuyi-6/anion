@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Project Möbius",
+  title: "莫比乌斯计划",
   description:
-    "Interview simulator, diagnostic reports, memory refactoring, and command center for high-pressure career preparation.",
+    "面试模拟器、诊断报告、记忆重构与高压职场备战指挥中心。",
 };
 
 export default function RootLayout({

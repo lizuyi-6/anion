@@ -90,7 +90,7 @@ export function InterviewSetupForm({
       <div className="panel">
         <div className="section-head">
           <div>
-            <p className="panel-label">A1 / Context Initialization</p>
+            <p className="panel-label">A1 / 上下文初始化</p>
             <h3>目标物设定</h3>
           </div>
         </div>
@@ -210,7 +210,7 @@ export function InterviewSetupForm({
       <div className="panel">
         <div className="section-head">
           <div>
-            <p className="panel-label">Materials</p>
+            <p className="panel-label">材料</p>
             <h3>候选人材料</h3>
           </div>
         </div>
@@ -238,7 +238,7 @@ export function InterviewSetupForm({
       {error ? <p className="error-copy">{error}</p> : null}
 
       <button type="submit" className="primary-button" disabled={isSubmitting}>
-        {isSubmitting ? "Creating Arena..." : "Enter The Interview Simulator"}
+        {isSubmitting ? "正在创建..." : "进入面试模拟器"}
       </button>
     </form>
   );

@@ -8,7 +8,7 @@ export function DiagramView({ spec }: { spec: DiagramSpec }) {
     <div className="chart-card">
       <div className="section-head">
         <div>
-          <p className="panel-label">Flow Spec</p>
+          <p className="panel-label">流程规格</p>
           <h3>架构 / 流程图</h3>
         </div>
       </div>

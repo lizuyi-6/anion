@@ -21,7 +21,7 @@ export default async function Home() {
     >
       <div className="card-grid">
         <section className="panel">
-          <p className="panel-label">A / The Interview Simulator</p>
+          <p className="panel-label">A / 面试模拟器</p>
           <h3>千面考官沙盒</h3>
           <p className="hero-copy">
             非线性追问、群面冲突、规则先行的打断机制，以及可沉淀成能力图谱的报告。
@@ -39,7 +39,7 @@ export default async function Home() {
         </section>
         <section className="panel">
           <p className="panel-label">C / Command Center</p>
-          <h3>Engineering / Strategy / Sandbox</h3>
+          <h3>工程 / 战略 / 沙盒</h3>
           <p className="hero-copy">
             工程副驾、可行性研究生成器和职场博弈沙盘共享同一份长期记忆图谱。
           </p>

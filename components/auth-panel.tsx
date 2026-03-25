@@ -35,7 +35,7 @@ export function AuthPanel({
 
       setMessage("Magic link sent. Check your inbox.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Unable to send magic link.");
+      setMessage(error instanceof Error ? error.message : "无法发送魔法链接。");
     } finally {
       setIsPending(false);
     }
@@ -63,10 +63,10 @@ export function AuthPanel({
 
   return (
     <section className="panel">
-      <p className="panel-label">Authentication</p>
-      <h3>Sign in to enable Supabase mode</h3>
+      <p className="panel-label">身份验证</p>
+      <h3>登录以启用Supabase模式</h3>
       <p className="hero-copy">
-        Use email magic link or Google. Demo mode remains available when Supabase is not configured.
+        使用邮箱魔法链接或Google登录。当Supabase未配置时，演示模式仍然可用。
       </p>
       <label className="field">
         <span>Email</span>
@@ -96,7 +96,7 @@ export function AuthPanel({
             void onGoogle();
           }}
         >
-          Continue with Google
+          继续使用Google登录
         </button>
       </div>
       {message ? <p className="muted-copy">{message}</p> : null}

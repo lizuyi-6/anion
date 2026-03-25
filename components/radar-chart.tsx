@@ -9,7 +9,7 @@ export function RadarChart({ report }: { report: DiagnosticReport }) {
     <div className="chart-card">
       <div className="section-head">
         <div>
-          <p className="panel-label">Endgame Diagnostic</p>
+          <p className="panel-label">终局诊断</p>
           <h3>高维雷达图</h3>
         </div>
       </div>

@@ -102,11 +102,11 @@ export function InterviewConsole({
       <div className="panel">
         <div className="section-head">
           <div>
-            <p className="panel-label">A2 / Dynamic Gameplay</p>
+            <p className="panel-label">A2 / 动态博弈</p>
             <h3>实时多轮对弈</h3>
           </div>
           <div className="chip-row">
-            <span className="status-pill">Pressure {currentPressure}</span>
+            <span className="status-pill">压力值 {currentPressure}</span>
             <span className="status-pill subtle">{session.config.rolePack}</span>
           </div>
         </div>

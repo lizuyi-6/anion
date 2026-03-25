@@ -8,7 +8,7 @@ export function TimelineView({ spec }: { spec: TimelineSpec }) {
     <div className="chart-card">
       <div className="section-head">
         <div>
-          <p className="panel-label">Timeline Spec</p>
+          <p className="panel-label">时间线规格</p>
           <h3>排期与资源</h3>
         </div>
       </div>

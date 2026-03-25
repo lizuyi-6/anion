@@ -11,7 +11,7 @@ export default async function HubLayout({
   return (
     <AppFrame
       viewer={viewer}
-      title="Command Center"
+      title="指挥中心"
       subtitle="系统提示词已经切换。这里不再找你的漏洞，而是利用已沉淀的能力图谱补齐短板、生成策略并预演博弈。"
       shellMode="command"
     >

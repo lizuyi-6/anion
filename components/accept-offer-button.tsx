@@ -62,7 +62,7 @@ export function AcceptOfferButton({
       setError(
         transitionError instanceof Error
           ? transitionError.message
-          : "Unable to complete protocol switch.",
+          :? "无法完成协议切换。",
       );
     }
   };
@@ -96,7 +96,7 @@ export function AcceptOfferButton({
         <div className="protocol-overlay" role="status" aria-live="polite">
           <div className="protocol-grid" aria-hidden />
           <div className="protocol-panel">
-            <span className="eyebrow">Offer Accepted</span>
+            <span className="eyebrow">Offer已接受</span>
             <h3>协议切换中</h3>
             <p className="hero-copy">
               冷峻考场正在退场，个人中枢正在接管。系统会把你的高压面试痕迹转译成长期副驾上下文。
@@ -117,7 +117,7 @@ export function AcceptOfferButton({
                 2. Rewrite Prompt
               </div>
               <div className={`protocol-step ${phase === "activating" ? "active" : ""}`}>
-                3. Activate Hub
+                3. 激活Hub
               </div>
             </div>
           </div>

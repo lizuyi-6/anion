@@ -143,7 +143,7 @@ export function HubConsole({
       <div className="panel">
         <div className="section-head">
           <div>
-            <p className="panel-label">Command Center</p>
+            <p className="panel-label">指挥中心</p>
             <h3>{title}</h3>
           </div>
         </div>
@@ -397,7 +397,7 @@ export function HubConsole({
                 className={`transcript-row ${message.role === "user" ? "candidate" : ""}`}
               >
                 <div className="transcript-meta">
-                  <span>{message.role === "user" ? "You" : "Mobius"}</span>
+                  <span>{message.role === "user" ? "你" : "莫比乌斯"}</span>
                 </div>
                 <p>{message.content}</p>
               </article>
@@ -449,7 +449,7 @@ export function HubConsole({
               ) : null}
               {artifact.openQuestions.length > 0 ? (
                 <article className="report-block">
-                  <h4>Open Questions</h4>
+                  <h4>待解决问题</h4>
                   <ul className="flat-list">
                     {artifact.openQuestions.map((item) => (
                       <li key={item}>{item}</li>
@@ -494,7 +494,7 @@ export function HubConsole({
               <p>{artifact.rootCause}</p>
             </article>
             <article className="report-block">
-              <h4>Memory Anchor</h4>
+              <h4>记忆锚点</h4>
               <p>{artifact.memoryAnchor}</p>
             </article>
             <article className="report-block">
@@ -537,7 +537,7 @@ export function HubConsole({
           </div>
           <div className="stack-md">
             <article className="report-block">
-              <h4>Counterpart Model</h4>
+              <h4>对手模型</h4>
               <p>{artifact.counterpartModel.style}</p>
               <ul className="flat-list">
                 {artifact.counterpartModel.incentives.map((item) => (
@@ -550,7 +550,7 @@ export function HubConsole({
               <p>{artifact.equilibrium}</p>
             </article>
             <article className="report-block">
-              <h4>Recommended Move</h4>
+              <h4>推荐行动</h4>
               <p>{artifact.recommendedMove}</p>
             </article>
             {artifact.pressurePoints.length > 0 ? (
@@ -564,7 +564,7 @@ export function HubConsole({
               </article>
             ) : null}
             <article className="report-block">
-              <h4>Talk Tracks</h4>
+              <h4>话术要点</h4>
               <ul className="flat-list">
                 {artifact.talkTracks.map((item) => (
                   <li key={item}>{item}</li>

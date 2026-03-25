@@ -21,8 +21,8 @@ export default async function SignInPage() {
         workspaceMode: "interview",
         preferredRolePack: "engineering",
       }}
-      title="Sign in"
-      subtitle="Supabase mode requires a verified session. Demo mode remains available when no backend is configured."
+      title="登录"
+      subtitle="Supabase 模式需要经过验证的会话。当未配置后端时，演示模式仍然可用。"
       shellMode="interview"
     >
       <AuthPanel
