@@ -61,7 +61,7 @@ export async function streamInterviewTurn(params: {
   });
 
   if (!response.ok || !response.body) {
-    throw new Error("Failed to receive interview stream");
+    throw new Error("接收面试流失败");
   }
 
   const reader = response.body.getReader();
@@ -113,7 +113,7 @@ export async function fetchReportStatus(sessionId: string) {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to load report status");
+    throw new Error("加载报告状态失败");
   }
 
   return (await response.json()) as {

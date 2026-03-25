@@ -59,7 +59,7 @@ export function ReportStatusPanel({
 
   return (
     <section className="panel transition-panel">
-      <p className="panel-label">A3 / Analysis Pipeline</p>
+      <p className="panel-label">A3 / 分析流程</p>
       <h3>{status === "analyzing" ? "终局报告仍在编译" : "分析流程需要重试"}</h3>
       <p className="hero-copy">
         报告页保持异步轮询。面试分析还在运行时，页面会自动刷新，不需要手动反复重载。

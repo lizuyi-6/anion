@@ -41,7 +41,7 @@ export function AppFrame({
       <header className="topbar">
         <div>
           <Link href="/" className="wordmark">
-            Project Möbius
+            莫比乌斯计划
           </Link>
           <p className="eyebrow">
             {shellMode === "command"
@@ -54,7 +54,7 @@ export function AppFrame({
           <span className="status-pill subtle">{workspaceLabel}</span>
           {!viewer.isDemo ? (
             <Link href="/auth/sign-out" className="nav-link">
-              Sign out
+              退出登录
             </Link>
           ) : null}
         </div>
@@ -65,7 +65,7 @@ export function AppFrame({
           <div className="panel">
             <p className="panel-label">查看者</p>
             <h3>{viewer.displayName}</h3>
-            <p className="muted-copy">Preferred Pack: {viewer.preferredRolePack}</p>
+            <p className="muted-copy">首选角色包：{viewer.preferredRolePack}</p>
           </div>
           <nav className="nav-list">
             {navItems.map((item) => (

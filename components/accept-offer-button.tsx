@@ -62,7 +62,7 @@ export function AcceptOfferButton({
       setError(
         transitionError instanceof Error
           ? transitionError.message
-          :? "无法完成协议切换。",
+          :: "无法完成协议切换。",
       );
     }
   };
@@ -114,10 +114,10 @@ export function AcceptOfferButton({
                       : ""
                 }`}
               >
-                2. Rewrite Prompt
+                2. 重写提示词
               </div>
               <div className={`protocol-step ${phase === "activating" ? "active" : ""}`}>
-                3. 激活Hub
+                3. 激活指挥中心
               </div>
             </div>
           </div>

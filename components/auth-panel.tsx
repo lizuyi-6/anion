@@ -86,7 +86,7 @@ export function AuthPanel({
             void onMagicLink();
           }}
         >
-          {isPending ? "Sending..." : "Send Magic Link"}
+          {isPending ? "发送中..." : "发送魔法链接"}
         </button>
         <button
           type="button"

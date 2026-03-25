@@ -78,45 +78,45 @@ export function buildCommandInput<TMode extends CommandMode>(params: {
 export function commandArtifactToMarkdown(artifact: CommandArtifact) {
   if (artifact.mode === "copilot") {
     return [
-      "# Engineering Copilot",
+      "# 工程 Copilot",
       "",
-      "## Root Cause",
+      "## 根本原因",
       artifact.rootCause,
       "",
-      "## Shortest Fix",
+      "## 最短修复路径",
       ...artifact.shortestFix.map((item) => `- ${item}`),
       "",
-      "## Optional Refactors",
+      "## 可选重构",
       ...artifact.optionalRefactors.map((item) => `- ${item}`),
       ...(artifact.watchouts.length > 0
-        ? ["", "## Watchouts", ...artifact.watchouts.map((item) => `- ${item}`)]
+        ? ["", "## 注意事项", ...artifact.watchouts.map((item) => `- ${item}`)]
         : []),
     ].join("\n");
   }
 
   if (artifact.mode === "strategy") {
     return [
-      "# Feasibility Study Report",
+      "# 可行性研究报告",
       "",
       ...artifact.sections.flatMap((section) => [`## ${section.title}`, section.body, ""]),
       ...(artifact.deliverables.length > 0
-        ? ["## Deliverables", ...artifact.deliverables.map((item) => `- ${item}`), ""]
+        ? ["## 交付物", ...artifact.deliverables.map((item) => `- ${item}`), ""]
         : []),
       ...(artifact.successMetrics.length > 0
-        ? ["## Success Metrics", ...artifact.successMetrics.map((item) => `- ${item}`), ""]
+        ? ["## 成功指标", ...artifact.successMetrics.map((item) => `- ${item}`), ""]
         : []),
       ...(artifact.assumptions.length > 0
-        ? ["## Assumptions", ...artifact.assumptions.map((item) => `- ${item}`), ""]
+        ? ["## 假设条件", ...artifact.assumptions.map((item) => `- ${item}`), ""]
         : []),
       ...(artifact.openQuestions.length > 0
-        ? ["## Open Questions", ...artifact.openQuestions.map((item) => `- ${item}`), ""]
+        ? ["## 待解决问题", ...artifact.openQuestions.map((item) => `- ${item}`), ""]
         : []),
       ...(artifact.risks.length > 0
-        ? ["## Risks", ...artifact.risks.map((item) => `- ${item}`), ""]
+        ? ["## 风险", ...artifact.risks.map((item) => `- ${item}`), ""]
         : []),
       ...(artifact.citations.length > 0
         ? [
-            "## Citations",
+            "## 引用",
             ...artifact.citations.map((item) => `- [${item.title}](${item.url})`),
             "",
           ]
@@ -125,31 +125,31 @@ export function commandArtifactToMarkdown(artifact: CommandArtifact) {
   }
 
   return [
-    "# Game Theory Sandbox",
+    "# 博弈论沙盒",
     "",
-    "## Current Equilibrium",
+    "## 当前均衡",
     artifact.equilibrium,
     "",
-    "## Recommended Move",
+    "## 推荐策略",
     artifact.recommendedMove,
     "",
-    "## Long-Term Cost",
+    "## 长期成本",
     artifact.longTermCost,
     "",
     ...(artifact.pressurePoints.length > 0
-      ? ["## Pressure Points", ...artifact.pressurePoints.map((item) => `- ${item}`), ""]
+      ? ["## 压力点", ...artifact.pressurePoints.map((item) => `- ${item}`), ""]
       : []),
-    "## Talk Tracks",
+    "## 话术要点",
     ...artifact.talkTracks.map((item) => `- ${item}`),
     ...(artifact.scenarioBranches.length > 0
       ? [
           "",
-          "## Scenario Branches",
+          "## 情景分支",
           ...artifact.scenarioBranches.flatMap((branch) => [
             `### ${branch.name}`,
-            `- If You Push: ${branch.ifYouPush}`,
-            `- If You Concede: ${branch.ifYouConcede}`,
-            `- Signal To Watch: ${branch.signalToWatch}`,
+            `- 如果施压: ${branch.ifYouPush}`,
+            `- 如果让步: ${branch.ifYouConcede}`,
+            `- 关注信号: ${branch.signalToWatch}`,
           ]),
         ]
       : []),

@@ -184,7 +184,7 @@ export function InterviewSetupForm({
       <div className="panel">
         <div className="section-head">
           <div>
-            <p className="panel-label">Boss Matrix</p>
+            <p className="panel-label">面试官矩阵</p>
             <h3>面试官矩阵选择</h3>
           </div>
         </div>

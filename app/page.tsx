@@ -16,7 +16,7 @@ export default async function Home() {
     <AppFrame
       viewer={viewer}
       activeHref="/"
-      title="Project Möbius"
+      title="莫比乌斯计划"
       subtitle="从高压面试沙盒切换到专属职场外脑。首版支持模拟面试、终局报告、Accept Offer 转场与三种中枢工作台。"
     >
       <div className="card-grid">
@@ -27,7 +27,7 @@ export default async function Home() {
             非线性追问、群面冲突、规则先行的打断机制，以及可沉淀成能力图谱的报告。
           </p>
           <Link href="/simulator/new" className="primary-button inline-button">
-            Create New Session
+            创建新会话
           </Link>
         </section>
         <section className="panel">
@@ -49,7 +49,7 @@ export default async function Home() {
       <section className="panel">
         <div className="section-head">
           <div>
-            <p className="panel-label">Recent Sessions</p>
+            <p className="panel-label">Recent Sessionsnt Sessions</p>
             <h3>历史会话</h3>
           </div>
         </div>

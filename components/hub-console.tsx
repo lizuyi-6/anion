@@ -378,7 +378,7 @@ export function HubConsole({
             void onSubmit();
           }}
         >
-          {isRunning ? "Thinking..." : runLabel(mode)}
+          {isRunning ? "思考中..." : runLabel(mode)}
         </button>
       </div>
 
@@ -439,7 +439,7 @@ export function HubConsole({
               </div>
               {artifact.assumptions.length > 0 ? (
                 <article className="report-block">
-                  <h4>Assumptions</h4>
+                  <h4>假设条件</h4>
                   <ul className="flat-list">
                     {artifact.assumptions.map((item) => (
                       <li key={item}>{item}</li>
@@ -484,7 +484,7 @@ export function HubConsole({
         <div className="panel">
           <div className="section-head">
             <div>
-              <p className="panel-label">Copilot Output</p>
+              <p className="panel-label">副驾输出</p>
               <h3>工程副驾建议</h3>
             </div>
           </div>
@@ -546,7 +546,7 @@ export function HubConsole({
               </ul>
             </article>
             <article className="report-block">
-              <h4>Current Equilibrium</h4>
+              <h4>当前均衡点</h4>
               <p>{artifact.equilibrium}</p>
             </article>
             <article className="report-block">
@@ -555,7 +555,7 @@ export function HubConsole({
             </article>
             {artifact.pressurePoints.length > 0 ? (
               <article className="report-block">
-                <h4>Pressure Points</h4>
+                <h4>施压点</h4>
                 <ul className="flat-list">
                   {artifact.pressurePoints.map((item) => (
                     <li key={item}>{item}</li>
