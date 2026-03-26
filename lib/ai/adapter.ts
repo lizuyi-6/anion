@@ -53,7 +53,7 @@ type CommandInput = {
 
 function formatMemoryContextForPrompt(memoryContext: ActiveMemoryContext | null) {
   if (!memoryContext) {
-    return "No active memory context";
+    return "没有活跃的记忆上下文";
   }
 
   return JSON.stringify({

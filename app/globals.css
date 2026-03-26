@@ -131,6 +131,10 @@ textarea:focus {
   align-items: center;
 }
 
+.section-head {
+  margin-bottom: 1.2rem;
+}
+
 .layout-grid {
   display: grid;
   grid-template-columns: 260px minmax(0, 1fr);
@@ -178,6 +182,10 @@ textarea:focus {
 .panel,
 .chart-card {
   padding: 1.5rem;
+}
+
+.session-list-panel {
+  margin-top: 0.5rem;
 }
 
 .hero-card::after,

@@ -46,7 +46,7 @@ export default async function Home() {
         </section>
       </div>
 
-      <section className="panel">
+      <section className="panel session-list-panel">
         <div className="section-head">
           <div>
             <p className="panel-label">最近会话</p>

@@ -40,9 +40,9 @@ function runLabel(mode: CommandMode) {
     case "copilot":
       return "运行副驾";
     case "strategy":
-      return "Generate FSR";
+      return "生成FSR";
     case "sandbox":
-      return "Simulate Scenario";
+      return "模拟场景";
   }
 }
 
@@ -386,7 +386,7 @@ export function HubConsole({
         <div className="panel">
           <div className="section-head">
             <div>
-              <p className="panel-label">Thread</p>
+              <p className="panel-label">对话记录</p>
               <h3>多轮记录</h3>
             </div>
           </div>
@@ -415,7 +415,7 @@ export function HubConsole({
                 <h3>可行性研究报告</h3>
               </div>
               <button type="button" className="secondary-button inline-button" onClick={onExport}>
-                Export Markdown
+                导出Markdown
               </button>
             </div>
             <div className="stack-md">
@@ -498,7 +498,7 @@ export function HubConsole({
               <p>{artifact.memoryAnchor}</p>
             </article>
             <article className="report-block">
-              <h4>Shortest Fix</h4>
+              <h4>最短修复路径</h4>
               <ul className="flat-list">
                 {artifact.shortestFix.map((item) => (
                   <li key={item}>{item}</li>
@@ -515,7 +515,7 @@ export function HubConsole({
             </article>
             {artifact.watchouts.length > 0 ? (
               <article className="report-block">
-                <h4>Watchouts</h4>
+                <h4>注意事项</h4>
                 <ul className="flat-list">
                   {artifact.watchouts.map((item) => (
                     <li key={item}>{item}</li>

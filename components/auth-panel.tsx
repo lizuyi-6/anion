@@ -33,7 +33,7 @@ export function AuthPanel({
         throw error;
       }
 
-      setMessage("Magic link sent. Check your inbox.");
+      setMessage("魔法链接已发送。请检查收件箱。");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "无法发送魔法链接。");
     } finally {
@@ -56,7 +56,7 @@ export function AuthPanel({
         throw error;
       }
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Unable to start Google sign-in.");
+      setMessage(error instanceof Error ? error.message : "无法启动 Google 登录。");
       setIsPending(false);
     }
   };
@@ -69,7 +69,7 @@ export function AuthPanel({
         使用邮箱魔法链接或Google登录。当Supabase未配置时，演示模式仍然可用。
       </p>
       <label className="field">
-        <span>Email</span>
+        <span>邮箱</span>
         <input
           type="email"
           value={email}
