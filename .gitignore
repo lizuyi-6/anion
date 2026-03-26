@@ -42,3 +42,6 @@ output-playwright-*.png
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Trae IDE
+.trae/
