@@ -63,6 +63,7 @@ export function InterviewConsole({
   const [answer, setAnswer] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const sendAnswer = async () => {
     if (!answer.trim() || isStreaming) {
@@ -70,6 +71,7 @@ export function InterviewConsole({
     }
 
     const answerText = answer.trim();
+    setErrorMessage(null);
     setTranscript((current) => [
       ...current,
       {
@@ -93,17 +95,22 @@ export function InterviewConsole({
           setPressure((current) => Math.min(100, Math.max(0, current + event.pressureDelta)));
         },
       });
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Interview request failed");
     } finally {
       setIsStreaming(false);
     }
   };
 
   const finalize = async () => {
+    setErrorMessage(null);
     setIsCompleting(true);
     try {
       await completeSession(session.id);
       router.push(`/report/${session.id}`);
       router.refresh();
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Failed to generate report");
     } finally {
       setIsCompleting(false);
     }
@@ -189,6 +196,11 @@ export function InterviewConsole({
             {isCompleting ? "分析中..." : "结束本场面试"}
           </button>
         </div>
+        {errorMessage ? (
+          <p className="error-copy" data-testid="interview-error-message">
+            {errorMessage}
+          </p>
+        ) : null}
       </div>
     </div>
   );

@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 
+import { resolveAiProvider } from "@/lib/env";
 import { getViewer } from "@/lib/server/auth";
+import { createAiErrorResponse } from "@/lib/server/route-errors";
 import { getDataStore } from "@/lib/server/store/repository";
 import { retryInterviewAnalysis } from "@/lib/server/services/analysis";
 
@@ -15,14 +17,19 @@ export async function POST(
 
   const { sessionId } = await context.params;
   const store = await getDataStore({ viewer });
-  const result = await retryInterviewAnalysis({
-    sessionId,
-    store,
-  });
 
-  return NextResponse.json({
-    queued: result.queued,
-    reportId: result.report?.id ?? null,
-    memoryProfileId: result.memoryProfile?.id ?? null,
-  });
+  try {
+    const result = await retryInterviewAnalysis({
+      sessionId,
+      store,
+    });
+
+    return NextResponse.json({
+      queued: result.queued,
+      reportId: result.report?.id ?? null,
+      memoryProfileId: result.memoryProfile?.id ?? null,
+    });
+  } catch (error) {
+    return createAiErrorResponse(error, resolveAiProvider());
+  }
 }

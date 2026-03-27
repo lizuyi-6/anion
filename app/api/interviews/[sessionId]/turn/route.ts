@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 
 import { TurnRequestSchema } from "@/lib/domain";
+import { resolveAiProvider } from "@/lib/env";
 import { getViewer } from "@/lib/server/auth";
+import { createAiErrorResponse } from "@/lib/server/route-errors";
 import { getDataStore } from "@/lib/server/store/repository";
 import { generateNextInterviewBeat } from "@/lib/server/services/interview";
 import { encodeSseEvent } from "@/lib/utils";
@@ -26,27 +28,32 @@ export async function POST(
   const json = await request.json();
   const payload = TurnRequestSchema.parse(json);
   const turns = await store.listTurns(sessionId);
-  const result = await generateNextInterviewBeat({
-    store,
-    session,
-    turns,
-    answer: payload.answer,
-  });
 
-  const stream = new ReadableStream({
-    start(controller) {
-      for (const event of result.events) {
-        controller.enqueue(new TextEncoder().encode(encodeSseEvent("turn", event)));
-      }
-      controller.close();
-    },
-  });
+  try {
+    const result = await generateNextInterviewBeat({
+      store,
+      session,
+      turns,
+      answer: payload.answer,
+    });
 
-  return new Response(stream, {
-    headers: {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache, no-transform",
-      Connection: "keep-alive",
-    },
-  });
+    const stream = new ReadableStream({
+      start(controller) {
+        for (const event of result.events) {
+          controller.enqueue(new TextEncoder().encode(encodeSseEvent("turn", event)));
+        }
+        controller.close();
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache, no-transform",
+        Connection: "keep-alive",
+      },
+    });
+  } catch (error) {
+    return createAiErrorResponse(error, resolveAiProvider());
+  }
 }

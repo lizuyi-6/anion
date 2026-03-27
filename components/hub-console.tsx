@@ -68,6 +68,7 @@ export function HubConsole({
   const [copilotBrief, setCopilotBrief] = useState(defaultCopilotBrief);
   const [strategyBrief, setStrategyBrief] = useState(defaultStrategyBrief);
   const [sandboxBrief, setSandboxBrief] = useState(defaultSandboxBrief);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const onUpload = async (files: FileList | null) => {
     if (!files || files.length === 0) {
@@ -83,6 +84,7 @@ export function HubConsole({
       return;
     }
 
+    setErrorMessage(null);
     const compiledInput =
       mode === "copilot"
         ? buildCommandInput({
@@ -115,6 +117,8 @@ export function HubConsole({
       setArtifact(result.artifact);
       setInput("");
       setAttachments([]);
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Command mode request failed");
     } finally {
       setIsRunning(false);
     }
@@ -370,6 +374,11 @@ export function HubConsole({
               </span>
             ))}
           </div>
+        ) : null}
+        {errorMessage ? (
+          <p className="error-copy" data-testid="hub-error-message">
+            {errorMessage}
+          </p>
         ) : null}
         <button
           type="button"

@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 
 import { CompleteSessionInputSchema } from "@/lib/domain";
+import { resolveAiProvider } from "@/lib/env";
 import { getViewer } from "@/lib/server/auth";
+import { createAiErrorResponse } from "@/lib/server/route-errors";
 import { getDataStore } from "@/lib/server/store/repository";
 import { queueInterviewAnalysis } from "@/lib/server/services/analysis";
 
@@ -25,14 +27,18 @@ export async function POST(
     return NextResponse.json({ error: "未找到会话" }, { status: 404 });
   }
 
-  const analysis = await queueInterviewAnalysis({
-    sessionId,
-    store,
-  });
+  try {
+    const analysis = await queueInterviewAnalysis({
+      sessionId,
+      store,
+    });
 
-  return NextResponse.json({
-    queued: analysis.queued,
-    reportId: analysis.report?.id ?? null,
-    memoryProfileId: analysis.memoryProfile?.id ?? null,
-  });
+    return NextResponse.json({
+      queued: analysis.queued,
+      reportId: analysis.report?.id ?? null,
+      memoryProfileId: analysis.memoryProfile?.id ?? null,
+    });
+  } catch (error) {
+    return createAiErrorResponse(error, resolveAiProvider());
+  }
 }

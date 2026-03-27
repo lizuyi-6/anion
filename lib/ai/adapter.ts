@@ -1,8 +1,10 @@
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 import Anthropic from "@anthropic-ai/sdk";
+import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { z } from "zod";
 
+import { toAiProviderFailure } from "@/lib/ai/errors";
 import { hasOpenAi, hasAnthropic, runtimeEnv } from "@/lib/env";
 import type {
   ActiveMemoryContext,
@@ -706,12 +708,114 @@ class OpenAiProvider implements AiProviderAdapter {
   }
 }
 
+function extractTextFromAnthropicContent(content: Anthropic.Message["content"]) {
+  return content
+    .map((block) =>
+      "text" in block && typeof block.text === "string" ? block.text : "",
+    )
+    .filter(Boolean)
+    .join("\n")
+    .trim();
+}
+
+function extractStructuredJson(text: string): unknown {
+  const trimmed = text.trim();
+  if (!trimmed) {
+    throw new Error("Anthropic gateway response was empty.");
+  }
+
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    // Fall through to fenced and substring parsing.
+  }
+
+  const fencedMatch = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fencedMatch) {
+    try {
+      return JSON.parse(fencedMatch[1].trim());
+    } catch {
+      // Fall through to balanced JSON parsing.
+    }
+  }
+
+  const start = trimmed.search(/[{\[]/);
+  if (start === -1) {
+    throw new Error("Anthropic gateway response did not contain JSON.");
+  }
+
+  const stack: string[] = [];
+  let inString = false;
+  let escaping = false;
+
+  for (let index = start; index < trimmed.length; index += 1) {
+    const char = trimmed[index];
+
+    if (inString) {
+      if (escaping) {
+        escaping = false;
+        continue;
+      }
+      if (char === "\\") {
+        escaping = true;
+        continue;
+      }
+      if (char === '"') {
+        inString = false;
+      }
+      continue;
+    }
+
+    if (char === '"') {
+      inString = true;
+      continue;
+    }
+
+    if (char === "{" || char === "[") {
+      stack.push(char);
+      continue;
+    }
+
+    if (char === "}") {
+      if (stack.at(-1) !== "{") {
+        throw new Error("Anthropic gateway response contained malformed JSON.");
+      }
+      stack.pop();
+    } else if (char === "]") {
+      if (stack.at(-1) !== "[") {
+        throw new Error("Anthropic gateway response contained malformed JSON.");
+      }
+      stack.pop();
+    } else {
+      continue;
+    }
+
+    if (stack.length === 0) {
+      return JSON.parse(trimmed.slice(start, index + 1));
+    }
+  }
+
+  throw new Error("Anthropic gateway response was not valid JSON.");
+}
+
 class AnthropicProvider implements AiProviderAdapter {
   provider = "anthropic" as const;
   private client = new Anthropic({
     apiKey: runtimeEnv.anthropicApiKey,
     baseURL: runtimeEnv.anthropicBaseUrl ?? undefined,
   });
+
+  private getRequestOptions() {
+    if (!runtimeEnv.anthropicBaseUrl) {
+      return undefined;
+    }
+
+    return {
+      headers: {
+        Authorization: `Bearer ${runtimeEnv.anthropicApiKey}`,
+      },
+    };
+  }
 
   private async callWithSchema<T extends object>(params: {
     model: string;
@@ -721,37 +825,59 @@ class AnthropicProvider implements AiProviderAdapter {
     schema: z.ZodType<T>;
     tools?: Anthropic.MessageCreateParamsNonStreaming["tools"];
   }): Promise<T> {
-    const jsonSchema = params.schema instanceof z.ZodObject
-      ? (params.schema as z.ZodObject<z.ZodRawShape>).shape
-      : {};
+    try {
+      const outputFormat = zodOutputFormat(params.schema);
 
-    const extraHeaders: Record<string, string> = {};
-    if (runtimeEnv.anthropicBaseUrl) {
-      extraHeaders["Authorization"] = `Bearer ${runtimeEnv.anthropicApiKey}`;
-    }
+      if (!runtimeEnv.anthropicBaseUrl) {
+        const response = await this.client.messages.parse(
+          {
+            model: params.model,
+            max_tokens: params.maxTokens,
+            system: params.system,
+            messages: params.messages,
+            tools: params.tools,
+            output_config: {
+              format: outputFormat,
+            },
+          },
+          this.getRequestOptions(),
+        );
 
-    const response = await this.client.messages.parse({
-      model: params.model,
-      max_tokens: params.maxTokens,
-      system: params.system,
-      messages: params.messages,
-      tools: params.tools,
-      response_format: {
-        type: "json_schema",
-        json_schema: {
-          name: "output",
-          schema: jsonSchema,
+        if (!response.parsed_output) {
+          throw new Error("Anthropic response did not include parsed output.");
+        }
+
+        return params.schema.parse(response.parsed_output);
+      }
+
+      const response = await this.client.messages.create(
+        {
+          model: params.model,
+          max_tokens: params.maxTokens,
+          system: [
+            params.system,
+            "Only return a raw JSON object with no markdown fences or extra commentary.",
+            "Use the exact field names and nesting from the schema. Do not translate keys, rename fields, or wrap the object in another object.",
+            "If a field is not applicable, return an empty string or empty array that still satisfies the schema constraints.",
+            `JSON schema: ${JSON.stringify(outputFormat.schema)}`,
+          ].join("\n"),
+          messages: params.messages,
+          tools: params.tools,
         },
-      },
-      extraHeaders,
-    });
+        this.getRequestOptions(),
+      );
 
-    const text = response.content[0];
-    if (text?.type !== "text") {
-      throw new Error("Unexpected response format from Anthropic");
+      const text = extractTextFromAnthropicContent(response.content);
+      if (!text) {
+        throw new Error(
+          "Anthropic gateway response did not include text content.",
+        );
+      }
+
+      return params.schema.parse(extractStructuredJson(text));
+    } catch (error) {
+      throw toAiProviderFailure(error, this.provider);
     }
-
-    return params.schema.parse(JSON.parse(text.text));
   }
 
   async generateInterviewEvent(input: InterviewGenerationInput) {
@@ -921,7 +1047,9 @@ class AnthropicProvider implements AiProviderAdapter {
         system: "你是一个专业的战略分析引擎，输出JSON格式。",
         messages: [{ role: "user", content: prompt }],
         schema,
-        tools: [{ name: "web_search", type: "web_search_20250305" }],
+        tools: runtimeEnv.anthropicBaseUrl
+          ? undefined
+          : [{ name: "web_search", type: "web_search_20250305" }],
       });
 
       return StrategyReportSchema.parse({

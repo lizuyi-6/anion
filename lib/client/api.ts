@@ -12,6 +12,24 @@ export interface UploadError {
   message?: string;
 }
 
+interface ApiErrorResponse extends UploadError {
+  provider?: string;
+  retryable?: boolean;
+}
+
+async function readErrorMessage(response: Response, fallbackMessage: string) {
+  try {
+    const errorData = (await response.json()) as ApiErrorResponse;
+    return errorData.message || errorData.error || fallbackMessage;
+  } catch {
+    return `${fallbackMessage} (${response.status})`;
+  }
+}
+
+async function throwApiError(response: Response, fallbackMessage: string): Promise<never> {
+  throw new Error(await readErrorMessage(response, fallbackMessage));
+}
+
 export async function uploadFiles(files: FileList | File[]) {
   if (files.length === 0) {
     return [];
@@ -29,19 +47,14 @@ export async function uploadFiles(files: FileList | File[]) {
   });
 
   if (!response.ok) {
-    let errorMessage = "上传失败";
-
-    try {
-      const errorData = (await response.json()) as UploadError;
-      errorMessage = errorData.message || errorData.error || errorMessage;
-    } catch {
-      errorMessage = `上传失败 (${response.status})`;
-    }
-
-    throw new Error(errorMessage);
+    await throwApiError(response, "Upload failed");
   }
 
-  const payload = (await response.json()) as { uploads: UploadReference[]; message?: string };
+  const payload = (await response.json()) as {
+    uploads: UploadReference[];
+    message?: string;
+  };
+
   return payload.uploads;
 }
 
@@ -55,16 +68,7 @@ export async function createSession(config: SessionConfig) {
   });
 
   if (!response.ok) {
-    let errorMessage = "创建会话失败";
-
-    try {
-      const errorData = (await response.json()) as { error?: string; message?: string };
-      errorMessage = errorData.message || errorData.error || errorMessage;
-    } catch {
-      errorMessage = `创建会话失败 (${response.status})`;
-    }
-
-    throw new Error(errorMessage);
+    await throwApiError(response, "Failed to create session");
   }
 
   return (await response.json()) as { sessionId: string };
@@ -87,8 +91,12 @@ export async function streamInterviewTurn(params: {
     }),
   });
 
-  if (!response.ok || !response.body) {
-    throw new Error("接收面试流失败");
+  if (!response.ok) {
+    await throwApiError(response, "Interview stream failed");
+  }
+
+  if (!response.body) {
+    throw new Error("Interview stream failed");
   }
 
   const reader = response.body.getReader();
@@ -127,7 +135,7 @@ export async function completeSession(sessionId: string) {
   });
 
   if (!response.ok) {
-    throw new Error("提交报告生成任务失败");
+    await throwApiError(response, "Failed to start report generation");
   }
 
   return response.json();
@@ -140,7 +148,7 @@ export async function fetchReportStatus(sessionId: string) {
   });
 
   if (!response.ok) {
-    throw new Error("加载报告状态失败");
+    await throwApiError(response, "Failed to load report status");
   }
 
   return (await response.json()) as {
@@ -158,7 +166,7 @@ export async function retryReport(sessionId: string) {
   });
 
   if (!response.ok) {
-    throw new Error("重试报告生成失败");
+    await throwApiError(response, "Failed to retry report generation");
   }
 
   return response.json();
@@ -170,7 +178,7 @@ export async function acceptOffer(sessionId: string) {
   });
 
   if (!response.ok) {
-    throw new Error("切换指挥中心模式失败");
+    await throwApiError(response, "Failed to switch command center mode");
   }
 
   return response.json();
@@ -182,7 +190,7 @@ export async function activateHub(sessionId: string) {
   });
 
   if (!response.ok) {
-    throw new Error("激活指挥中心失败");
+    await throwApiError(response, "Failed to activate command center");
   }
 
   return response.json();
@@ -203,7 +211,7 @@ export async function runCommandModeApi(params: {
   });
 
   if (!response.ok) {
-    throw new Error("运行命令模式失败");
+    await throwApiError(response, "Command mode run failed");
   }
 
   return (await response.json()) as {

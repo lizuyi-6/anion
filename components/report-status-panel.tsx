@@ -33,9 +33,11 @@ export function ReportStatusPanel({
             router.refresh();
           }
         })
-        .catch(() => {
+        .catch((error) => {
           if (!cancelled) {
-            setLastError("暂时无法刷新分析状态。");
+            setLastError(
+              error instanceof Error ? error.message : "Failed to refresh analysis status",
+            );
           }
         });
     }, 2500);
@@ -52,6 +54,8 @@ export function ReportStatusPanel({
       await retryReport(sessionId);
       setLastError(null);
       setStatus("analyzing");
+    } catch (error) {
+      setLastError(error instanceof Error ? error.message : "Failed to retry analysis");
     } finally {
       setIsRetrying(false);
     }
@@ -59,10 +63,11 @@ export function ReportStatusPanel({
 
   return (
     <section className="panel transition-panel" data-testid="report-status-panel">
-      <p className="panel-label">A3 / 分析流程</p>
-      <h3>{status === "analyzing" ? "终局报告仍在编译" : "分析流程需要重试"}</h3>
+      <p className="panel-label">A3 / Analysis</p>
+      <h3>{status === "analyzing" ? "Report is still processing" : "Analysis needs a retry"}</h3>
       <p className="hero-copy">
-        报告页保持异步轮询。面试分析还在运行时，页面会自动刷新，不需要手动反复重载。
+        The report page keeps polling while analysis is running and refreshes itself once the
+        report becomes available.
       </p>
       <div className="terminal-caret" aria-hidden />
       {lastError ? <p className="error-copy">{lastError}</p> : null}
@@ -75,7 +80,7 @@ export function ReportStatusPanel({
             void onRetry();
           }}
         >
-          {isRetrying ? "重试中..." : "重试分析"}
+          {isRetrying ? "Retrying..." : "Retry analysis"}
         </button>
       </div>
     </section>
