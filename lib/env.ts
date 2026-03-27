@@ -1,11 +1,16 @@
 import type { RuntimeMode } from "@/lib/domain";
 
+export type AiProvider = "openai" | "anthropic" | "mock";
+
 const env = {
   appUrl: process.env.APP_URL ?? "http://localhost:3000",
   openAiApiKey: process.env.OPENAI_API_KEY,
   openAiModel: process.env.OPENAI_MODEL ?? "gpt-5.2",
   openAiEmbeddingModel:
     process.env.OPENAI_EMBEDDING_MODEL ?? "text-embedding-3-small",
+  anthropicApiKey: process.env.ANTHROPIC_API_KEY,
+  anthropicModel: process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-20250514",
+  anthropicBaseUrl: process.env.ANTHROPIC_BASE_URL,
   supabaseUrl: process.env.SUPABASE_URL,
   supabaseAnonKey: process.env.SUPABASE_ANON_KEY,
   supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
@@ -18,6 +23,20 @@ export const runtimeEnv = Object.freeze(env);
 
 export function hasOpenAi() {
   return Boolean(runtimeEnv.openAiApiKey);
+}
+
+export function hasAnthropic() {
+  return Boolean(runtimeEnv.anthropicApiKey);
+}
+
+export function resolveAiProvider(): AiProvider {
+  if (hasAnthropic()) {
+    return "anthropic";
+  }
+  if (hasOpenAi()) {
+    return "openai";
+  }
+  return "mock";
 }
 
 export function hasSupabase() {

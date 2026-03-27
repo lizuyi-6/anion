@@ -161,10 +161,41 @@ const causalityMarkers = [
   "which means",
   "due to",
   "so that",
+  "resulted in",
+  "led to",
+  "contributed to",
   "因为",
   "所以",
   "导致",
   "因此",
+  "造成",
+  "引起",
+  "使得",
+  "从而",
+  "最终",
+  "结果是",
+  "带来的",
+  "因为...所以",
+  "由于...因此",
+];
+
+const projectCasePatterns = [
+  /在我参与的|在我负责的|我主导的|我参与过的|曾经做过|做过一个/,
+  /项目名称|项目背景|项目规模|项目周期|项目结果|项目经验/,
+  /当时我们|当时的情况|当时遇到|当时面临/,
+  /上线后|部署后|运行后|使用后|实施后/,
+  /我们采用了|我们选择了|我们决定|最终方案/,
+  /年|月|周|天|小时/,
+  /提升了|降低了|减少了|增加了|改进了/,
+  /%|\d+%|百分之/,
+  /\d+倍|\d+次|\d+个/,
+];
+
+const boundaryPatterns = [
+  /除非|除了|如果不|只有当|在.*情况下|边界条件/,
+  /最大|最小|最高|最低|最多|最少/,
+  /不能超过|不能低于|必须满足|前提是/,
+  /限制|约束|瓶颈|短板/,
 ];
 
 const evidenceMarkers = [
@@ -175,12 +206,37 @@ const evidenceMarkers = [
   "logs",
   "trace",
   "experiment",
-  "例如",
-  "比如",
+  "sample",
+  "observation",
+  "result",
+  "outcome",
+  "performance",
+  "data",
+  "case study",
+  "项目",
+  "案例",
+  "经验",
+  "结果",
   "数据",
   "指标",
   "日志",
   "实验",
+  "证明",
+  "验证",
+  "测试",
+  "观察",
+  "案例分析",
+  "例如",
+  "比如",
+  "具体来说",
+  "以我参与的",
+  "在我的项目中",
+  "实际我们",
+  "当时的情况",
+  "具体数据",
+  "性能指标",
+  "上线后",
+  "测试结果",
 ];
 
 const contradictionMarkers = [
@@ -229,6 +285,10 @@ function countKeywordHits(answer: string, keywords: readonly string[]) {
   );
 }
 
+function countPatternHits(answer: string, patterns: RegExp[]) {
+  return patterns.reduce((total, pattern) => total + (pattern.test(answer) ? 1 : 0), 0);
+}
+
 function unique(values: string[]) {
   return [...new Set(values)];
 }
@@ -260,9 +320,13 @@ export function analyzeAnswerSignals(
   const sentences = sentenceSplit(trimmed);
   const relevance = keywordOverlap(trimmed, context.lastQuestion ?? "");
   const causalHits = countKeywordHits(trimmed, causalityMarkers);
+  const patternHits = countPatternHits(trimmed, projectCasePatterns);
+  const boundaryHits = countPatternHits(trimmed, boundaryPatterns);
   const evidenceHits =
     countKeywordHits(trimmed, evidenceMarkers) +
-    (/\b\d+(\.\d+)?%?\b/u.test(trimmed) ? 1 : 0);
+    (/\b\d+(\.\d+)?%?\b/u.test(trimmed) ? 1 : 0) +
+    (patternHits > 0 ? patternHits : 0) +
+    (boundaryHits > 0 ? 1 : 0);
   const contradictionRisk =
     countKeywordHits(trimmed, contradictionMarkers) >= 2 && causalHits === 0;
 
@@ -275,6 +339,9 @@ export function analyzeAnswerSignals(
     .sort((a, b) => b.hits - a.hits);
 
   const tags = unique(tagHits.map((entry) => entry.tag));
+  const hasEvidence = evidenceHits > 0 || patternHits > 0 || boundaryHits > 0;
+  const hasCausal = causalHits > 0;
+  
   const weaknesses = unique([
     ...(trimmed.length > 620 || sentences.length > 6
       ? ["The main line is buried under too much setup."]
@@ -282,13 +349,19 @@ export function analyzeAnswerSignals(
     ...(context.lastQuestion && relevance < 0.16
       ? ["The answer drifted away from the exact question."]
       : []),
-    ...(causalHits === 0 ? ["The answer needs a clearer causal chain."] : []),
-    ...(evidenceHits === 0 ? ["The answer needs proof, a number, or an observed signal."] : []),
+    ...(!hasCausal && sentences.length > 2 ? ["The answer could benefit from a clearer causal chain."] : []),
+    ...(!hasEvidence && sentences.length > 3 && patternHits === 0 ? ["The answer could be strengthened with a concrete example or case."] : []),
     ...(contradictionRisk ? ["The answer sounds over-certain without proving the boundary."] : []),
+    ...(tags.includes("architecture") && !hasEvidence ? ["Could you walk through a specific architecture decision?"] : []),
+    ...(tags.includes("business") && !hasEvidence ? ["What was the measurable impact?"] : []),
+    ...(tags.includes("process") && !hasEvidence ? ["How did you handle the handover in practice?"] : []),
   ]);
+  
   const strengths = unique([
-    ...(causalHits > 0 ? ["The answer contains usable causality."] : []),
-    ...(evidenceHits > 0 ? ["The answer attempts to prove itself with evidence."] : []),
+    ...(hasCausal ? ["The answer contains usable causality."] : []),
+    ...(hasEvidence ? ["The answer attempts to prove itself with evidence."] : []),
+    ...(patternHits > 0 ? ["The answer includes concrete project experience."] : []),
+    ...(boundaryHits > 0 ? ["The answer acknowledges important constraints."] : []),
     ...(tags.length > 0 ? [`The candidate is signaling ${tags.slice(0, 2).join(" / ")} depth.`] : []),
   ]);
 
@@ -364,13 +437,36 @@ function chooseConflictInterviewer(
     .sort((a, b) => b.score - a.score)[0]?.interviewer;
 }
 
-function buildOpenLoops(signals: AnswerSignalProfile, primary: InterviewerDefinition) {
-  const loops = [
-    `补全这条回答的证据链：${signals.summary}`,
-    `${primary.label} 要追的边界：${primary.evidenceDirective}`,
-    ...signals.weaknesses.map((weakness) => `待澄清：${weakness}`),
-  ];
-
+function buildOpenLoops(
+  signals: AnswerSignalProfile,
+  primary: InterviewerDefinition,
+  answer: string
+) {
+  const hasEvidence = signals.evidenceHits > 0 || signals.causalHits > 0;
+  const loops: string[] = [];
+  
+  if (signals.tags.includes("architecture") && !hasEvidence) {
+    loops.push(`追问架构决策：${primary.evidenceDirective}`);
+  } else if (signals.tags.includes("business") && !hasEvidence) {
+    loops.push(`追问商业影响：请量化这个决策的价值`);
+  } else if (signals.tags.includes("people") && !hasEvidence) {
+    loops.push(`追问团队协作：这个决定影响了哪些相关方？`);
+  } else if (signals.tags.includes("process") && !hasEvidence) {
+    loops.push(`追问执行细节：这个流程在实际中是怎么落地的？`);
+  } else if (signals.tags.includes("data") && !hasEvidence) {
+    loops.push(`追问数据依据：这个判断背后的数据是什么？`);
+  }
+  
+  if (signals.weaknesses.length > 0) {
+    loops.push(...signals.weaknesses.slice(0, 2).map(w => `待澄清：${w}`));
+  }
+  
+  if (signals.strengths.length > 0) {
+    loops.push(`继续深入：${signals.strengths[0]}`);
+  }
+  
+  loops.push(`${primary.label} 继续追问：${primary.pressureDirective}`);
+  
   return unique(loops).slice(0, 4);
 }
 
@@ -398,7 +494,7 @@ export function buildDirectorMovePlan(params: {
   const challenger = shouldCreateConflict
     ? chooseConflictInterviewer(params.session, signals, primary.id)
     : undefined;
-  const openLoops = buildOpenLoops(signals, primary);
+  const openLoops = buildOpenLoops(signals, primary, params.answer);
 
   return {
     primarySpeakerId: primary.id,

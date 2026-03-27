@@ -7,7 +7,16 @@ import type {
   UploadReference,
 } from "@/lib/domain";
 
+export interface UploadError {
+  error: string;
+  message?: string;
+}
+
 export async function uploadFiles(files: FileList | File[]) {
+  if (files.length === 0) {
+    return [];
+  }
+
   const formData = new FormData();
 
   for (const file of Array.from(files)) {
@@ -20,10 +29,19 @@ export async function uploadFiles(files: FileList | File[]) {
   });
 
   if (!response.ok) {
-    throw new Error("上传失败");
+    let errorMessage = "上传失败";
+
+    try {
+      const errorData = (await response.json()) as UploadError;
+      errorMessage = errorData.message || errorData.error || errorMessage;
+    } catch {
+      errorMessage = `上传失败 (${response.status})`;
+    }
+
+    throw new Error(errorMessage);
   }
 
-  const payload = (await response.json()) as { uploads: UploadReference[] };
+  const payload = (await response.json()) as { uploads: UploadReference[]; message?: string };
   return payload.uploads;
 }
 
@@ -37,7 +55,16 @@ export async function createSession(config: SessionConfig) {
   });
 
   if (!response.ok) {
-    throw new Error("创建会话失败");
+    let errorMessage = "创建会话失败";
+
+    try {
+      const errorData = (await response.json()) as { error?: string; message?: string };
+      errorMessage = errorData.message || errorData.error || errorMessage;
+    } catch {
+      errorMessage = `创建会话失败 (${response.status})`;
+    }
+
+    throw new Error(errorMessage);
   }
 
   return (await response.json()) as { sessionId: string };

@@ -62,13 +62,17 @@ export function InterviewSetupForm({
 
     try {
       setIsUploading(true);
+      setError("");
+
       const uploads = await uploadFiles(files);
       setForm((current) => ({
         ...current,
         materials: [...current.materials, ...uploads],
       }));
     } catch (uploadError) {
-      setError(uploadError instanceof Error ? `上传失败：${uploadError.message}` : "上传失败");
+      const errorMessage = uploadError instanceof Error ? uploadError.message : "上传失败";
+      setError(`上传失败：${errorMessage}`);
+      console.error("文件上传错误:", uploadError);
     } finally {
       setIsUploading(false);
     }
@@ -268,10 +272,15 @@ export function InterviewSetupForm({
           </div>
         </div>
         <label className="upload-box">
-          <span>上传简历、项目材料、日志或补充文档。</span>
+          <span>
+            {isUploading
+              ? "上传中..."
+              : "上传简历、项目材料、日志或补充文档（支持 txt, csv, md, json, log, pdf, doc, docx）"}
+          </span>
           <input
             type="file"
             multiple
+            disabled={isUploading}
             onChange={(event) => {
               void onUpload(event.target.files);
             }}

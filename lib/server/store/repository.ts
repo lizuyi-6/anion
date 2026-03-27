@@ -189,19 +189,25 @@ class MemoryDataStore implements DataStore {
   }
 
   async uploadFile(file: File, options?: { kind?: UploadReference["kind"] }) {
-    const id = toId("upload");
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const upload = toUploadReference({
-      id,
-      provider: "memory",
-      kind: options?.kind,
-      path: `memory://${id}/${sanitizeFileName(file.name)}`,
-      file,
-      buffer,
-    });
+    try {
+      const id = toId("upload");
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const upload = toUploadReference({
+        id,
+        provider: "memory",
+        kind: options?.kind,
+        path: `memory://${id}/${sanitizeFileName(file.name)}`,
+        file,
+        buffer,
+      });
 
-    this.uploads.set(upload.id, upload);
-    return upload;
+      this.uploads.set(upload.id, upload);
+      console.log(`文件上传成功: ${upload.originalName} (${upload.size} bytes)`);
+      return upload;
+    } catch (error) {
+      console.error("MemoryDataStore 文件上传失败:", error);
+      throw new Error(`文件上传失败: ${error instanceof Error ? error.message : "未知错误"}`);
+    }
   }
 
   async createSession(session: InterviewSession) {
@@ -446,30 +452,37 @@ class SupabaseDataStore implements DataStore {
   }
 
   async uploadFile(file: File, options?: { kind?: UploadReference["kind"] }) {
-    const ownerId = this.getUserIdForQuery();
-    const id = toId("upload");
-    const safeName = sanitizeFileName(file.name);
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const path = `${ownerId}/${new Date().toISOString().slice(0, 10)}/${id}-${safeName}`;
-    const { error } = await this.supabase.storage
-      .from(runtimeEnv.supabaseBucket)
-      .upload(path, buffer, {
-        contentType: file.type || "application/octet-stream",
-        upsert: false,
+    try {
+      const ownerId = this.getUserIdForQuery();
+      const id = toId("upload");
+      const safeName = sanitizeFileName(file.name);
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const path = `${ownerId}/${new Date().toISOString().slice(0, 10)}/${id}-${safeName}`;
+      const { error } = await this.supabase.storage
+        .from(runtimeEnv.supabaseBucket)
+        .upload(path, buffer, {
+          contentType: file.type || "application/octet-stream",
+          upsert: false,
+        });
+
+      if (error) {
+        console.error("Supabase 存储上传失败:", error);
+        throw new Error(`文件上传到存储服务失败: ${error.message}`);
+      }
+
+      console.log(`文件上传成功: ${file.name} -> ${path}`);
+      return toUploadReference({
+        id,
+        provider: "supabase",
+        kind: options?.kind,
+        path,
+        file,
+        buffer,
       });
-
-    if (error) {
-      throw error;
+    } catch (error) {
+      console.error("SupabaseDataStore 文件上传失败:", error);
+      throw new Error(`文件上传失败: ${error instanceof Error ? error.message : "未知错误"}`);
     }
-
-    return toUploadReference({
-      id,
-      provider: "supabase",
-      kind: options?.kind,
-      path,
-      file,
-      buffer,
-    });
   }
 
   async createSession(session: InterviewSession) {

@@ -1,7 +1,9 @@
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
+import Anthropic from "@anthropic-ai/sdk";
+import { z } from "zod";
 
-import { hasOpenAi, runtimeEnv } from "@/lib/env";
+import { hasOpenAi, hasAnthropic, runtimeEnv } from "@/lib/env";
 import type {
   ActiveMemoryContext,
   CommandArtifact,
@@ -110,7 +112,7 @@ function buildReplayMoments(session: InterviewSession, turns: InterviewTurn[]) {
 }
 
 export interface AiProviderAdapter {
-  provider: "mock" | "openai";
+  provider: "mock" | "openai" | "anthropic";
   generateInterviewEvent(input: InterviewGenerationInput): Promise<LiveTurnEvent>;
   generateDiagnosticReport(input: ReportInput): Promise<DiagnosticReport>;
   generateMemoryProfile(input: {
@@ -131,16 +133,53 @@ class MockAiProvider implements AiProviderAdapter {
       input.session.config.interviewers[
         input.session.directorState.round % input.session.config.interviewers.length
       ];
-    const personaMap: Record<string, string> = {
-      hacker: "别抽象。直接把复杂度、内存边界、并发控制和失败条件说清楚。",
-      architect: "把数据流、瓶颈、降级路径和回滚条件画出来。",
-      founder: "告诉我这个取舍为什么值得赌，代价由谁承担。",
-      strategist: "先把用户痛点和需求证据钉住，再谈路线。",
-      operator: "给负责人、时间、指标和控制回路，不要给愿景。",
-      analyst: "指出真正支撑结论的证据，不要拿结论重复包装自己。",
-      people_leader: "说清楚你怎么在压力下守住标准又不丢掉队伍。",
-      cross_functional_director: "别假设别人会配合。说清你的杠杆、筹码和退路。",
+    const personaMap: Record<string, string[]> = {
+      hacker: [
+        "别抽象。直接把复杂度、内存边界、并发控制和失败条件说清楚。",
+        "你的实现方案在极端情况下会出现什么问题？",
+        "这个技术决策的权衡点在哪里？",
+      ],
+      architect: [
+        "把数据流、瓶颈、降级路径和回滚条件画出来。",
+        "这个架构的扩展性如何？当规模增长10倍时会发生什么？",
+        "你选择的方案和其他备选方案相比优势在哪里？",
+      ],
+      founder: [
+        "告诉我这个取舍为什么值得赌，代价由谁承担。",
+        "这个决策的用户价值和商业价值是什么？",
+        "如果这个决策失败了，你有什么应对方案？",
+      ],
+      strategist: [
+        "先把需求钉住，再谈实现路径。",
+        "这个策略的假设前提是什么？",
+        "如何验证这个策略的有效性？",
+      ],
+      operator: [
+        "给负责人、时间、指标和控制回路，不要给愿景。",
+        "这个流程的实际执行细节是什么？",
+        "执行过程中可能遇到的阻力是什么？",
+      ],
+      analyst: [
+        "指出真正支撑结论的证据，不要拿结论重复包装自己。",
+        "这个分析的边界条件是什么？",
+        "你用什么数据支撑这个结论？",
+      ],
+      people_leader: [
+        "说清楚你怎么在压力下守住标准又不丢掉队伍。",
+        "这个决策对团队成员有什么影响？",
+        "你如何平衡不同成员的需求？",
+      ],
+      cross_functional_director: [
+        "别假设别人会配合。说清你的杠杆、筹码和退路。",
+        "这个决策涉及哪些利益相关方？",
+        "你如何协调不同部门的优先级？",
+      ],
     };
+    
+    const interviewerPersona = personaMap[interviewer] ?? personaMap["analyst"];
+    const directive = Array.isArray(interviewerPersona)
+      ? interviewerPersona[Math.floor(Math.random() * interviewerPersona.length)]
+      : interviewerPersona;
 
     const lastCandidate =
       input.candidateAnswer ??
@@ -166,10 +205,10 @@ class MockAiProvider implements AiProviderAdapter {
       pressureDelta: kind === "interrupt" ? 10 : kind === "conflict" ? 8 : 4,
       message:
         kind === "interrupt"
-          ? `停。${seam} ${input.speakerDirective ?? personaMap[interviewer] ?? "把因果链拧紧。"}`
+          ? `停。${seam} ${input.speakerDirective ?? directive}`
           : kind === "conflict"
-            ? `我不同意。${seam} ${input.speakerDirective ?? personaMap[interviewer] ?? "给我更硬的证据。"}`
-            : `你刚才提到“${summarizeText(seed, 64)}”。${input.speakerDirective ?? personaMap[interviewer] ?? "继续往下一层。"} `,
+            ? `我不同意。${seam} ${input.speakerDirective ?? directive}`
+            : `你刚才提到"${summarizeText(seed, 64)}"。${input.speakerDirective ?? directive}`,
       rationale:
         input.forcedRationale ??
         input.directorBrief ??
@@ -667,6 +706,267 @@ class OpenAiProvider implements AiProviderAdapter {
   }
 }
 
+class AnthropicProvider implements AiProviderAdapter {
+  provider = "anthropic" as const;
+  private client = new Anthropic({
+    apiKey: runtimeEnv.anthropicApiKey,
+    baseURL: runtimeEnv.anthropicBaseUrl ?? undefined,
+  });
+
+  private async callWithSchema<T extends object>(params: {
+    model: string;
+    maxTokens: number;
+    system: string;
+    messages: Anthropic.MessageCreateParamsNonStreaming["messages"];
+    schema: z.ZodType<T>;
+    tools?: Anthropic.MessageCreateParamsNonStreaming["tools"];
+  }): Promise<T> {
+    const jsonSchema = params.schema instanceof z.ZodObject
+      ? (params.schema as z.ZodObject<z.ZodRawShape>).shape
+      : {};
+
+    const extraHeaders: Record<string, string> = {};
+    if (runtimeEnv.anthropicBaseUrl) {
+      extraHeaders["Authorization"] = `Bearer ${runtimeEnv.anthropicApiKey}`;
+    }
+
+    const response = await this.client.messages.parse({
+      model: params.model,
+      max_tokens: params.maxTokens,
+      system: params.system,
+      messages: params.messages,
+      tools: params.tools,
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          name: "output",
+          schema: jsonSchema,
+        },
+      },
+      extraHeaders,
+    });
+
+    const text = response.content[0];
+    if (text?.type !== "text") {
+      throw new Error("Unexpected response format from Anthropic");
+    }
+
+    return params.schema.parse(JSON.parse(text.text));
+  }
+
+  async generateInterviewEvent(input: InterviewGenerationInput) {
+    const prompt = [
+      "你是莫比乌斯计划的面试指挥官。",
+      `目标公司：${input.session.config.targetCompany}`,
+      `角色包：${input.session.config.rolePack}`,
+      `岗位级别：${input.session.config.level}`,
+      `职位描述：${summarizeText(input.session.config.jobDescription, 1500)}`,
+      `导演状态：${JSON.stringify(input.session.directorState)}`,
+      `最近轮次：${JSON.stringify(input.turns.slice(-4))}`,
+      input.directorBrief ? `导演提示：${input.directorBrief}` : "",
+      input.openLoops?.length ? `待补闭环：${JSON.stringify(input.openLoops)}` : "",
+      input.candidateAnswer ? `最新回答：${input.candidateAnswer}` : "",
+      input.preferredSpeakerId ? `指定发言人 ID：${input.preferredSpeakerId}` : "",
+      input.speakerDirective ? `发言人契约：${input.speakerDirective}` : "",
+      input.forcedKind ? `指定下一个事件类型：${input.forcedKind}` : "",
+      input.forcedRationale ? `必须保留的理由：${input.forcedRationale}` : "",
+      "只返回一个中文结构化事件。保持尖锐、高压、聚焦因果，并与发言人身份一致。",
+      "以JSON格式输出，包含 id, kind, speakerId, speakerLabel, pressureDelta, message, rationale, timestamp 字段。",
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    const schema = LiveTurnEventSchema.omit({ sessionId: true });
+    const result = await this.callWithSchema({
+      model: runtimeEnv.anthropicModel,
+      maxTokens: 1024,
+      system: "你是一个专业的面试模拟器，输出JSON格式。",
+      messages: [{ role: "user", content: prompt }],
+      schema,
+    });
+
+    return LiveTurnEventSchema.parse({
+      ...result,
+      sessionId: input.session.id,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  async generateDiagnosticReport(input: ReportInput) {
+    const prompt = [
+      "你是莫比乌斯计划的诊断报告引擎。",
+      `角色包：${input.session.config.rolePack}`,
+      `会话配置：${JSON.stringify(input.session.config)}`,
+      `面试轮次：${JSON.stringify(input.turns)}`,
+      "只输出中文。保持直接、怀疑、可执行。",
+      "每条 finding 都必须指向 evidenceTurnIds；evidenceAnchors 必须包含 excerpt、speakerLabel 和 note。",
+      "以JSON格式输出诊断报告。",
+    ].join("\n");
+
+    const schema = DiagnosticReportSchema.omit({
+      id: true,
+      sessionId: true,
+      generatedAt: true,
+    });
+
+    const result = await this.callWithSchema({
+      model: runtimeEnv.anthropicModel,
+      maxTokens: 4096,
+      system: "你是一个专业的面试诊断引擎，输出JSON格式。",
+      messages: [{ role: "user", content: prompt }],
+      schema,
+    });
+
+    return DiagnosticReportSchema.parse({
+      id: toId("report"),
+      sessionId: input.session.id,
+      generatedAt: new Date().toISOString(),
+      ...result,
+    });
+  }
+
+  async generateMemoryProfile(input: {
+    report: DiagnosticReport;
+    session: InterviewSession;
+    turns: InterviewTurn[];
+  }) {
+    const prompt = [
+      "你是莫比乌斯计划的记忆重构引擎。",
+      `会话配置：${JSON.stringify(input.session.config)}`,
+      `诊断报告：${JSON.stringify(input.report)}`,
+      `面试全文：${JSON.stringify(input.turns)}`,
+      "输出一份可检索的中文记忆画像。每个节点都必须包含 sourceTurnIds。replayMoments 要提炼出后续可重放的关键切片。",
+      "以JSON格式输出记忆画像。",
+    ].join("\n");
+
+    const schema = MemoryProfileSchema.omit({
+      id: true,
+      sessionId: true,
+      generatedAt: true,
+    });
+
+    const result = await this.callWithSchema({
+      model: runtimeEnv.anthropicModel,
+      maxTokens: 4096,
+      system: "你是一个专业的记忆重构引擎，输出JSON格式。",
+      messages: [{ role: "user", content: prompt }],
+      schema,
+    });
+
+    return MemoryProfileSchema.parse({
+      id: toId("memory"),
+      sessionId: input.session.id,
+      generatedAt: new Date().toISOString(),
+      ...result,
+    });
+  }
+
+  async generateCommandArtifact(input: CommandInput) {
+    const attachmentContext = input.attachments
+      .map((attachment) => {
+        const preview = attachment.textContent
+          ? summarizeText(attachment.textContent, 800)
+          : attachment.originalName;
+        return `${attachment.originalName}: ${preview}`;
+      })
+      .join("\n");
+    const memoryContext = formatMemoryContextForPrompt(input.memoryContext);
+
+    if (input.mode === "copilot") {
+      const prompt = [
+        "你是用户忠诚的工程副驾。",
+        `查看者：${input.viewer.displayName}`,
+        `活跃记忆上下文：${memoryContext}`,
+        `最近历史：${JSON.stringify(input.history.slice(-4))}`,
+        `用户输入：${input.prompt}`,
+        attachmentContext ? `附件：${attachmentContext}` : "",
+        "只返回中文。先给根因，再给最短修复路径，再给可选重构，最后给注意事项。尽量把建议锚定到记忆中的短板或优势。",
+        "以JSON格式输出工程副驾建议。",
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      const schema = CopilotResponseSchema.omit({ id: true, mode: true });
+      const result = await this.callWithSchema({
+        model: runtimeEnv.anthropicModel,
+        maxTokens: 4096,
+        system: "你是一个专业的工程副驾，输出JSON格式。",
+        messages: [{ role: "user", content: prompt }],
+        schema,
+      });
+
+      return CopilotResponseSchema.parse({
+        id: toId("copilot"),
+        mode: "copilot",
+        ...result,
+      });
+    }
+
+    if (input.mode === "strategy") {
+      const prompt = [
+        "你是莫比乌斯计划的可行性与战略引擎。",
+        `活跃记忆上下文：${memoryContext}`,
+        `用户输入：${input.prompt}`,
+        attachmentContext ? `附件：${attachmentContext}` : "",
+        "只返回中文。必须包含市场背景、问题定义、可行性判断、架构/流程图 DSL、排期与资源、风险与前置条件，并补充 deliverables、successMetrics、assumptions 和 openQuestions。",
+        "以JSON格式输出战略报告。",
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      const schema = StrategyReportSchema.omit({ id: true, mode: true });
+      const result = await this.callWithSchema({
+        model: runtimeEnv.anthropicModel,
+        maxTokens: 8192,
+        system: "你是一个专业的战略分析引擎，输出JSON格式。",
+        messages: [{ role: "user", content: prompt }],
+        schema,
+        tools: [{ name: "web_search", type: "web_search_20250305" }],
+      });
+
+      return StrategyReportSchema.parse({
+        id: toId("strategy"),
+        mode: "strategy",
+        ...result,
+      });
+    }
+
+    const prompt = [
+      "你是莫比乌斯计划的职场博弈沙盒。",
+      `活跃记忆上下文：${memoryContext}`,
+      `最近历史：${JSON.stringify(input.history.slice(-4))}`,
+      `用户输入：${input.prompt}`,
+      "只返回中文。必须包含当前均衡、激励、推荐动作、长期成本、pressurePoints、scenarioBranches，以及 3-5 条可直接带进会议的话术。",
+      "以JSON格式输出博弈沙盒结果。",
+    ].join("\n");
+
+    const schema = SandboxOutcomeSchema.omit({ id: true, mode: true });
+    const result = await this.callWithSchema({
+      model: runtimeEnv.anthropicModel,
+      maxTokens: 4096,
+      system: "你是一个专业的职场博弈分析引擎，输出JSON格式。",
+      messages: [{ role: "user", content: prompt }],
+      schema,
+    });
+
+    return SandboxOutcomeSchema.parse({
+      id: toId("sandbox"),
+      mode: "sandbox",
+      ...result,
+    });
+  }
+
+  async generateEmbeddings() {
+    return null;
+  }
+}
+
 export function getAiProvider(): AiProviderAdapter {
-  return hasOpenAi() ? new OpenAiProvider() : new MockAiProvider();
+  if (hasAnthropic()) {
+    return new AnthropicProvider();
+  }
+  if (hasOpenAi()) {
+    return new OpenAiProvider();
+  }
+  return new MockAiProvider();
 }
