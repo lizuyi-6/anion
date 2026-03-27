@@ -158,14 +158,21 @@ export function InterviewSetupForm({
           </label>
           <label className="field">
             <span>岗位级别</span>
-            <input
+            <select
               data-testid="level-input"
               value={form.level}
               onChange={(event) =>
                 setForm((current) => ({ ...current, level: event.target.value }))
               }
               required
-            />
+            >
+              <option value="初级">初级 (Junior)</option>
+              <option value="中级">中级 (Mid-level)</option>
+              <option value="资深">资深 (Senior)</option>
+              <option value="Staff">Staff</option>
+              <option value="Principal">Principal</option>
+              <option value="Director">Director</option>
+            </select>
           </label>
           <label className="field">
             <span>候选人称呼</span>

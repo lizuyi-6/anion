@@ -4,6 +4,7 @@ import type {
   CommandArtifact,
   CommandMode,
   CommandThread,
+  SandboxTurnEvent,
   UploadReference,
   Viewer,
 } from "@/lib/domain";
@@ -128,4 +129,65 @@ function summarizeArtifact(artifact: CommandArtifact) {
           : []),
       ].join("\n");
   }
+}
+
+export async function generateSandboxBeat(params: {
+  store: DataStore;
+  viewer: Viewer;
+  threadId: string;
+  userMessage: string;
+  counterpartRole: string;
+  counterpartIncentives: string;
+  userRedLine: string;
+  memoryContext: ActiveMemoryContext | null;
+}): Promise<SandboxTurnEvent> {
+  const ai = getAiProvider();
+  const existingMessages = await params.store.listCommandMessages(params.threadId);
+
+  const sandboxHistory = existingMessages
+    .filter((message) => message.role === "user" || message.content.startsWith("[对手]"))
+    .map((message) => ({
+      role: message.role === "user" ? "user" as const : "counterpart" as const,
+      content: message.content.replace(/^\[对手\]\s*/, ""),
+    }));
+
+  await params.store.appendCommandMessage({
+    id: toId("msg"),
+    threadId: params.threadId,
+    mode: "sandbox",
+    role: "user",
+    content: params.userMessage,
+    attachments: [],
+    createdAt: new Date().toISOString(),
+  });
+
+  const event = await ai.generateSandboxTurn({
+    threadId: params.threadId,
+    history: sandboxHistory,
+    userMessage: params.userMessage,
+    counterpartRole: params.counterpartRole,
+    counterpartIncentives: params.counterpartIncentives,
+    userRedLine: params.userRedLine,
+    memoryContext: params.memoryContext,
+  });
+
+  const assistantContent = [
+    `[对手] ${event.counterpartMessage}`,
+    "",
+    `[战术分析] ${event.strategicCommentary}`,
+    `策略意图：${event.counterpartTone}`,
+    `施压等级：${event.pressureLevel}/10`,
+  ].join("\n");
+
+  await params.store.appendCommandMessage({
+    id: toId("msg"),
+    threadId: params.threadId,
+    mode: "sandbox",
+    role: "assistant",
+    content: assistantContent,
+    attachments: [],
+    createdAt: new Date().toISOString(),
+  });
+
+  return event;
 }

@@ -62,8 +62,17 @@ export function InterviewConsole({
   );
   const [answer, setAnswer] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
+  const [thinkingStatus, setThinkingStatus] = useState<string | null>(null);
   const [isCompleting, setIsCompleting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [answerStartTime, setAnswerStartTime] = useState<number | null>(null);
+
+  const handleAnswerChange = (value: string) => {
+    setAnswer(value);
+    if (!answerStartTime && value.length > 0) {
+      setAnswerStartTime(Date.now());
+    }
+  };
 
   const sendAnswer = async () => {
     if (!answer.trim() || isStreaming) {
@@ -71,6 +80,7 @@ export function InterviewConsole({
     }
 
     const answerText = answer.trim();
+    const elapsed = answerStartTime ? Math.round((Date.now() - answerStartTime) / 1000) : 0;
     setErrorMessage(null);
     setTranscript((current) => [
       ...current,
@@ -83,22 +93,28 @@ export function InterviewConsole({
       },
     ]);
     setAnswer("");
+    setAnswerStartTime(null);
     setIsStreaming(true);
 
     try {
       await streamInterviewTurn({
         sessionId: session.id,
         answer: answerText,
-        elapsedSeconds: 90,
+        elapsedSeconds: elapsed,
         onEvent: (event) => {
+          setThinkingStatus(null);
           setTranscript((current) => [...current, mapEvent(event)]);
           setPressure((current) => Math.min(100, Math.max(0, current + event.pressureDelta)));
+        },
+        onThinking: (status) => {
+          setThinkingStatus(status);
         },
       });
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Interview request failed");
     } finally {
       setIsStreaming(false);
+      setThinkingStatus(null);
     }
   };
 
@@ -152,11 +168,13 @@ export function InterviewConsole({
             </article>
           ))}
           {isStreaming ? (
-            <div
-              className="terminal-caret"
-              aria-hidden
-              data-testid="interview-streaming-indicator"
-            />
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }} aria-hidden data-testid="interview-streaming-indicator">
+              <div className="breathing-light" />
+              <div className="terminal-caret" />
+              {thinkingStatus ? (
+                <span className="muted-copy" style={{ fontSize: "0.78rem", fontFamily: "var(--font-mono)" }}>{thinkingStatus === "director_analyzing" ? "导演分析中…" : thinkingStatus}</span>
+              ) : null}
+            </div>
           ) : null}
         </div>
       </div>
@@ -167,7 +185,7 @@ export function InterviewConsole({
           <textarea
             rows={6}
             value={answer}
-            onChange={(event) => setAnswer(event.target.value)}
+            onChange={(event) => handleAnswerChange(event.target.value)}
             data-testid="interview-answer-input"
             placeholder="给出一个短、硬、可验证的回答。先结论，再补证据。"
           />

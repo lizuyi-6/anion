@@ -40,14 +40,22 @@ export async function POST(
       answer: payload.answer,
     });
 
+    const encoder = new TextEncoder();
+
     const stream = new ReadableStream({
-      start(controller) {
-        for (const event of result.events) {
-          controller.enqueue(new TextEncoder().encode(encodeSseEvent("turn", event)));
-        }
-        controller.close();
-      },
-    });
+      async start(controller) {
+    controller.enqueue(encoder.encode(encodeSseEvent("thinking", {
+      sessionId,
+      status: "director_analyzing",
+      timestamp: new Date().toISOString(),
+    })));
+
+    for (const event of result.events) {
+    controller.enqueue(encoder.encode(encodeSseEvent("turn", event)));
+    }
+    controller.close();
+  },
+  });
 
     return new Response(stream, {
       headers: {

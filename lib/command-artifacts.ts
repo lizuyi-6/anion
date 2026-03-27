@@ -91,6 +91,16 @@ export function commandArtifactToMarkdown(artifact: CommandArtifact) {
       ...(artifact.watchouts.length > 0
         ? ["", "## 注意事项", ...artifact.watchouts.map((item) => `- ${item}`)]
         : []),
+      ...(artifact.techForesight.length > 0
+        ? [
+            "",
+            "## 前瞻性技术预判",
+            ...artifact.techForesight.flatMap((item) => [
+              `### ${item.technology} (${item.risk}风险 / ${item.timeline})`,
+              item.recommendation,
+            ]),
+          ]
+        : []),
     ].join("\n");
   }
 

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { ThemeToggle } from "@/components/theme-toggle";
 import type { Viewer } from "@/lib/domain";
 import { formatRolePackLabel } from "@/lib/domain";
 import { cn } from "@/lib/utils";
@@ -51,6 +52,7 @@ export function AppFrame({
         <div className="topbar-meta">
           <span className="status-pill">{viewer.isDemo ? "演示模式" : "已认证"}</span>
           <span className="status-pill subtle">{workspaceLabel}</span>
+          <ThemeToggle />
           {!viewer.isDemo ? (
             <Link href="/auth/sign-out" className="nav-link">
               退出登录

@@ -3,6 +3,7 @@ import type {
   CommandMessage,
   CommandMode,
   LiveTurnEvent,
+  SandboxTurnEvent,
   SessionConfig,
   UploadReference,
 } from "@/lib/domain";
@@ -79,6 +80,7 @@ export async function streamInterviewTurn(params: {
   answer: string;
   elapsedSeconds: number;
   onEvent: (event: LiveTurnEvent) => void;
+  onThinking?: (status: string) => void;
 }) {
   const response = await fetch(`/api/interviews/${params.sessionId}/turn`, {
     method: "POST",
@@ -119,8 +121,16 @@ export async function streamInterviewTurn(params: {
         continue;
       }
 
-      const event = JSON.parse(dataLine.slice(6)) as LiveTurnEvent;
-      params.onEvent(event);
+      const eventLine = chunk.split("\n").find((line) => line.startsWith("event: "));
+      const eventType = eventLine ? eventLine.slice(7) : "turn";
+      const data = JSON.parse(dataLine.slice(6));
+
+      if (eventType === "thinking") {
+        params.onThinking?.(data.status);
+        continue;
+      }
+
+      params.onEvent(data as LiveTurnEvent);
     }
   }
 }
@@ -219,4 +229,60 @@ export async function runCommandModeApi(params: {
     artifact: CommandArtifact;
     history: CommandMessage[];
   };
+}
+
+export async function streamSandboxTurn(params: {
+  threadId: string;
+  userMessage: string;
+  counterpartRole: string;
+  counterpartIncentives: string;
+  userRedLine: string;
+  onEvent: (event: SandboxTurnEvent) => void;
+}) {
+  const response = await fetch("/api/command/sandbox/turn", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      threadId: params.threadId,
+      userMessage: params.userMessage,
+      counterpartRole: params.counterpartRole,
+      counterpartIncentives: params.counterpartIncentives,
+      userRedLine: params.userRedLine,
+    }),
+  });
+
+  if (!response.ok) {
+    await throwApiError(response, "Sandbox turn failed");
+  }
+
+  if (!response.body) {
+    throw new Error("Sandbox turn failed");
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) {
+      break;
+    }
+
+    buffer += decoder.decode(value, { stream: true });
+    const events = buffer.split("\n\n");
+    buffer = events.pop() ?? "";
+
+    for (const chunk of events) {
+      const dataLine = chunk.split("\n").find((line) => line.startsWith("data: "));
+      if (!dataLine) {
+        continue;
+      }
+
+      const event = JSON.parse(dataLine.slice(6)) as SandboxTurnEvent;
+      params.onEvent(event);
+    }
+  }
 }

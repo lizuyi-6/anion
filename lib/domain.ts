@@ -326,6 +326,15 @@ export const SandboxOutcomeSchema = z.object({
   pressurePoints: z.array(z.string()).default([]),
   talkTracks: z.array(z.string()).min(2).max(8),
   scenarioBranches: z.array(SandboxScenarioBranchSchema).default([]),
+  payoffMatrix: z.object({
+    rowHeader: z.string(),
+    colHeader: z.string(),
+    rows: z.array(z.object({
+      label: z.string(),
+      payoffs: z.array(z.string()),
+    })).min(2),
+    nashEquilibrium: z.string(),
+  }).optional(),
 });
 
 export type SandboxOutcome = z.infer<typeof SandboxOutcomeSchema>;
@@ -338,6 +347,12 @@ export const CopilotResponseSchema = z.object({
   optionalRefactors: z.array(z.string()).min(1),
   memoryAnchor: z.string(),
   watchouts: z.array(z.string()).default([]),
+  techForesight: z.array(z.object({
+    technology: z.string(),
+    risk: z.enum(["high", "medium", "low"]),
+    timeline: z.string(),
+    recommendation: z.string(),
+  })).default([]),
 });
 
 export type CopilotResponse = z.infer<typeof CopilotResponseSchema>;
@@ -402,6 +417,26 @@ export const CommandRequestSchema = z.object({
   input: z.string().min(4).max(12000),
   attachments: z.array(SessionArtifactRefSchema).default([]),
 });
+
+export const SandboxTurnRequestSchema = z.object({
+  threadId: z.string(),
+  userMessage: z.string().min(1).max(4000),
+  counterpartRole: z.string().min(1).max(200),
+  counterpartIncentives: z.string().min(1).max(500),
+  userRedLine: z.string().min(1).max(500),
+});
+
+export const SandboxTurnEventSchema = z.object({
+  id: z.string(),
+  threadId: z.string(),
+  counterpartMessage: z.string(),
+  counterpartTone: z.string(),
+  strategicCommentary: z.string(),
+  pressureLevel: z.number().min(0).max(10),
+  timestamp: z.string(),
+});
+
+export type SandboxTurnEvent = z.infer<typeof SandboxTurnEventSchema>;
 
 export type RolePackDefinition = {
   id: RolePackId;

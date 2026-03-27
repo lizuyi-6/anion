@@ -15,6 +15,7 @@ import type {
   InterviewTurn,
   LiveTurnEvent,
   MemoryProfile,
+  SandboxTurnEvent,
   UploadReference,
   Viewer,
 } from "@/lib/domain";
@@ -24,6 +25,7 @@ import {
   LiveTurnEventSchema,
   MemoryProfileSchema,
   SandboxOutcomeSchema,
+  SandboxTurnEventSchema,
   StrategyReportSchema,
   getRolePack,
 } from "@/lib/domain";
@@ -53,6 +55,16 @@ type CommandInput = {
   prompt: string;
   attachments: UploadReference[];
   history: Array<{ role: "user" | "assistant"; content: string }>;
+};
+
+type SandboxTurnInput = {
+  threadId: string;
+  history: Array<{ role: "user" | "counterpart"; content: string }>;
+  userMessage: string;
+  counterpartRole: string;
+  counterpartIncentives: string;
+  userRedLine: string;
+  memoryContext: ActiveMemoryContext | null;
 };
 
 function formatMemoryContextForPrompt(memoryContext: ActiveMemoryContext | null) {
@@ -123,6 +135,7 @@ export interface AiProviderAdapter {
     turns: InterviewTurn[];
   }): Promise<MemoryProfile>;
   generateCommandArtifact(input: CommandInput): Promise<CommandArtifact>;
+  generateSandboxTurn(input: SandboxTurnInput): Promise<SandboxTurnEvent>;
   generateEmbeddings?(input: string[]): Promise<number[][] | null>;
 }
 
@@ -367,6 +380,20 @@ class MockAiProvider implements AiProviderAdapter {
           "不要一上来同时改状态流和渲染层，否则回归面会失控。",
           "如果日志只证明症状，不要把它误当成根因证据。",
         ],
+        techForesight: [
+          {
+            technology: "状态同步机制 (WebSocket/SSE)",
+            risk: "medium",
+            timeline: "未来3-6个月",
+            recommendation: "当前的长轮询在并发>200时会堆积。建议提前规划向推送架构迁移，减少实时同步依赖。",
+          },
+          {
+            technology: "边缘计算 / 弱网环境适配",
+            risk: "high",
+            timeline: "未来1-3个月",
+            recommendation: "如果涉及IoT或移动端场景，必须提前设计离线优先策略和弱网降级方案。",
+          },
+        ],
       });
     }
 
@@ -453,7 +480,7 @@ class MockAiProvider implements AiProviderAdapter {
       id: toId("sandbox"),
       mode: "sandbox",
       counterpartModel: {
-        style: "强势、结果导向，并且会在会议中实时重写规则。",
+        style: "强势、结果导向、并且会在会议中实时重写规则。",
         incentives: ["保住控制权", "避免额外背锅"],
         redLines: ["公开失去面子", "承诺不可控交付"],
       },
@@ -477,6 +504,27 @@ class MockAiProvider implements AiProviderAdapter {
           signalToWatch: "对方是否开始主动讨论 owner、接口和验收标准。",
         },
       ],
+      payoffMatrix: {
+        rowHeader: "你",
+        colHeader: "对手",
+        rows: [
+          { label: "强硬", payoffs: ["双赢：各守边界", "你赢：对方让步"] },
+          { label: "让步", payoffs: ["你输：对方蚕食", "双输：关系破裂"] },
+        ],
+        nashEquilibrium: "(强硬,强硬) — 双方各守边界，达成不稳定均衡。谁先让步谁就输。",
+      },
+    });
+  }
+
+  async generateSandboxTurn(input: SandboxTurnInput): Promise<SandboxTurnEvent> {
+    return SandboxTurnEventSchema.parse({
+      id: toId("sandbox-turn"),
+      threadId: input.threadId,
+      counterpartMessage: "我可以给你资源，但你得先交出接口控制权。你觉得呢？",
+      counterpartTone: "施压 — 把条件框架成'交换'，实际是在蚕食你的边界。",
+      strategicCommentary: "对方试图用资源作为筹码换取控制权。这是一个典型的权力不对等谈判开局。你的红线是不能失去核心接口控制权，所以需要把话题从'交换'重新框架为'协作分工'。",
+      pressureLevel: 6,
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -619,8 +667,7 @@ class OpenAiProvider implements AiProviderAdapter {
           `最近历史：${JSON.stringify(input.history.slice(-4))}`,
           `用户输入：${input.prompt}`,
           attachmentContext ? `附件：${attachmentContext}` : "",
-          "只返回中文。先给根因，再给最短修复路径，再给可选重构，最后给注意事项。尽量把建议锚定到记忆中的短板或优势。",
-        ]
+          "只返回中文。先给根因，再给最短修复路径，再给可选重构，最后给注意事项。尽量把建议锚定到记忆中的短板或优势。另外，在 techForesight 中给出 2-4 个前瞻性技术风险预判：考虑用户的运行环境和当前代码栈，推测未来 3-6 个月可能出现的技术债、架构瓶颈或以及具体的升级/规避建议。",        ]
           .filter(Boolean)
           .join("\n"),
         text: {
@@ -691,6 +738,47 @@ class OpenAiProvider implements AiProviderAdapter {
       id: toId("sandbox"),
       mode: "sandbox",
       ...response.output_parsed,
+    });
+  }
+
+  async generateSandboxTurn(input: SandboxTurnInput): Promise<SandboxTurnEvent> {
+    const memoryContext = formatMemoryContextForPrompt(input.memoryContext);
+    const historyContext = input.history.length > 0
+      ? `对话历史：\n${input.history.map((h) => `[${h.role === "user" ? "你" : "对手"}] ${h.content}`).join("\n")}`
+      : "";
+
+    const response = await this.client.responses.parse({
+      model: runtimeEnv.openAiModel,
+      input: [
+        `你是莫比乌斯计划的职场博弈沙盒中的对手角色扮演引擎。`,
+        `你的角色：${input.counterpartRole}`,
+        `你的激励/动机：${input.counterpartIncentives}`,
+        `对方的红线：${input.userRedLine}`,
+        memoryContext ? `活跃记忆上下文：${memoryContext}` : "",
+        historyContext,
+        `对方刚说：${input.userMessage}`,
+        "",
+        "你必须以对手的口吻回复（counterpartMessage），然后给出你的战术分析（strategicCommentary）。",
+        "counterpartMessage：用对手的语气和策略说话。可以是施压、诱惑、转移话题、制造混乱、或者假装让步。保持职场真实感。",
+        "counterpartTone：一句话描述对手这一轮的策略意图。",
+        "strategicCommentary：站在第三方视角，分析对手的策略和用户的应对建议。",
+        "pressureLevel：0-10，表示对手这一轮的施压程度。",
+        "只返回中文。",
+      ].filter(Boolean).join("\n"),
+      text: {
+        format: zodTextFormat(
+          SandboxTurnEventSchema.omit({ id: true, threadId: true, timestamp: true }),
+          "sandbox_turn_event",
+        ),
+        verbosity: "medium",
+      },
+    });
+
+    return SandboxTurnEventSchema.parse({
+      id: toId("sandbox-turn"),
+      threadId: input.threadId,
+      ...response.output_parsed,
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -1007,7 +1095,7 @@ class AnthropicProvider implements AiProviderAdapter {
         `最近历史：${JSON.stringify(input.history.slice(-4))}`,
         `用户输入：${input.prompt}`,
         attachmentContext ? `附件：${attachmentContext}` : "",
-        "只返回中文。先给根因，再给最短修复路径，再给可选重构，最后给注意事项。尽量把建议锚定到记忆中的短板或优势。",
+        "只返回中文。先给根因，再给最短修复路径，再给可选重构，最后给注意事项。尽量把建议锚定到记忆中的短板或优势。另外，在 techForesight 中给出 2-4 个前瞻性技术风险预判：考虑用户的运行环境和当前代码栈,推测未来 3-6 个月可能出现的技术债、架构瓶颈或以及具体的升级/规避建议。",
         "以JSON格式输出工程副驾建议。",
       ]
         .filter(Boolean)
@@ -1082,6 +1170,45 @@ class AnthropicProvider implements AiProviderAdapter {
       id: toId("sandbox"),
       mode: "sandbox",
       ...result,
+    });
+  }
+
+  async generateSandboxTurn(input: SandboxTurnInput): Promise<SandboxTurnEvent> {
+    const memoryContext = formatMemoryContextForPrompt(input.memoryContext);
+    const historyContext = input.history.length > 0
+      ? `对话历史：\n${input.history.map((h) => `[${h.role === "user" ? "你" : "对手"}] ${h.content}`).join("\n")}`
+      : "";
+
+    const prompt = [
+      `你的角色：${input.counterpartRole}`,
+      `你的激励/动机：${input.counterpartIncentives}`,
+      `对方的红线：${input.userRedLine}`,
+      memoryContext ? `活跃记忆上下文：${memoryContext}` : "",
+      historyContext,
+      `对方刚说：${input.userMessage}`,
+      "",
+      "以对手的口吻回复（counterpartMessage），然后给出战术分析（strategicCommentary）。",
+      "counterpartMessage：用对手的语气说话，保持职场真实感。",
+      "counterpartTone：一句话描述对手这一轮的策略意图。",
+      "strategicCommentary：站在第三方视角分析策略和应对建议。",
+      "pressureLevel：0-10，对手这一轮的施压程度。",
+      "只返回中文。以JSON格式输出。",
+    ].filter(Boolean).join("\n");
+
+    const schema = SandboxTurnEventSchema.omit({ id: true, threadId: true, timestamp: true });
+    const result = await this.callWithSchema({
+      model: runtimeEnv.anthropicModel,
+      maxTokens: 2048,
+      system: "你是莫比乌斯计划的职场博弈沙盒对手角色扮演引擎，输出JSON格式。",
+      messages: [{ role: "user", content: prompt }],
+      schema,
+    });
+
+    return SandboxTurnEventSchema.parse({
+      id: toId("sandbox-turn"),
+      threadId: input.threadId,
+      ...result,
+      timestamp: new Date().toISOString(),
     });
   }
 
