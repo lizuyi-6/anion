@@ -82,7 +82,7 @@ export async function executeInterviewAnalysis(params: {
   const session = await store.getSession(params.sessionId);
 
   if (!session) {
-    throw new Error(`Session ${params.sessionId} not found`);
+    throw new Error(`未找到会话：${params.sessionId}`);
   }
 
   const turns = await store.listTurns(params.sessionId);
@@ -149,7 +149,7 @@ export async function queueInterviewAnalysis(params: {
   const session = await params.store.getSession(params.sessionId);
 
   if (!session) {
-    throw new Error(`Session ${params.sessionId} not found`);
+    throw new Error(`未找到会话：${params.sessionId}`);
   }
 
   await params.store.updateSession(params.sessionId, {
@@ -236,7 +236,7 @@ export async function retryInterviewAnalysis(params: {
 }) {
   const session = await params.store.getSession(params.sessionId);
   if (!session) {
-    throw new Error(`Session ${params.sessionId} not found`);
+    throw new Error(`未找到会话：${params.sessionId}`);
   }
 
   if (!isAnalysisRetryable(session)) {

@@ -60,9 +60,7 @@ export function AcceptOfferButton({
       setShowOverlay(false);
       setPhase("idle");
       setError(
-        transitionError instanceof Error
-          ? transitionError.message
-          :: "无法完成协议切换。",
+        transitionError instanceof Error ? transitionError.message : "无法完成协议切换。",
       );
     }
   };
@@ -72,11 +70,11 @@ export function AcceptOfferButton({
       ? "进入指挥中心"
       : isPending
         ? phase === "accepting"
-          ? "正在接受Offer..."
+          ? "正在接受录用..."
           : phase === "sequencing"
             ? "正在重写协议..."
             : "正在激活指挥中心..."
-        : "接受Offer";
+        : "接受录用";
 
   return (
     <div className="stack-sm">
@@ -84,6 +82,7 @@ export function AcceptOfferButton({
         type="button"
         className="primary-button protocol-button"
         disabled={isPending}
+        data-testid="accept-offer-button"
         onClick={() => {
           void onAccept();
         }}
@@ -93,17 +92,22 @@ export function AcceptOfferButton({
       {error ? <p className="error-copy">{error}</p> : null}
 
       {showOverlay ? (
-        <div className="protocol-overlay" role="status" aria-live="polite">
+        <div
+          className="protocol-overlay"
+          role="status"
+          aria-live="polite"
+          data-testid="accept-offer-overlay"
+        >
           <div className="protocol-grid" aria-hidden />
           <div className="protocol-panel">
-            <span className="eyebrow">Offer已接受</span>
+            <span className="eyebrow">录用已确认</span>
             <h3>协议切换中</h3>
             <p className="hero-copy">
-              冷峻考场正在退场，个人中枢正在接管。系统会把你的高压面试痕迹转译成长期副驾上下文。
+              冷启动考场正在退场，个人中枢正在接管。系统会把你的高压面试轨迹翻译成长期可复用的副驾上下文。
             </p>
             <div className="protocol-steps">
               <div className={`protocol-step ${phase === "accepting" ? "active" : "done"}`}>
-                1. 锁定Offer
+                1. 锁定录用
               </div>
               <div
                 className={`protocol-step ${

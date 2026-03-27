@@ -19,7 +19,7 @@ const baseSession: InterviewSession = {
     jobDescription: "Build systems and lead technical execution with clear trade-offs.",
     interviewers: ["hacker", "architect", "founder"],
     materials: [],
-    candidateName: "Candidate",
+    candidateName: "候选人",
   },
   directorState: {
     openLoops: ["loop"],

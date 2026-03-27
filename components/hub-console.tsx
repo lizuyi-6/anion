@@ -16,15 +16,15 @@ import type {
 
 const defaultCopilotBrief: CopilotBrief = {
   issueType: "线上故障",
-  runtime: "production / browser",
+  runtime: "生产环境 / 浏览器",
   suspectedLayer: "状态边界",
   desiredOutcome: "最短安全修复路径",
 };
 
 const defaultStrategyBrief: StrategyBrief = {
-  deliverable: "PRD + FSR",
+  deliverable: "产品需求文档 + 可行性研究报告",
   targetUser: "内部业务团队",
-  constraints: "两周内给出 MVP 路线",
+  constraints: "两周内给出最小可行版本路线",
   timeline: "6-8 周",
 };
 
@@ -40,7 +40,7 @@ function runLabel(mode: CommandMode) {
     case "copilot":
       return "运行副驾";
     case "strategy":
-      return "生成FSR";
+      return "生成可研报告";
     case "sandbox":
       return "模拟场景";
   }
@@ -139,7 +139,7 @@ export function HubConsole({
   const profile = memoryContext?.profile ?? null;
 
   return (
-    <div className="stack-lg">
+    <div className="stack-lg" data-testid={`hub-console-${mode}`}>
       <div className="panel">
         <div className="section-head">
           <div>
@@ -175,7 +175,7 @@ export function HubConsole({
           </div>
         ) : (
           <p className="muted-copy">
-            还没有激活记忆图谱。先完成一场面试并点击 Accept Offer。
+            还没有激活记忆图谱。先完成一场面试并点击“接受录用”。
           </p>
         )}
       </div>
@@ -348,6 +348,7 @@ export function HubConsole({
             rows={6}
             value={input}
             onChange={(event) => setInput(event.target.value)}
+            data-testid="hub-command-input"
             placeholder="把真实问题扔进来，系统会把结构化 brief 和你的原始叙述合并成更可执行的请求。"
           />
         </label>
@@ -374,6 +375,7 @@ export function HubConsole({
           type="button"
           className="primary-button"
           disabled={isRunning || !input.trim()}
+          data-testid="hub-run-button"
           onClick={() => {
             void onSubmit();
           }}
@@ -383,7 +385,7 @@ export function HubConsole({
       </div>
 
       {history.length > 0 ? (
-        <div className="panel">
+        <div className="panel" data-testid="command-history">
           <div className="section-head">
             <div>
               <p className="panel-label">对话记录</p>
@@ -411,7 +413,7 @@ export function HubConsole({
           <div className="panel">
             <div className="section-head">
               <div>
-                <p className="panel-label">FSR</p>
+                <p className="panel-label">可研报告</p>
                 <h3>可行性研究报告</h3>
               </div>
               <button type="button" className="secondary-button inline-button" onClick={onExport}>
@@ -481,7 +483,7 @@ export function HubConsole({
       ) : null}
 
       {artifact?.mode === "copilot" ? (
-        <div className="panel">
+        <div className="panel" data-testid="copilot-output">
           <div className="section-head">
             <div>
               <p className="panel-label">副驾输出</p>
@@ -489,7 +491,7 @@ export function HubConsole({
             </div>
           </div>
           <div className="stack-md">
-            <article className="report-block">
+            <article className="report-block" data-testid="copilot-root-cause">
               <h4>根本原因</h4>
               <p>{artifact.rootCause}</p>
             </article>
@@ -497,7 +499,7 @@ export function HubConsole({
               <h4>记忆锚点</h4>
               <p>{artifact.memoryAnchor}</p>
             </article>
-            <article className="report-block">
+            <article className="report-block" data-testid="copilot-shortest-fix">
               <h4>最短修复路径</h4>
               <ul className="flat-list">
                 {artifact.shortestFix.map((item) => (

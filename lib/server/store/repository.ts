@@ -162,7 +162,7 @@ class MemoryDataStore implements DataStore {
   mode = "demo" as const;
   viewer: Viewer = {
     id: "demo-user",
-    displayName: "Demo Candidate",
+    displayName: "演示候选人",
     isDemo: true,
     workspaceMode: "interview",
     preferredRolePack: "engineering",
@@ -217,7 +217,7 @@ class MemoryDataStore implements DataStore {
   async updateSession(sessionId: string, update: SessionUpdate) {
     const existing = this.sessions.get(sessionId);
     if (!existing) {
-      throw new Error(`Session ${sessionId} not found`);
+      throw new Error(`未找到会话：${sessionId}`);
     }
 
     const next: InterviewSession = {
@@ -414,7 +414,7 @@ class SupabaseDataStore implements DataStore {
   getDemoViewer(preferredRolePack: RolePackId = "engineering") {
     return {
       id: "demo-user",
-      displayName: "Demo Candidate",
+      displayName: "演示候选人",
       isDemo: true,
       workspaceMode: "interview" as const,
       preferredRolePack,
@@ -424,17 +424,17 @@ class SupabaseDataStore implements DataStore {
   private getUserIdForQuery(requestedUserId?: string) {
     if (this.isAdmin) {
       if (!requestedUserId) {
-        throw new Error("Admin store requires an explicit user id");
+        throw new Error("管理员数据仓库需要显式提供用户 ID");
       }
       return requestedUserId;
     }
 
     if (!this.viewer) {
-      throw new Error("Authenticated viewer required");
+      throw new Error("需要已认证的查看者");
     }
 
     if (requestedUserId && requestedUserId !== this.viewer.id) {
-      throw new Error("Forbidden");
+      throw new Error("禁止访问");
     }
 
     return this.viewer.id;
@@ -559,7 +559,7 @@ class SupabaseDataStore implements DataStore {
   async updateSession(sessionId: string, update: SessionUpdate) {
     const existing = await this.getSession(sessionId);
     if (!existing) {
-      throw new Error(`Session ${sessionId} not found`);
+      throw new Error(`未找到会话：${sessionId}`);
     }
 
     const next: InterviewSession = {
@@ -988,7 +988,7 @@ class SupabaseDataStore implements DataStore {
   async appendCommandMessage(message: CommandMessage) {
     const thread = await this.getThread(message.threadId);
     if (!thread) {
-      throw new Error(`Thread ${message.threadId} not found`);
+      throw new Error(`未找到会话线程：${message.threadId}`);
     }
 
     const { error } = await this.supabase.from("command_messages").insert({

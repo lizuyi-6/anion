@@ -18,7 +18,7 @@ const baseSession: InterviewSession = {
     jobDescription: "Own architecture, latency, and business trade-offs under pressure.",
     interviewers: ["hacker", "architect", "founder"],
     materials: [],
-    candidateName: "Candidate",
+    candidateName: "候选人",
   },
   directorState: {
     openLoops: ["loop"],

@@ -7,7 +7,7 @@ import { createInterviewSession } from "@/lib/server/services/interview";
 export async function POST(request: Request) {
   const viewer = await getViewer();
   if (!viewer) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "未授权" }, { status: 401 });
   }
 
   const json = await request.json();

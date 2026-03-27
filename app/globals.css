@@ -1,15 +1,15 @@
 :root {
-  --bg: #0b0b0a;
-  --bg-elevated: #121211;
-  --bg-soft: #1a1a18;
-  --line: rgba(255, 255, 255, 0.1);
-  --line-strong: rgba(255, 255, 255, 0.22);
-  --text: #f2f1eb;
-  --muted: rgba(242, 241, 235, 0.62);
-  --accent: #f2f1eb;
-  --accent-soft: rgba(242, 241, 235, 0.08);
-  --accent-contrast: #0b0b0a;
-  --warning: #c38763;
+  --bg: #f5f5f7;
+  --bg-elevated: #ffffff;
+  --bg-soft: #eaeaef;
+  --line: rgba(0, 0, 0, 0.08);
+  --line-strong: rgba(0, 0, 0, 0.18);
+  --text: #1a1a2e;
+  --muted: rgba(26, 26, 46, 0.45);
+  --accent: #6366f1;
+  --accent-soft: rgba(99, 102, 241, 0.07);
+  --accent-contrast: #ffffff;
+  --warning: #d97706;
   --max-width: 1380px;
   --font-display:
     "Space Grotesk", "Avenir Next", "Segoe UI", "PingFang SC", "Noto Sans SC",
@@ -17,7 +17,7 @@
   --font-mono:
     "IBM Plex Mono", "SFMono-Regular", "JetBrains Mono", Consolas, "Liberation Mono",
     monospace;
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 html,
@@ -32,9 +32,8 @@ body {
   color: var(--text);
   background-color: var(--bg);
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 120px 120px;
+    radial-gradient(circle 1px at 1px 1px, rgba(99, 102, 241, 0.04) 1px, transparent 0);
+  background-size: 28px 28px;
   font-family: var(--font-display), sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -64,7 +63,7 @@ textarea {
   border: 1px solid var(--line);
   border-radius: 18px;
   padding: 1rem 1.1rem;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(0, 0, 0, 0.02);
   color: var(--text);
   resize: vertical;
 }
@@ -73,7 +72,7 @@ input:focus,
 textarea:focus {
   outline: none;
   border-color: var(--line-strong);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(0, 0, 0, 0.03);
 }
 
 .app-shell {
@@ -85,16 +84,17 @@ textarea:focus {
 }
 
 .app-shell.shell-command {
-  --bg-elevated: #141412;
-  --bg-soft: #1d1d19;
-  --line: rgba(255, 255, 255, 0.12);
-  --line-strong: rgba(255, 255, 255, 0.24);
-  --text: #f2eee5;
-  --muted: rgba(242, 238, 229, 0.64);
-  --accent: #efe7d8;
-  --accent-soft: rgba(239, 231, 216, 0.08);
-  --accent-contrast: #0b0b0a;
-  --warning: #d39a74;
+  --bg: #f0f0f2;
+  --bg-elevated: #fafafe;
+  --bg-soft: #e6e6eb;
+  --line: rgba(0, 0, 0, 0.1);
+  --line-strong: rgba(0, 0, 0, 0.2);
+  --text: #1a1a2e;
+  --muted: rgba(26, 26, 46, 0.48);
+  --accent: #4f46e5;
+  --accent-soft: rgba(79, 70, 229, 0.08);
+  --accent-contrast: #ffffff;
+  --warning: #b45309;
 }
 
 .topbar {
@@ -258,7 +258,7 @@ textarea:focus {
   padding: 0.45rem 0.75rem;
   border-radius: 999px;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.03);
   font-family: var(--font-mono), monospace;
   font-size: 0.72rem;
 }
@@ -297,7 +297,7 @@ textarea:focus {
 .list-row {
   border: 1px solid var(--line);
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(0, 0, 0, 0.015);
 }
 
 .metric-card,
@@ -316,18 +316,97 @@ textarea:focus {
 }
 
 .select-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
   text-align: left;
   padding: 1rem;
+  padding-right: 5.4rem;
   color: inherit;
   cursor: pointer;
-  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+  overflow: hidden;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
 }
 
-.select-card.selected,
+.select-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 12%, transparent), transparent 38%),
+    linear-gradient(160deg, color-mix(in srgb, var(--accent) 5%, transparent), transparent 56%);
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
 .select-card:hover {
-  border-color: var(--line-strong);
-  background: rgba(255, 255, 255, 0.06);
+  border-color: color-mix(in srgb, var(--line-strong) 90%, var(--accent) 10%);
+  background: rgba(0, 0, 0, 0.03);
   transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.select-card:hover::before {
+  opacity: 0.36;
+}
+
+.select-card[data-selected="true"] {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--line-strong));
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 6%, transparent), color-mix(in srgb, var(--accent) 3%, transparent)),
+    color-mix(in srgb, var(--accent) 4%, transparent);
+  transform: translateY(-3px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 8px 24px rgba(0, 0, 0, 0.08),
+    0 0 0 1px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+.select-card[data-selected="true"]::before {
+  opacity: 0.72;
+}
+
+.select-card:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 52%, var(--line-strong));
+  outline-offset: 2px;
+  border-color: color-mix(in srgb, var(--accent) 52%, var(--line-strong));
+}
+
+.select-card[data-selected="true"]:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 52%, var(--line-strong));
+  outline-offset: 2px;
+}
+
+.select-card strong,
+.select-card p,
+.select-card .eyebrow {
+  position: relative;
+  z-index: 1;
+}
+
+.select-card-badge {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.28rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
 }
 
 .upload-box {
@@ -376,7 +455,7 @@ textarea:focus {
 }
 
 .secondary-button {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(0, 0, 0, 0.03);
   color: var(--text);
 }
 
@@ -425,7 +504,7 @@ textarea:focus {
   padding: 1rem 1.1rem;
   border-radius: 22px;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.025);
+  background: rgba(0, 0, 0, 0.015);
 }
 
 .transcript-row.candidate {
@@ -465,13 +544,13 @@ textarea:focus {
 .radar-ring,
 .radar-axis,
 .timeline-grid {
-  stroke: rgba(255, 255, 255, 0.12);
+  stroke: var(--line);
   stroke-width: 1;
 }
 
 .radar-shape {
-  fill: rgba(216, 226, 241, 0.18);
-  stroke: rgba(216, 226, 241, 0.95);
+  fill: color-mix(in srgb, var(--accent) 8%, transparent);
+  stroke: color-mix(in srgb, var(--accent) 60%, transparent);
   stroke-width: 2;
 }
 
@@ -479,14 +558,14 @@ textarea:focus {
 .diagram-edge-label,
 .timeline-week-label,
 .timeline-owner-label {
-  fill: rgba(247, 247, 245, 0.62);
+  fill: var(--muted);
   font-size: 10px;
   font-family: var(--font-mono), monospace;
 }
 
 .diagram-node {
-  fill: rgba(255, 255, 255, 0.04);
-  stroke: rgba(255, 255, 255, 0.18);
+  fill: color-mix(in srgb, var(--text) 2%, transparent);
+  stroke: var(--line);
 }
 
 .diagram-node-label,
@@ -497,13 +576,13 @@ textarea:focus {
 
 .diagram-edge {
   fill: none;
-  stroke: rgba(216, 226, 241, 0.86);
+  stroke: color-mix(in srgb, var(--accent) 50%, transparent);
   stroke-width: 2;
 }
 
 .timeline-bar {
-  fill: rgba(216, 226, 241, 0.2);
-  stroke: rgba(216, 226, 241, 0.8);
+  fill: color-mix(in srgb, var(--accent) 10%, transparent);
+  stroke: color-mix(in srgb, var(--accent) 50%, transparent);
 }
 
 .flat-list {
@@ -525,20 +604,18 @@ textarea:focus {
 .citation-link {
   display: block;
   padding: 0.7rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .transition-panel {
   border-style: dashed;
-  background:
-    linear-gradient(0deg, transparent, transparent),
-    repeating-linear-gradient(
-      90deg,
-      transparent 0,
-      transparent 24px,
-      color-mix(in srgb, var(--line) 36%, transparent) 24px,
-      color-mix(in srgb, var(--line) 36%, transparent) 25px
-    );
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent 24px,
+    color-mix(in srgb, var(--line) 36%, transparent) 24px,
+    color-mix(in srgb, var(--line) 36%, transparent) 25px
+  );
 }
 
 .mode-brief-grid {
@@ -574,15 +651,15 @@ textarea:focus {
   z-index: 60;
   display: grid;
   place-items: center;
-  background: rgba(10, 10, 10, 0.92);
+  background: rgba(255, 255, 255, 0.85);
 }
 
 .protocol-grid {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
   background-size: 56px 56px;
   animation: protocol-grid-pan 16s linear infinite;
 }
@@ -591,15 +668,15 @@ textarea:focus {
   position: relative;
   width: min(720px, calc(100vw - 2rem));
   padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 28px;
-  background: rgba(245, 244, 239, 0.92);
-  color: #111;
+  background: rgba(20, 20, 30, 0.92);
+  color: #f0f0f5;
 }
 
 .protocol-panel .hero-copy,
 .protocol-panel .eyebrow {
-  color: rgba(17, 17, 17, 0.66);
+  color: color-mix(in srgb, var(--text) 60%, transparent);
 }
 
 .protocol-steps {
@@ -610,19 +687,14 @@ textarea:focus {
 
 .protocol-step {
   padding: 0.85rem 1rem;
-  border: 1px solid rgba(17, 17, 17, 0.14);
+  border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
   border-radius: 999px;
-  color: rgba(17, 17, 17, 0.56);
+  color: color-mix(in srgb, var(--text) 56%, transparent);
 }
 
 .protocol-step.active {
-  border-color: rgba(17, 17, 17, 0.42);
-  color: #111;
-  background: rgba(17, 17, 17, 0.08);
-}
-
-.protocol-step.done {
-  color: #111;
+  border-color: color-mix(in srgb, var(--accent) 42%, transparent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
 }
 
 @keyframes protocol-grid-pan {
@@ -632,7 +704,7 @@ textarea:focus {
 }
 
 .error-copy {
-  color: #ffd0c0;
+  color: #dc2626;
 }
 
 @media (max-width: 1040px) {

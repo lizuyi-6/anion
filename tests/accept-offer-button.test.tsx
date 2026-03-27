@@ -38,7 +38,7 @@ describe("AcceptOfferButton", () => {
     render(<AcceptOfferButton sessionId="session_1" status="report_ready" />);
 
     await act(async () => {
-      fireEvent.click(screen.getByRole("button", { name: /accept offer/i }));
+      fireEvent.click(screen.getByRole("button", { name: "接受录用" }));
       await Promise.resolve();
       await vi.runAllTimersAsync();
     });
@@ -49,10 +49,10 @@ describe("AcceptOfferButton", () => {
     expect(push).toHaveBeenCalledWith("/hub/copilot?session=session_1");
   });
 
-  it("re-enters the hub immediately when the session is already active", async () => {
+  it("re-enters the hub immediately when the session is already active", () => {
     render(<AcceptOfferButton sessionId="session_1" status="hub_active" />);
 
-    fireEvent.click(screen.getByRole("button", { name: /enter command center/i }));
+    fireEvent.click(screen.getByRole("button", { name: "进入指挥中心" }));
 
     expect(acceptOffer).not.toHaveBeenCalled();
     expect(activateHub).not.toHaveBeenCalled();

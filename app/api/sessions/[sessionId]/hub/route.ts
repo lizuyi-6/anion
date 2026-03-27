@@ -11,19 +11,19 @@ export async function POST(
   const { sessionId } = await context.params;
   const viewer = await getViewer();
   if (!viewer) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "未授权" }, { status: 401 });
   }
 
   const store = await getDataStore({ viewer });
   const session = await store.getSession(sessionId);
 
   if (!session) {
-    return NextResponse.json({ error: "Session not found" }, { status: 404 });
+    return NextResponse.json({ error: "未找到会话" }, { status: 404 });
   }
 
   if (!canActivateCommandCenter(session)) {
     return NextResponse.json(
-      { error: "Offer must be accepted before entering the command center" },
+      { error: "必须先接受录用，才能进入指挥中心" },
       { status: 409 },
     );
   }

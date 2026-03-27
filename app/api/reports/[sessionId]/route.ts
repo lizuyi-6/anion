@@ -10,7 +10,7 @@ export async function GET(
 ) {
   const viewer = await getViewer();
   if (!viewer) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "未授权" }, { status: 401 });
   }
 
   const { sessionId } = await context.params;
@@ -18,7 +18,7 @@ export async function GET(
   const diagnostics = await getSessionDiagnostics(sessionId, store);
 
   if (!diagnostics.session) {
-    return NextResponse.json({ error: "Session not found" }, { status: 404 });
+    return NextResponse.json({ error: "未找到会话" }, { status: 404 });
   }
 
   return NextResponse.json(diagnostics);

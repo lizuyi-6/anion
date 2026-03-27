@@ -205,7 +205,7 @@ export async function generateNextInterviewBeat(params: {
     sessionId: session.id,
     role: "candidate",
     speakerId: "candidate",
-    speakerLabel: session.config.candidateName ?? "Candidate",
+    speakerLabel: session.config.candidateName ?? "候选人",
     kind: "system",
     content: answer,
     meta: {

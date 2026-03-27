@@ -58,7 +58,7 @@ export function ReportStatusPanel({
   };
 
   return (
-    <section className="panel transition-panel">
+    <section className="panel transition-panel" data-testid="report-status-panel">
       <p className="panel-label">A3 / 分析流程</p>
       <h3>{status === "analyzing" ? "终局报告仍在编译" : "分析流程需要重试"}</h3>
       <p className="hero-copy">

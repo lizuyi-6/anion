@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { completeSession, streamInterviewTurn } from "@/lib/client/api";
-import { getInterviewerDefinition } from "@/lib/domain";
+import { formatRolePackLabel, getInterviewerDefinition } from "@/lib/domain";
 import type { InterviewSession, InterviewTurn, LiveTurnEvent } from "@/lib/domain";
 
 type TurnView = {
@@ -14,6 +14,19 @@ type TurnView = {
   content: string;
   kind: string;
 };
+
+const turnKindLabels: Record<string, string> = {
+  question: "问题",
+  follow_up: "追问",
+  interrupt: "打断",
+  conflict: "冲突",
+  candidate: "候选人",
+  system: "系统",
+};
+
+function formatTurnKind(kind: string) {
+  return turnKindLabels[kind] ?? kind;
+}
 
 function mapTurn(turn: InterviewTurn): TurnView {
   return {
@@ -50,7 +63,6 @@ export function InterviewConsole({
   const [answer, setAnswer] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
-  const currentPressure = useMemo(() => pressure, [pressure]);
 
   const sendAnswer = async () => {
     if (!answer.trim() || isStreaming) {
@@ -98,16 +110,16 @@ export function InterviewConsole({
   };
 
   return (
-    <div className="stack-lg">
+    <div className="stack-lg" data-testid="interview-console">
       <div className="panel">
         <div className="section-head">
           <div>
             <p className="panel-label">A2 / 动态博弈</p>
-            <h3>实时多轮对弈</h3>
+            <h3>实时多轮对话</h3>
           </div>
           <div className="chip-row">
-            <span className="status-pill">压力值 {currentPressure}</span>
-            <span className="status-pill subtle">{session.config.rolePack}</span>
+            <span className="status-pill">压力值 {pressure}</span>
+            <span className="status-pill subtle">{formatRolePackLabel(session.config.rolePack)}</span>
           </div>
         </div>
         <div className="chip-row">
@@ -118,20 +130,27 @@ export function InterviewConsole({
             </span>
           ))}
         </div>
-        <div className="transcript">
+        <div className="transcript" data-testid="interview-transcript">
           {transcript.map((turn) => (
             <article
               key={turn.id}
               className={`transcript-row ${turn.role === "candidate" ? "candidate" : ""}`}
+              data-testid={`transcript-row-${turn.role}`}
             >
               <div className="transcript-meta">
                 <span>{turn.speakerLabel}</span>
-                <small>{turn.kind}</small>
+                <small>{formatTurnKind(turn.kind)}</small>
               </div>
               <p>{turn.content}</p>
             </article>
           ))}
-          {isStreaming ? <div className="terminal-caret" aria-hidden /> : null}
+          {isStreaming ? (
+            <div
+              className="terminal-caret"
+              aria-hidden
+              data-testid="interview-streaming-indicator"
+            />
+          ) : null}
         </div>
       </div>
 
@@ -142,6 +161,7 @@ export function InterviewConsole({
             rows={6}
             value={answer}
             onChange={(event) => setAnswer(event.target.value)}
+            data-testid="interview-answer-input"
             placeholder="给出一个短、硬、可验证的回答。先结论，再补证据。"
           />
         </label>
@@ -150,6 +170,7 @@ export function InterviewConsole({
             type="button"
             className="primary-button"
             disabled={isStreaming || !answer.trim()}
+            data-testid="interview-send-button"
             onClick={() => {
               void sendAnswer();
             }}
@@ -160,6 +181,7 @@ export function InterviewConsole({
             type="button"
             className="secondary-button"
             disabled={isCompleting}
+            data-testid="interview-finish-button"
             onClick={() => {
               void finalize();
             }}

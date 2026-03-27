@@ -1,3 +1,4 @@
+import { getAiProvider } from "@/lib/ai/adapter";
 import type {
   ActiveMemoryContext,
   CommandArtifact,
@@ -6,9 +7,9 @@ import type {
   UploadReference,
   Viewer,
 } from "@/lib/domain";
-import { getAiProvider } from "@/lib/ai/adapter";
+import { formatCommandModeLabel } from "@/lib/domain";
 import type { DataStore } from "@/lib/server/store/repository";
-import { summarizeText, titleCase, toId } from "@/lib/utils";
+import { summarizeText, toId } from "@/lib/utils";
 
 export async function resolveThread(params: {
   store: DataStore;
@@ -30,7 +31,7 @@ export async function resolveThread(params: {
     id: toId("thread"),
     userId: params.viewer.id,
     mode: params.mode,
-    title: `${titleCase(params.mode)} | ${summarizeText(params.input, 42)}`,
+    title: `${formatCommandModeLabel(params.mode)} | ${summarizeText(params.input, 42)}`,
     createdAt: now,
     updatedAt: now,
     sessionId: params.sessionId,
@@ -104,10 +105,10 @@ function summarizeArtifact(artifact: CommandArtifact) {
       return [
         artifact.rootCause,
         "",
-        "Shortest fix:",
+        "最短修复路径：",
         ...artifact.shortestFix.map((item) => `- ${item}`),
         ...(artifact.watchouts.length > 0
-          ? ["", "Watchouts:", ...artifact.watchouts.map((item) => `- ${item}`)]
+          ? ["", "注意事项：", ...artifact.watchouts.map((item) => `- ${item}`)]
           : []),
       ].join("\n");
     case "strategy":
@@ -121,9 +122,9 @@ function summarizeArtifact(artifact: CommandArtifact) {
       return [
         artifact.equilibrium,
         "",
-        `Recommended move: ${artifact.recommendedMove}`,
+        `推荐动作：${artifact.recommendedMove}`,
         ...(artifact.pressurePoints.length > 0
-          ? ["", "Pressure points:", ...artifact.pressurePoints.map((item) => `- ${item}`)]
+          ? ["", "施压点：", ...artifact.pressurePoints.map((item) => `- ${item}`)]
           : []),
       ].join("\n");
   }

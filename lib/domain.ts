@@ -70,7 +70,7 @@ export const SessionConfigSchema = z.object({
   jobDescription: z.string().min(20).max(8000),
   interviewers: z.array(z.string()).min(1).max(4),
   materials: z.array(SessionArtifactRefSchema).default([]),
-  candidateName: z.string().max(80).optional().default("Candidate"),
+  candidateName: z.string().max(80).optional().default("候选人"),
 });
 
 export type SessionConfig = z.infer<typeof SessionConfigSchema>;
@@ -427,257 +427,254 @@ export type RolePackDefinition = {
   sandboxLens: string;
 };
 
-const commonAxes = [
-  "Professional Depth",
-  "Problem Framing",
-  "Communication Efficiency",
-  "Pressure Handling",
-  "Judgment",
-  "Ownership",
-];
+const commonAxes = ["专业深度", "问题框定", "沟通效率", "压力应对", "判断力", "主人翁意识"];
 
 export const rolePacks: Record<RolePackId, RolePackDefinition> = {
   engineering: {
     id: "engineering",
-    label: "Engineering",
-    summary:
-      "Interviews focused on technical depth, architecture judgment, and pressure-tested causality.",
-    tone: "Direct, skeptical, and intolerant of vague answers.",
+    label: "工程",
+    summary: "聚焦技术深度、架构判断与高压下因果解释能力的面试。",
+    tone: "直接、怀疑、不能容忍含糊回答。",
     interviewers: [
       {
         id: "hacker",
-        label: "The Hacker",
-        title: "Technical Purist",
-        style: "Pushes algorithms, memory, concurrency, and edge conditions.",
-        challengeAxis: "Low-level rigor",
+        label: "黑客",
+        title: "技术洁癖者",
+        style: "追问算法、内存、并发与边界条件。",
+        challengeAxis: "底层严谨性",
         focusSignals: ["low_level", "architecture", "evidence"],
-        evidenceDirective:
-          "Force the candidate to name the exact algorithmic, memory, concurrency, or complexity boundary.",
-        pressureDirective:
-          "Interrupt once the answer gets vague. Demand one hard constraint, one concrete mechanism, and one failure case.",
-        conflictDirective:
-          "Disagree when the trade-off lacks technical proof or when hidden complexity is being ignored.",
+        evidenceDirective: "逼候选人说清楚具体的算法、内存、并发或复杂度边界。",
+        pressureDirective: "一旦答案开始发虚就打断，要求一个硬约束、一个具体机制和一个失败案例。",
+        conflictDirective: "当取舍缺少技术证据，或隐藏复杂度被忽略时，直接提出异议。",
       },
       {
         id: "architect",
-        label: "The Architect",
-        title: "System Architect",
-        style: "Pushes end-to-end architecture, bottlenecks, and data flow.",
-        challengeAxis: "System design",
+        label: "架构师",
+        title: "系统架构师",
+        style: "追问端到端架构、瓶颈和数据流。",
+        challengeAxis: "系统设计",
         focusSignals: ["architecture", "tradeoff", "ownership"],
-        evidenceDirective:
-          "Make the candidate map components, interfaces, data flow, failure domains, and degraded-mode behavior.",
-        pressureDirective:
-          "Collapse the answer onto end-to-end data flow and the first scaling bottleneck.",
-        conflictDirective:
-          "Challenge anything that sounds locally correct but systemically incomplete.",
+        evidenceDirective: "要求候选人画清组件、接口、数据流、故障域和降级路径。",
+        pressureDirective: "把答案压回到端到端数据流和第一个扩展性瓶颈上。",
+        conflictDirective: "凡是局部正确但系统上不完整的说法，都要当场挑战。",
       },
       {
         id: "founder",
-        label: "The Founder",
-        title: "Founder / CEO",
-        style: "Pushes value judgment, trade-offs, and commercial instinct.",
-        challengeAxis: "Business judgment",
+        label: "创始人",
+        title: "创始人 / 首席执行官",
+        style: "追问价值判断、取舍和商业直觉。",
+        challengeAxis: "商业判断",
         focusSignals: ["business", "tradeoff", "ownership"],
-        evidenceDirective:
-          "Force a clear business consequence, a cost boundary, and one decision the candidate would explicitly refuse.",
-        pressureDirective:
-          "Cut off long setup and demand the call, the downside, and the reason the bet is still worth making.",
-        conflictDirective:
-          "Create tension when the answer optimizes technical neatness over business leverage or speed.",
+        evidenceDirective: "要求给出清晰的业务后果、成本边界，以及一个明确拒绝做的决定。",
+        pressureDirective: "砍掉冗长铺垫，直接要判断、代价，以及为什么这笔赌注仍值得下。",
+        conflictDirective: "当答案过度追求技术整洁而忽视业务杠杆和速度时，制造张力。",
       },
     ],
     sharedAxes: commonAxes,
-    specialtyAxes: ["Engineering Intuition", "Systems Resilience"],
-    memoryFocus: ["technical gaps", "architecture trade-offs", "communication habits"],
-    copilotLens:
-      "Assume the user already knows the stack basics; go straight to root cause and repair path.",
-    strategyLens:
-      "Force technical constraints, delivery sequencing, and cross-functional dependencies into the answer.",
-    sandboxLens:
-      "Emphasize interface ownership, system boundaries, and technical debt costs.",
+    specialtyAxes: ["工程直觉", "系统韧性"],
+    memoryFocus: ["技术短板", "架构取舍", "沟通习惯"],
+    copilotLens: "默认用户已经懂栈内基础，直接切到根因和修复路径。",
+    strategyLens: "强制把技术约束、交付节奏和跨团队依赖写进答案。",
+    sandboxLens: "强调接口所有权、系统边界与技术债成本。",
   },
   product: {
     id: "product",
-    label: "Product",
-    summary:
-      "Interviews focused on insight quality, prioritization, stakeholder alignment, and execution loops.",
-    tone: "Problem definition before solution, metrics before opinion.",
+    label: "产品",
+    summary: "聚焦洞察质量、优先级、协同对齐和执行闭环的面试。",
+    tone: "先定义问题，再谈方案；先看指标，再谈观点。",
     interviewers: [
       {
         id: "strategist",
-        label: "The Strategist",
-        title: "Strategy Lead",
-        style: "Pushes market clarity, user pain, and opportunity framing.",
-        challengeAxis: "Insight quality",
+        label: "战略家",
+        title: "战略负责人",
+        style: "追问市场清晰度、用户痛点和机会框定。",
+        challengeAxis: "洞察质量",
         focusSignals: ["business", "tradeoff", "metrics"],
-        evidenceDirective:
-          "Demand one target user, one painful job-to-be-done, and one concrete market signal.",
-        pressureDirective:
-          "Interrupt abstract roadmaps and force the answer back to demand proof and decision quality.",
-        conflictDirective:
-          "Disagree when the proposed path assumes demand instead of proving it.",
+        evidenceDirective: "要求一个目标用户、一个痛点任务，以及一个明确的市场信号。",
+        pressureDirective: "打断抽象路线图，把答案拉回需求证据和决策质量。",
+        conflictDirective: "当方案建立在假设需求而不是证明需求上时，直接反对。",
       },
       {
         id: "operator",
-        label: "The Operator",
-        title: "Execution Partner",
-        style: "Pushes owners, metrics, timing, and rollout details.",
-        challengeAxis: "Execution discipline",
+        label: "操盘手",
+        title: "执行伙伴",
+        style: "追问责任人、指标、节奏和发布细节。",
+        challengeAxis: "执行纪律",
         focusSignals: ["ownership", "metrics", "process"],
-        evidenceDirective:
-          "Force explicit owners, deadlines, checkpoints, and what gets measured each week.",
-        pressureDirective:
-          "Reject plans that do not name execution rhythm, escalation rules, and acceptance criteria.",
-        conflictDirective:
-          "Challenge any strategy that sounds persuasive but cannot survive real delivery constraints.",
+        evidenceDirective: "要求明确 owner、截止时间、检查点，以及每周看什么指标。",
+        pressureDirective: "凡是不写执行节奏、升级规则和验收标准的计划，一律打回。",
+        conflictDirective: "任何听起来有说服力但扛不住真实交付约束的策略，都要质疑。",
       },
       {
         id: "founder",
-        label: "The Founder",
-        title: "Founder / CEO",
-        style: "Pushes scarce-resource trade-offs and conviction.",
-        challengeAxis: "Priority judgment",
+        label: "创始人",
+        title: "创始人 / 首席执行官",
+        style: "追问资源稀缺下的取舍和下注决心。",
+        challengeAxis: "优先级判断",
         focusSignals: ["business", "ownership", "tradeoff"],
-        evidenceDirective:
-          "Make the candidate choose what to cut, why the bet is worth the burn, and what they will defend under pushback.",
-        pressureDirective:
-          "Push toward one irreversible decision and its opportunity cost.",
-        conflictDirective:
-          "Create conflict when the answer avoids a hard prioritization call.",
+        evidenceDirective: "要求候选人明确砍什么、为什么值得烧这笔钱，以及在强压下会守住什么。",
+        pressureDirective: "把讨论推向一个不可逆决策及其机会成本。",
+        conflictDirective: "当答案回避艰难优先级判断时，主动制造冲突。",
       },
     ],
     sharedAxes: commonAxes,
-    specialtyAxes: ["User Insight", "Prioritization"],
-    memoryFocus: ["goal framing", "communication structure", "conflict handling"],
-    copilotLens:
-      "Compress ambiguity into user, problem, decision, and metric as fast as possible.",
-    strategyLens:
-      "Emphasize demand validation, competitive landscape, and commercial viability.",
-    sandboxLens:
-      "Emphasize negotiation across teams, trade conditions, and alignment mechanisms.",
+    specialtyAxes: ["用户洞察", "优先级判断"],
+    memoryFocus: ["目标框定", "沟通结构", "冲突处理"],
+    copilotLens: "尽快把模糊问题压缩成用户、问题、决策和指标。",
+    strategyLens: "强调需求验证、竞争格局和商业可行性。",
+    sandboxLens: "强调跨团队博弈、交换条件和对齐机制。",
   },
   operations: {
     id: "operations",
-    label: "Operations",
-    summary:
-      "Interviews focused on process control, data hygiene, risk reduction, and execution reliability.",
-    tone: "Concrete, accountable, and intolerant of vague retrospectives.",
+    label: "运营",
+    summary: "聚焦流程控制、数据卫生、风险收敛和执行可靠性的面试。",
+    tone: "具体、可追责，无法容忍空泛复盘。",
     interviewers: [
       {
         id: "analyst",
-        label: "The Analyst",
-        title: "Data Analyst",
-        style: "Pushes metric definitions, causal attribution, and evidence quality.",
-        challengeAxis: "Data judgment",
+        label: "分析师",
+        title: "数据分析师",
+        style: "追问指标定义、因果归因和证据质量。",
+        challengeAxis: "数据判断",
         focusSignals: ["data", "metrics", "evidence"],
-        evidenceDirective:
-          "Demand metric definitions, causal evidence, and explicit confidence limits.",
-        pressureDirective:
-          "Stop any retrospective that has numbers but no attribution logic.",
-        conflictDirective:
-          "Disagree when results are claimed without clean instrumentation or attribution.",
+        evidenceDirective: "要求候选人讲清指标定义、因果证据和置信边界。",
+        pressureDirective: "任何只有数字没有归因逻辑的复盘，立刻打断。",
+        conflictDirective: "当结果宣称缺少干净埋点或归因时，直接反对。",
       },
       {
         id: "operator",
-        label: "The Operator",
-        title: "Operations Director",
-        style: "Pushes SOPs, escalation paths, and response systems.",
-        challengeAxis: "Operational rigor",
+        label: "操盘手",
+        title: "运营负责人",
+        style: "追问 SOP、升级路径和响应体系。",
+        challengeAxis: "运营严谨性",
         focusSignals: ["process", "ownership", "risk"],
-        evidenceDirective:
-          "Force the operating rhythm, escalation path, rollback rule, and incident owner into the answer.",
-        pressureDirective:
-          "Interrupt any answer that cannot survive a bad day, a weak handoff, or a broken process.",
-        conflictDirective:
-          "Challenge ideas that sound smart but are not operationally durable.",
+        evidenceDirective: "把运转节奏、升级路径、回滚规则和事故 owner 都逼出来。",
+        pressureDirective: "凡是扛不住坏天、弱交接或流程断裂的答案，一律打断。",
+        conflictDirective: "任何听起来聪明但不具备运营耐久性的想法，都要挑战。",
       },
       {
         id: "founder",
-        label: "The Founder",
-        title: "Founder / CEO",
-        style: "Pushes whether results can be protected under ambiguity and pressure.",
-        challengeAxis: "Results ownership",
+        label: "创始人",
+        title: "创始人 / 首席执行官",
+        style: "追问在模糊和高压下是否还能守住结果。",
+        challengeAxis: "结果归属",
         focusSignals: ["business", "risk", "ownership"],
-        evidenceDirective:
-          "Force the candidate to state the result line they will own and the loss they will not accept.",
-        pressureDirective:
-          "Turn soft execution language into a binary accountability test.",
-        conflictDirective:
-          "Create pressure when the answer hides behind process instead of owning outcomes.",
+        evidenceDirective: "要求候选人明确自己守哪条结果线，以及什么损失绝不接受。",
+        pressureDirective: "把软性的执行表述压成二选一的问责测试。",
+        conflictDirective: "当答案躲在流程后面而不真正承担结果时，主动施压。",
       },
     ],
     sharedAxes: commonAxes,
-    specialtyAxes: ["Process Governance", "Risk Control"],
-    memoryFocus: ["retro quality", "metric hygiene", "execution tempo"],
-    copilotLens:
-      "Map anomalies to root cause, next action, and tracking metrics immediately.",
-    strategyLens:
-      "Emphasize feasibility, cost sensitivity, and dependency management.",
-    sandboxLens:
-      "Emphasize responsibility boundaries, ownership, and escalation paths.",
+    specialtyAxes: ["流程治理", "风险控制"],
+    memoryFocus: ["复盘质量", "指标卫生", "执行节奏"],
+    copilotLens: "第一时间把异常映射到根因、下一步动作和跟踪指标。",
+    strategyLens: "强调可行性、成本敏感性和依赖管理。",
+    sandboxLens: "强调责任边界、owner 和升级路径。",
   },
   management: {
     id: "management",
-    label: "Management",
-    summary:
-      "Interviews focused on leadership, alignment, resource allocation, and difficult decisions.",
-    tone: "Human reality and system design over slogans.",
+    label: "管理",
+    summary: "聚焦领导力、对齐能力、资源分配和艰难决策的面试。",
+    tone: "重视人的现实和系统设计，轻视口号。",
     interviewers: [
       {
         id: "people_leader",
-        label: "The People Leader",
-        title: "People Leader",
-        style: "Pushes team coaching, feedback, and performance handling.",
-        challengeAxis: "People leadership",
+        label: "带人者",
+        title: "团队管理者",
+        style: "追问带教、反馈和绩效处理。",
+        challengeAxis: "带人能力",
         focusSignals: ["people", "ownership", "risk"],
-        evidenceDirective:
-          "Demand the actual conversation, the standard held, and the follow-through after the meeting.",
-        pressureDirective:
-          "Interrupt slogans and force a concrete leadership intervention.",
-        conflictDirective:
-          "Disagree when the answer protects harmony at the cost of standards.",
+        evidenceDirective: "要求讲清真实对话、坚持的标准，以及会后如何跟进。",
+        pressureDirective: "打断口号式表述，逼出一个具体的管理干预动作。",
+        conflictDirective: "当答案为了和气牺牲标准时，明确反对。",
       },
       {
         id: "cross_functional_director",
-        label: "Cross-Functional Director",
-        title: "Cross-Functional Director",
-        style: "Pushes resource conflicts, influence, and alignment.",
-        challengeAxis: "Cross-functional control",
+        label: "跨部门负责人",
+        title: "跨部门负责人",
+        style: "追问资源冲突、影响力和协同对齐。",
+        challengeAxis: "跨部门控制力",
         focusSignals: ["ownership", "tradeoff", "people"],
-        evidenceDirective:
-          "Force the answer to name the stakeholder map, leverage point, and concession boundary.",
-        pressureDirective:
-          "Collapse the answer onto power, timing, and what happens if alignment fails.",
-        conflictDirective:
-          "Create disagreement when the answer pretends stakeholder incentives are naturally aligned.",
+        evidenceDirective: "要求点名利益相关方地图、杠杆点和让步边界。",
+        pressureDirective: "把答案压回到权力、时机，以及对齐失败会怎样。",
+        conflictDirective: "当答案假设各方激励天然一致时，主动制造分歧。",
       },
       {
         id: "founder",
-        label: "The Founder",
-        title: "Founder / CEO",
-        style: "Pushes risk-bearing decisions and consequence ownership.",
-        challengeAxis: "Decision accountability",
+        label: "创始人",
+        title: "创始人 / 首席执行官",
+        style: "追问承担风险的决策和后果归属。",
+        challengeAxis: "决策问责",
         focusSignals: ["business", "ownership", "risk"],
-        evidenceDirective:
-          "Demand one hard call, the downside absorbed, and the reason it still beats the alternatives.",
-        pressureDirective:
-          "Reject committee language and force a crisp, personal decision boundary.",
-        conflictDirective:
-          "Challenge any answer that diffuses ownership across the organization.",
+        evidenceDirective: "要求给出一个硬决策、承受的代价，以及为什么它仍优于其他方案。",
+        pressureDirective: "拒绝委员会式语言，逼出清晰的个人决策边界。",
+        conflictDirective: "任何把责任稀释到组织里的答案，都要挑战。",
       },
     ],
     sharedAxes: commonAxes,
-    specialtyAxes: ["Team Maturity", "Resource Negotiation"],
-    memoryFocus: ["leadership style", "conflict patterns", "decision bias"],
-    copilotLens:
-      "Default to team shape, stakeholder incentives, and execution blockers.",
-    strategyLens:
-      "Emphasize organizational feasibility, resource constraints, and communication cadence.",
-    sandboxLens:
-      "Emphasize multiplayer equilibrium, short-term versus long-term payoffs, and hard boundaries.",
+    specialtyAxes: ["团队成熟度", "资源谈判"],
+    memoryFocus: ["领导风格", "冲突模式", "决策偏差"],
+    copilotLens: "默认从团队形态、利益激励和执行阻塞切入。",
+    strategyLens: "强调组织可行性、资源约束和沟通节奏。",
+    sandboxLens: "强调多人博弈、短中长期收益和硬边界。",
   },
 };
+
+const sessionStatusLabels: Record<SessionStatus, string> = {
+  draft: "草稿",
+  live: "进行中",
+  analyzing: "分析中",
+  report_ready: "报告就绪",
+  accepted: "已接受录用",
+  hub_active: "指挥中心已激活",
+};
+
+const findingSeverityLabels = {
+  critical: "致命",
+  major: "重大",
+  medium: "中等",
+  minor: "次要",
+} as const;
+
+const findingCategoryLabels: Record<string, string> = {
+  communication: "沟通",
+  engineering: "工程",
+  product: "产品",
+  behavior: "行为",
+  business: "业务",
+  data: "数据",
+  leadership: "领导力",
+  operations: "运营",
+  risk: "风险",
+};
+
+const commandModeLabels: Record<CommandMode, string> = {
+  copilot: "副驾",
+  strategy: "战略",
+  sandbox: "沙盒",
+};
+
+export function formatRolePackLabel(rolePackId: RolePackId) {
+  return rolePacks[rolePackId].label;
+}
+
+export function formatSessionStatus(status: SessionStatus) {
+  return sessionStatusLabels[status];
+}
+
+export function formatFindingSeverity(
+  severity: z.infer<typeof DiagnosticFindingSchema>["severity"],
+) {
+  return findingSeverityLabels[severity];
+}
+
+export function formatFindingCategory(category: string) {
+  return findingCategoryLabels[category] ?? category;
+}
+
+export function formatCommandModeLabel(mode: CommandMode) {
+  return commandModeLabels[mode];
+}
 
 export function getRolePack(rolePackId: RolePackId) {
   return rolePacks[rolePackId];

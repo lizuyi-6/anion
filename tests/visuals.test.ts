@@ -33,7 +33,7 @@ describe("visual renderers", () => {
 
   it("creates a timeline layout", () => {
     const layout = buildTimelineLayout({
-      items: [{ phase: "MVP", startWeek: 2, durationWeeks: 3, owner: "Eng" }],
+      items: [{ phase: "最小可行版本", startWeek: 2, durationWeeks: 3, owner: "工程" }],
     });
 
     expect(layout.totalWeeks).toBe(4);

@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import type { Viewer } from "@/lib/domain";
+import { formatRolePackLabel } from "@/lib/domain";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -34,9 +35,7 @@ export function AppFrame({
   shellMode?: AppShellMode;
 }) {
   const workspaceLabel =
-    shellMode === "command" 
-      ? "指挥中心" 
-      : workspaceLabels[viewer.workspaceMode] || "默认模式";
+    shellMode === "command" ? "指挥中心" : workspaceLabels[viewer.workspaceMode] ?? "默认模式";
 
   return (
     <div className={cn("app-shell", `shell-${shellMode}`)} data-shell={shellMode}>
@@ -46,9 +45,7 @@ export function AppFrame({
             莫比乌斯计划
           </Link>
           <p className="eyebrow">
-            {shellMode === "command"
-              ? "个人指挥中心"
-              : "面试模拟器 + 指挥中心"}
+            {shellMode === "command" ? "个人指挥中心" : "面试模拟器 + 指挥中心"}
           </p>
         </div>
         <div className="topbar-meta">
@@ -67,7 +64,7 @@ export function AppFrame({
           <div className="panel">
             <p className="panel-label">查看者</p>
             <h3>{viewer.displayName}</h3>
-            <p className="muted-copy">首选角色包：{viewer.preferredRolePack}</p>
+            <p className="muted-copy">首选角色包：{formatRolePackLabel(viewer.preferredRolePack)}</p>
           </div>
           <nav className="nav-list">
             {navItems.map((item) => (
@@ -85,7 +82,7 @@ export function AppFrame({
         <main className="content">
           <section className="hero-card">
             <p className="eyebrow">
-              {shellMode === "command" ? "系统协议/忠诚模式" : "系统状态"}
+              {shellMode === "command" ? "系统协议 / 忠诚模式" : "系统状态"}
             </p>
             <h1>{title}</h1>
             <p className="hero-copy">{subtitle}</p>

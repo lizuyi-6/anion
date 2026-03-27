@@ -6,7 +6,7 @@ import { hasSupabase, hasSupabaseAdmin, runtimeEnv } from "@/lib/env";
 
 export async function createSupabaseServerClient() {
   if (!hasSupabase()) {
-    throw new Error("Supabase runtime is not configured");
+    throw new Error("Supabase 运行环境未配置");
   }
 
   const cookieStore = await cookies();
@@ -31,7 +31,7 @@ export async function createSupabaseServerClient() {
 
 export function createSupabaseAdminClient() {
   if (!hasSupabaseAdmin()) {
-    throw new Error("Supabase admin runtime is not configured");
+    throw new Error("Supabase 管理端运行环境未配置");
   }
 
   return createClient(

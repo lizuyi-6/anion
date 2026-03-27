@@ -412,13 +412,13 @@ export function buildDirectorMovePlan(params: {
       ? `${challenger.conflictDirective} ${challenger.evidenceDirective}`
       : undefined,
     conflictReason: challenger
-      ? `${challenger.label} should challenge the current answer because ${signals.weaknesses[0] ?? "the trade-off is not fully closed"}.`
+      ? `${challenger.label} 应该挑战当前回答，因为${signals.weaknesses[0] ?? "这笔取舍还没有真正闭环"}。`
       : undefined,
     openLoops,
     brief: [
-      `Primary seam: ${signals.weaknesses[0] ?? "Push one level deeper."}`,
-      `Primary interviewer: ${primary.label}.`,
-      signals.strengths[0] ? `Candidate strength to preserve: ${signals.strengths[0]}` : "",
+      `主缝隙：${signals.weaknesses[0] ?? "继续往下一层。"} `,
+      `主讲面试官：${primary.label}。`,
+      signals.strengths[0] ? `需要保留的候选人优势：${signals.strengths[0]}` : "",
     ]
       .filter(Boolean)
       .join(" "),

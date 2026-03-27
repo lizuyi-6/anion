@@ -100,7 +100,7 @@ export async function completeSession(sessionId: string) {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to queue report generation");
+    throw new Error("提交报告生成任务失败");
   }
 
   return response.json();

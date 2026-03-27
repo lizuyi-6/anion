@@ -16,7 +16,7 @@ export default async function SignInPage() {
     <AppFrame
       viewer={{
         id: "guest",
-        displayName: "Guest",
+        displayName: "访客",
         isDemo: true,
         workspaceMode: "interview",
         preferredRolePack: "engineering",

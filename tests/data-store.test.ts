@@ -21,7 +21,7 @@ describe("MemoryDataStore", () => {
         jobDescription: "Build systems and own the architecture trade-offs.",
         interviewers: ["hacker", "architect", "founder"],
         materials: [],
-        candidateName: "Candidate",
+        candidateName: "候选人",
       },
       directorState: {
         openLoops: ["loop"],
@@ -49,7 +49,7 @@ describe("MemoryDataStore", () => {
         jobDescription: "Own platform architecture and cross-functional execution.",
         interviewers: ["hacker", "architect", "founder"],
         materials: [],
-        candidateName: "Candidate",
+        candidateName: "候选人",
       },
       directorState: {
         openLoops: ["loop"],

@@ -6,7 +6,7 @@ import { storeUpload } from "@/lib/server/services/uploads";
 export async function POST(request: Request) {
   const viewer = await getViewer();
   if (!viewer) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "未授权" }, { status: 401 });
   }
 
   const formData = await request.formData();

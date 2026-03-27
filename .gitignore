@@ -32,6 +32,7 @@ yarn-error.log*
 .demo-server*.log
 .local-dev*.log
 output-playwright-*.png
+/output/playwright/
 
 # env files (can opt-in for committing if needed)
 .env*

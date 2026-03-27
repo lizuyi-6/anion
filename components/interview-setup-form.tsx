@@ -3,9 +3,9 @@
 import { useRouter } from "next/navigation";
 import { startTransition, useMemo, useState } from "react";
 
+import { createSession, uploadFiles } from "@/lib/client/api";
 import type { RolePackId, SessionConfig, UploadReference } from "@/lib/domain";
 import { rolePacks } from "@/lib/domain";
-import { createSession, uploadFiles } from "@/lib/client/api";
 
 type FormState = Omit<SessionConfig, "materials"> & {
   materials: UploadReference[];
@@ -21,7 +21,7 @@ export function InterviewSetupForm({
     rolePack: defaultRolePack,
     targetCompany: "",
     industry: "",
-    level: "Senior",
+    level: "资深",
     jobDescription: "",
     interviewers: rolePacks[defaultRolePack].interviewers.map((item) => item.id),
     materials: [],
@@ -67,8 +67,8 @@ export function InterviewSetupForm({
         ...current,
         materials: [...current.materials, ...uploads],
       }));
-    } catch (error) {
-      setError(error instanceof Error ? `上传失败: ${error.message}` : "上传失败");
+    } catch (uploadError) {
+      setError(uploadError instanceof Error ? `上传失败：${uploadError.message}` : "上传失败");
     } finally {
       setIsUploading(false);
     }
@@ -78,19 +78,23 @@ export function InterviewSetupForm({
     event.preventDefault();
     setError("");
 
-    // 客户端验证
+    if (isUploading) {
+      setError("材料仍在上传，请稍候再提交。");
+      return;
+    }
+
     if (form.targetCompany.trim().length < 2) {
-      setError("目标公司名称至少需要 2 个字符");
+      setError("目标公司名称至少需要 2 个字符。");
       return;
     }
 
     if (form.jobDescription.trim().length < 20) {
-      setError("职位描述至少需要 20 个字符");
+      setError("职位描述至少需要 20 个字符。");
       return;
     }
 
     if (form.interviewers.length === 0) {
-      setError("请至少选择一位面试官");
+      setError("请至少选择一位面试官。");
       return;
     }
 
@@ -102,27 +106,32 @@ export function InterviewSetupForm({
         router.push(`/simulator/${result.sessionId}`);
       });
     } catch (submissionError) {
-      setError(
-        submissionError instanceof Error ? submissionError.message : "创建失败",
-      );
+      setError(submissionError instanceof Error ? submissionError.message : "创建失败");
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const submitLabel = isUploading
+    ? "材料上传中..."
+    : isSubmitting
+      ? "正在创建..."
+      : "进入面试模拟器";
+
   return (
-    <form className="stack-lg" onSubmit={onSubmit}>
+    <form className="stack-lg" onSubmit={onSubmit} data-testid="interview-setup-form">
       <div className="panel">
         <div className="section-head">
           <div>
-            <p className="panel-label">A1 上下文初始化</p>
-            <h3>目标物设定</h3>
+            <p className="panel-label">A1 / 上下文初始化</p>
+            <h3>目标画像设定</h3>
           </div>
         </div>
         <div className="grid-two">
           <label className="field">
             <span>目标公司</span>
             <input
+              data-testid="target-company-input"
               value={form.targetCompany}
               onChange={(event) =>
                 setForm((current) => ({
@@ -136,6 +145,7 @@ export function InterviewSetupForm({
           <label className="field">
             <span>行业</span>
             <input
+              data-testid="industry-input"
               value={form.industry}
               onChange={(event) =>
                 setForm((current) => ({ ...current, industry: event.target.value }))
@@ -145,6 +155,7 @@ export function InterviewSetupForm({
           <label className="field">
             <span>岗位级别</span>
             <input
+              data-testid="level-input"
               value={form.level}
               onChange={(event) =>
                 setForm((current) => ({ ...current, level: event.target.value }))
@@ -155,6 +166,7 @@ export function InterviewSetupForm({
           <label className="field">
             <span>候选人称呼</span>
             <input
+              data-testid="candidate-name-input"
               value={form.candidateName}
               onChange={(event) =>
                 setForm((current) => ({
@@ -168,6 +180,7 @@ export function InterviewSetupForm({
         <label className="field">
           <span>职位描述</span>
           <textarea
+            data-testid="job-description-input"
             value={form.jobDescription}
             onChange={(event) =>
               setForm((current) => ({
@@ -188,16 +201,24 @@ export function InterviewSetupForm({
             <h3>能力包装</h3>
           </div>
         </div>
-        <div className="card-grid">
+        <div className="card-grid" aria-label="角色包选择">
           {(Object.keys(rolePacks) as RolePackId[]).map((rolePackId) => {
             const item = rolePacks[rolePackId];
+            const selected = form.rolePack === rolePackId;
             return (
               <button
                 key={rolePackId}
                 type="button"
-                className={`select-card ${form.rolePack === rolePackId ? "selected" : ""}`}
+                className="select-card"
+                aria-pressed={selected}
+                data-selected={selected ? "true" : "false"}
                 onClick={() => onRolePackChange(rolePackId)}
               >
+                {selected ? (
+                  <span className="select-card-badge" aria-hidden="true">
+                    已选中
+                  </span>
+                ) : null}
                 <strong>{item.label}</strong>
                 <p>{item.summary}</p>
               </button>
@@ -210,19 +231,26 @@ export function InterviewSetupForm({
         <div className="section-head">
           <div>
             <p className="panel-label">面试官矩阵</p>
-            <h3>面试官矩阵选择</h3>
+            <h3>面试官选择</h3>
           </div>
         </div>
-        <div className="card-grid">
+        <div className="card-grid" aria-label="面试官选择">
           {pack.interviewers.map((interviewer) => {
             const checked = form.interviewers.includes(interviewer.id);
             return (
               <button
                 key={interviewer.id}
                 type="button"
-                className={`select-card ${checked ? "selected" : ""}`}
+                className="select-card"
+                aria-pressed={checked}
+                data-selected={checked ? "true" : "false"}
                 onClick={() => toggleInterviewer(interviewer.id)}
               >
+                {checked ? (
+                  <span className="select-card-badge" aria-hidden="true">
+                    已选中
+                  </span>
+                ) : null}
                 <span className="eyebrow">{interviewer.title}</span>
                 <strong>{interviewer.label}</strong>
                 <p>{interviewer.style}</p>
@@ -240,7 +268,7 @@ export function InterviewSetupForm({
           </div>
         </div>
         <label className="upload-box">
-          <span>上传简历、项目材料、日志或补充文档</span>
+          <span>上传简历、项目材料、日志或补充文档。</span>
           <input
             type="file"
             multiple
@@ -262,8 +290,13 @@ export function InterviewSetupForm({
 
       {error ? <p className="error-copy">{error}</p> : null}
 
-      <button type="submit" className="primary-button" disabled={isSubmitting}>
-        {isSubmitting ? "正在创建..." : "进入面试模拟器"}
+      <button
+        type="submit"
+        className="primary-button"
+        disabled={isSubmitting || isUploading}
+        data-testid="create-session-button"
+      >
+        {submitLabel}
       </button>
     </form>
   );

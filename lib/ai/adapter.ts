@@ -149,7 +149,7 @@ class MockAiProvider implements AiProviderAdapter {
         .reverse()
         .find((turn) => turn.role === "candidate")
         ?.content ??
-      "The candidate gave a short answer.";
+      "候选人给出了一个较短的回答。";
     const seed = sentenceSplit(lastCandidate).at(0) ?? lastCandidate;
     const kind = input.forcedKind ?? "follow_up";
 
@@ -188,7 +188,7 @@ class MockAiProvider implements AiProviderAdapter {
       .map((turn) => summarizeText(turn.content, 140));
 
     while (evidence.length < 3) {
-      evidence.push("The candidate produced a usable but pressure-sensitive answer frame.");
+      evidence.push("候选人给出了一个可用但对压力较敏感的回答框架。");
     }
 
     return DiagnosticReportSchema.parse({
@@ -368,20 +368,20 @@ class MockAiProvider implements AiProviderAdapter {
         citations: [],
         diagramSpec: {
           nodes: [
-            { id: "signal", label: "Demand Signal", lane: 0 },
-            { id: "mvp", label: "Thin MVP", lane: 1 },
-            { id: "scale", label: "Scale Controls", lane: 2 },
+            { id: "signal", label: "需求信号", lane: 0 },
+            { id: "mvp", label: "最小可行版本", lane: 1 },
+            { id: "scale", label: "放量控制", lane: 2 },
           ],
           edges: [
-            { from: "signal", to: "mvp", label: "validated pain" },
-            { from: "mvp", to: "scale", label: "measured traction" },
+            { from: "signal", to: "mvp", label: "已验证痛点" },
+            { from: "mvp", to: "scale", label: "已测得牵引" },
           ],
         },
         timelineSpec: {
           items: [
-            { phase: "Discovery", startWeek: 1, durationWeeks: 2, owner: "Strategy" },
-            { phase: "MVP", startWeek: 3, durationWeeks: 3, owner: "Product + Eng" },
-            { phase: "Rollout", startWeek: 6, durationWeeks: 2, owner: "Ops" },
+            { phase: "探索", startWeek: 1, durationWeeks: 2, owner: "战略" },
+            { phase: "最小可行版本", startWeek: 3, durationWeeks: 3, owner: "产品 + 工程" },
+            { phase: "放量", startWeek: 6, durationWeeks: 2, owner: "运营" },
           ],
         },
         risks: [
@@ -389,7 +389,7 @@ class MockAiProvider implements AiProviderAdapter {
           "如果指标定义始终模糊，后续复盘无法支撑继续投入。",
         ],
         deliverables: [
-          "一版可执行的 PRD/FSR 主文档",
+          "一版可执行的产品需求文档 / 可行性研究主文档",
           "一张端到端数据/业务流程图",
           "一个按周拆解的里程碑与资源表",
         ],
@@ -398,7 +398,7 @@ class MockAiProvider implements AiProviderAdapter {
           "关键链路 owner、接口和验收标准在立项阶段已锁定",
         ],
         assumptions: [
-          "现有团队具备最小 MVP 所需的工程交付能力",
+          "现有团队具备交付最小可行版本所需的工程能力",
           "业务方愿意为首版验证让渡部分范围和节奏",
         ],
         openQuestions: [
@@ -452,21 +452,21 @@ class OpenAiProvider implements AiProviderAdapter {
 
   async generateInterviewEvent(input: InterviewGenerationInput) {
     const prompt = [
-      "You are the Project Mobius interview conductor.",
-      `Target company: ${input.session.config.targetCompany}`,
-      `Role pack: ${input.session.config.rolePack}`,
-      `Level: ${input.session.config.level}`,
-      `Job description: ${summarizeText(input.session.config.jobDescription, 1500)}`,
-      `Director state: ${JSON.stringify(input.session.directorState)}`,
-      `Last turns: ${JSON.stringify(input.turns.slice(-4))}`,
-      input.directorBrief ? `Director brief: ${input.directorBrief}` : "",
-      input.openLoops?.length ? `Open loops: ${JSON.stringify(input.openLoops)}` : "",
-      input.candidateAnswer ? `Latest answer: ${input.candidateAnswer}` : "",
-      input.preferredSpeakerId ? `Required speaker id: ${input.preferredSpeakerId}` : "",
-      input.speakerDirective ? `Speaker contract: ${input.speakerDirective}` : "",
-      input.forcedKind ? `Required next kind: ${input.forcedKind}` : "",
-      input.forcedRationale ? `Reason to preserve: ${input.forcedRationale}` : "",
-      "Return a single structured event in Chinese. Keep it sharp, high-pressure, causality-focused, and speaker-specific.",
+      "你是莫比乌斯计划的面试指挥官。",
+      `目标公司：${input.session.config.targetCompany}`,
+      `角色包：${input.session.config.rolePack}`,
+      `岗位级别：${input.session.config.level}`,
+      `职位描述：${summarizeText(input.session.config.jobDescription, 1500)}`,
+      `导演状态：${JSON.stringify(input.session.directorState)}`,
+      `最近轮次：${JSON.stringify(input.turns.slice(-4))}`,
+      input.directorBrief ? `导演提示：${input.directorBrief}` : "",
+      input.openLoops?.length ? `待补闭环：${JSON.stringify(input.openLoops)}` : "",
+      input.candidateAnswer ? `最新回答：${input.candidateAnswer}` : "",
+      input.preferredSpeakerId ? `指定发言人 ID：${input.preferredSpeakerId}` : "",
+      input.speakerDirective ? `发言人契约：${input.speakerDirective}` : "",
+      input.forcedKind ? `指定下一个事件类型：${input.forcedKind}` : "",
+      input.forcedRationale ? `必须保留的理由：${input.forcedRationale}` : "",
+      "只返回一个中文结构化事件。保持尖锐、高压、聚焦因果，并与发言人身份一致。",
     ]
       .filter(Boolean)
       .join("\n");
@@ -494,12 +494,12 @@ class OpenAiProvider implements AiProviderAdapter {
     const response = await this.client.responses.parse({
       model: runtimeEnv.openAiModel,
       input: [
-        "You are the Project Mobius diagnostic report engine.",
-        `Role pack: ${input.session.config.rolePack}`,
-        `Session config: ${JSON.stringify(input.session.config)}`,
-        `Interview turns: ${JSON.stringify(input.turns)}`,
-        "Output Chinese only. Be direct, skeptical, and actionable.",
-        "Every finding must point to evidenceTurnIds. evidenceAnchors should include excerpt, speakerLabel, and note.",
+        "你是莫比乌斯计划的诊断报告引擎。",
+        `角色包：${input.session.config.rolePack}`,
+        `会话配置：${JSON.stringify(input.session.config)}`,
+        `面试轮次：${JSON.stringify(input.turns)}`,
+        "只输出中文。保持直接、怀疑、可执行。",
+        "每条 finding 都必须指向 evidenceTurnIds；evidenceAnchors 必须包含 `excerpt`、`speakerLabel` 和 `note`。",
       ].join("\n"),
       text: {
         format: zodTextFormat(
@@ -530,11 +530,11 @@ class OpenAiProvider implements AiProviderAdapter {
     const response = await this.client.responses.parse({
       model: runtimeEnv.openAiModel,
       input: [
-        "You are the Project Mobius memory refactoring engine.",
-        `Session config: ${JSON.stringify(input.session.config)}`,
-        `Diagnostic report: ${JSON.stringify(input.report)}`,
-        `Interview transcript: ${JSON.stringify(input.turns)}`,
-        "Output a searchable Chinese memory profile. Every node must include sourceTurnIds. replayMoments should capture memorable slices that can be replayed later.",
+        "你是莫比乌斯计划的记忆重构引擎。",
+        `会话配置：${JSON.stringify(input.session.config)}`,
+        `诊断报告：${JSON.stringify(input.report)}`,
+        `面试全文：${JSON.stringify(input.turns)}`,
+        "输出一份可检索的中文记忆画像。每个节点都必须包含 `sourceTurnIds`。`replayMoments` 要提炼出后续可重放的关键切片。",
       ].join("\n"),
       text: {
         format: zodTextFormat(
@@ -572,13 +572,13 @@ class OpenAiProvider implements AiProviderAdapter {
       const response = await this.client.responses.parse({
         model: runtimeEnv.openAiModel,
         input: [
-          "You are the user's loyal engineering copilot.",
-          `Viewer: ${input.viewer.displayName}`,
-          `Active memory context: ${memoryContext}`,
-          `Recent history: ${JSON.stringify(input.history.slice(-4))}`,
-          `User input: ${input.prompt}`,
-          attachmentContext ? `Attachments: ${attachmentContext}` : "",
-          "Return Chinese only. Start with root cause, then the shortest fix, then optional refactors, then watchouts. Explicitly anchor the advice to gaps or wins from memory when possible.",
+          "你是用户忠诚的工程副驾。",
+          `查看者：${input.viewer.displayName}`,
+          `活跃记忆上下文：${memoryContext}`,
+          `最近历史：${JSON.stringify(input.history.slice(-4))}`,
+          `用户输入：${input.prompt}`,
+          attachmentContext ? `附件：${attachmentContext}` : "",
+          "只返回中文。先给根因，再给最短修复路径，再给可选重构，最后给注意事项。尽量把建议锚定到记忆中的短板或优势。",
         ]
           .filter(Boolean)
           .join("\n"),
@@ -602,11 +602,11 @@ class OpenAiProvider implements AiProviderAdapter {
       const response = await this.client.responses.parse({
         model: runtimeEnv.openAiModel,
         input: [
-          "You are the Project Mobius feasibility and strategy engine.",
-          `Active memory context: ${memoryContext}`,
-          `User input: ${input.prompt}`,
-          attachmentContext ? `Attachments: ${attachmentContext}` : "",
-          "Return Chinese only. Must include 市场背景, 问题定义, 可行性判断, 架构/流程图 DSL, 排期与资源, 风险与前置条件, plus deliverables, successMetrics, assumptions, and openQuestions.",
+          "你是莫比乌斯计划的可行性与战略引擎。",
+          `活跃记忆上下文：${memoryContext}`,
+          `用户输入：${input.prompt}`,
+          attachmentContext ? `附件：${attachmentContext}` : "",
+          "只返回中文。必须包含市场背景、问题定义、可行性判断、架构/流程图 DSL、排期与资源、风险与前置条件，并补充 deliverables、successMetrics、assumptions 和 openQuestions。",
         ]
           .filter(Boolean)
           .join("\n"),
@@ -631,11 +631,11 @@ class OpenAiProvider implements AiProviderAdapter {
     const response = await this.client.responses.parse({
       model: runtimeEnv.openAiModel,
       input: [
-        "You are the Project Mobius workplace sandbox.",
-        `Active memory context: ${memoryContext}`,
-        `Recent history: ${JSON.stringify(input.history.slice(-4))}`,
-        `User input: ${input.prompt}`,
-        "Return Chinese only. Include the current equilibrium, incentives, recommended move, long-term cost, pressurePoints, scenarioBranches, and 3-5 meeting-ready talk tracks.",
+        "你是莫比乌斯计划的职场博弈沙盒。",
+        `活跃记忆上下文：${memoryContext}`,
+        `最近历史：${JSON.stringify(input.history.slice(-4))}`,
+        `用户输入：${input.prompt}`,
+        "只返回中文。必须包含当前均衡、激励、推荐动作、长期成本、pressurePoints、scenarioBranches，以及 3-5 条可直接带进会议的话术。",
       ].join("\n"),
       text: {
         format: zodTextFormat(

@@ -5,6 +5,7 @@ import { AcceptOfferButton } from "@/components/accept-offer-button";
 import { AppFrame } from "@/components/app-frame";
 import { RadarChart } from "@/components/radar-chart";
 import { ReportStatusPanel } from "@/components/report-status-panel";
+import { formatFindingCategory, formatFindingSeverity } from "@/lib/domain";
 import { requireViewer } from "@/lib/server/auth";
 import { getDataStore } from "@/lib/server/store/repository";
 import { getSessionDiagnostics } from "@/lib/server/services/analysis";
@@ -29,7 +30,7 @@ export default async function ReportPage({
     <AppFrame
       viewer={viewer}
       title="终局透视报告"
-      subtitle="雷达、证据锚点、STAR 高光和可复用记忆，都从同一条面试轨迹里提纯出来。"
+      subtitle="雷达图、证据锚点、STAR 高光和可复用记忆，都从同一条面试轨迹里提纯出来。"
       shellMode="interview"
     >
       {!report ? (
@@ -70,8 +71,10 @@ export default async function ReportPage({
               {report.findings.map((finding) => (
                 <article key={finding.title} className="report-block">
                   <div className="chip-row">
-                    <span className="status-pill">{finding.severity}</span>
-                    <span className="status-pill subtle">{finding.category}</span>
+                    <span className="status-pill">{formatFindingSeverity(finding.severity)}</span>
+                    <span className="status-pill subtle">
+                      {formatFindingCategory(finding.category)}
+                    </span>
                   </div>
                   <h4>{finding.title}</h4>
                   <p>{finding.detail}</p>
@@ -119,7 +122,7 @@ export default async function ReportPage({
             <div className="section-head">
               <div>
                 <p className="panel-label">B1 / 记忆重构</p>
-                <h3>提取的记忆图谱</h3>
+                <h3>提取出的记忆图谱</h3>
               </div>
             </div>
             {memoryProfile ? (
@@ -169,8 +172,8 @@ export default async function ReportPage({
           <section className="panel transition-panel">
             <div className="section-head">
               <div>
-                <p className="panel-label">B2 / 状态转换</p>
-                <h3>接受 offer</h3>
+                <p className="panel-label">B2 / 状态切换</p>
+                <h3>接受录用</h3>
               </div>
             </div>
             <p className="hero-copy">

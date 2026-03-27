@@ -64,7 +64,7 @@ describe("interview to command center flow", () => {
 
     expect(result.artifact.mode).toBe("copilot");
     if (result.artifact.mode !== "copilot") {
-      throw new Error("Expected copilot artifact");
+      throw new Error("期望得到副驾产物");
     }
     expect(result.artifact.watchouts.length).toBeGreaterThan(0);
     expect((await store.getSession(session.id))?.status).toBe("hub_active");

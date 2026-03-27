@@ -34,14 +34,14 @@ const report: DiagnosticReport = {
   id: "report_1",
   sessionId: "session_1",
   scores: [
-    { key: "a", label: "Depth", score: 70, signal: "稳住了主线。" },
-    { key: "b", label: "Framing", score: 68, signal: "判断还算清楚。" },
-    { key: "c", label: "Communication", score: 64, signal: "落结论稍慢。" },
-    { key: "d", label: "Pressure", score: 72, signal: "抗压尚可。" },
-    { key: "e", label: "Judgment", score: 66, signal: "取舍略薄。" },
-    { key: "f", label: "Ownership", score: 75, signal: "责任边界较清楚。" },
-    { key: "g", label: "Intuition", score: 69, signal: "工程直觉可用。" },
-    { key: "h", label: "Resilience", score: 73, signal: "系统韧性意识较强。" },
+    { key: "a", label: "深度", score: 70, signal: "稳住了主线。" },
+    { key: "b", label: "框定", score: 68, signal: "判断还算清楚。" },
+    { key: "c", label: "表达", score: 64, signal: "落结论稍慢。" },
+    { key: "d", label: "抗压", score: 72, signal: "抗压尚可。" },
+    { key: "e", label: "判断", score: 66, signal: "取舍略薄。" },
+    { key: "f", label: "担当", score: 75, signal: "责任边界较清楚。" },
+    { key: "g", label: "直觉", score: 69, signal: "工程直觉可用。" },
+    { key: "h", label: "韧性", score: 73, signal: "系统韧性意识较强。" },
   ],
   evidence: ["A", "B", "C"],
   evidenceAnchors: [],
@@ -70,11 +70,11 @@ const report: DiagnosticReport = {
 };
 
 describe("visual components", () => {
-  it("renders the command shell with the corrected wordmark", () => {
+  it("renders the command shell with the localized wordmark", () => {
     const { container } = render(
       <AppFrame
         viewer={viewer}
-        title="Command Center"
+        title="指挥中心"
         subtitle="subtitle"
         shellMode="command"
       >
@@ -82,7 +82,7 @@ describe("visual components", () => {
       </AppFrame>,
     );
 
-    expect(screen.getByText("Project Möbius")).toBeInTheDocument();
+    expect(screen.getByText("莫比乌斯计划")).toBeInTheDocument();
     expect(container.querySelector('[data-shell="command"]')).toBeInTheDocument();
   });
 
@@ -90,6 +90,6 @@ describe("visual components", () => {
     render(<RadarChart report={report} />);
 
     expect(screen.getByText("高维雷达图")).toBeInTheDocument();
-    expect(screen.getByLabelText("diagnostic radar")).toBeInTheDocument();
+    expect(screen.getByLabelText("诊断雷达图")).toBeInTheDocument();
   });
 });

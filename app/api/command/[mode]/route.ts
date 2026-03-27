@@ -12,12 +12,12 @@ export async function POST(
   const { mode } = await context.params;
 
   if (!commandModes.includes(mode as (typeof commandModes)[number])) {
-    return NextResponse.json({ error: "Unsupported mode" }, { status: 400 });
+    return NextResponse.json({ error: "不支持的模式" }, { status: 400 });
   }
 
   const viewer = await getViewer();
   if (!viewer) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "未授权" }, { status: 401 });
   }
 
   const payload = CommandRequestSchema.parse(await request.json());

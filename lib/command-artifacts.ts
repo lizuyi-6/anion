@@ -37,10 +37,10 @@ export function buildCommandInput<TMode extends CommandMode>(params: {
   if (params.mode === "copilot") {
     const brief = params.brief as CopilotBrief;
     return [
-      `问题类型: ${brief.issueType}`,
-      `运行环境: ${brief.runtime}`,
-      `疑似层级: ${brief.suspectedLayer}`,
-      `期望输出: ${brief.desiredOutcome}`,
+      `问题类型：${brief.issueType}`,
+      `运行环境：${brief.runtime}`,
+      `疑似层级：${brief.suspectedLayer}`,
+      `期望输出：${brief.desiredOutcome}`,
       "",
       trimmedNarrative,
     ]
@@ -51,10 +51,10 @@ export function buildCommandInput<TMode extends CommandMode>(params: {
   if (params.mode === "strategy") {
     const brief = params.brief as StrategyBrief;
     return [
-      `目标交付物: ${brief.deliverable}`,
-      `目标用户/对象: ${brief.targetUser}`,
-      `关键约束: ${brief.constraints}`,
-      `预期时间线: ${brief.timeline}`,
+      `目标交付物：${brief.deliverable}`,
+      `目标用户 / 对象：${brief.targetUser}`,
+      `关键约束：${brief.constraints}`,
+      `预期时间线：${brief.timeline}`,
       "",
       trimmedNarrative,
     ]
@@ -64,10 +64,10 @@ export function buildCommandInput<TMode extends CommandMode>(params: {
 
   const brief = params.brief as SandboxBrief;
   return [
-    `对手角色: ${brief.counterpartRole}`,
-    `对手激励: ${brief.incentives}`,
-    `你的红线: ${brief.redLine}`,
-    `会议窗口: ${brief.meetingWindow}`,
+    `对手角色：${brief.counterpartRole}`,
+    `对手激励：${brief.incentives}`,
+    `你的红线：${brief.redLine}`,
+    `会议窗口：${brief.meetingWindow}`,
     "",
     trimmedNarrative,
   ]
@@ -78,7 +78,7 @@ export function buildCommandInput<TMode extends CommandMode>(params: {
 export function commandArtifactToMarkdown(artifact: CommandArtifact) {
   if (artifact.mode === "copilot") {
     return [
-      "# 工程 Copilot",
+      "# 工程副驾建议",
       "",
       "## 根本原因",
       artifact.rootCause,
@@ -125,19 +125,19 @@ export function commandArtifactToMarkdown(artifact: CommandArtifact) {
   }
 
   return [
-    "# 博弈论沙盒",
+    "# 职场博弈沙盘",
     "",
     "## 当前均衡",
     artifact.equilibrium,
     "",
-    "## 推荐策略",
+    "## 推荐动作",
     artifact.recommendedMove,
     "",
     "## 长期成本",
     artifact.longTermCost,
     "",
     ...(artifact.pressurePoints.length > 0
-      ? ["## 压力点", ...artifact.pressurePoints.map((item) => `- ${item}`), ""]
+      ? ["## 施压点", ...artifact.pressurePoints.map((item) => `- ${item}`), ""]
       : []),
     "## 话术要点",
     ...artifact.talkTracks.map((item) => `- ${item}`),
@@ -147,9 +147,9 @@ export function commandArtifactToMarkdown(artifact: CommandArtifact) {
           "## 情景分支",
           ...artifact.scenarioBranches.flatMap((branch) => [
             `### ${branch.name}`,
-            `- 如果施压: ${branch.ifYouPush}`,
-            `- 如果让步: ${branch.ifYouConcede}`,
-            `- 关注信号: ${branch.signalToWatch}`,
+            `- 如果施压：${branch.ifYouPush}`,
+            `- 如果让步：${branch.ifYouConcede}`,
+            `- 关注信号：${branch.signalToWatch}`,
           ]),
         ]
       : []),
