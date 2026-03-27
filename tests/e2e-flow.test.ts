@@ -1,4 +1,18 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+const { MockAiProvider } = vi.hoisted(() => {
+  // Force mock provider via dynamic import with stubbed env
+  return { MockAiProvider: null as any };
+});
+
+vi.mock("@/lib/ai/adapter", async (importOriginal) => {
+  const original = await importOriginal<typeof import("@/lib/ai/adapter")>();
+  const mockProvider = new original.MockAiProvider();
+  return {
+    ...original,
+    getAiProvider: () => mockProvider,
+  };
+});
 
 import { createInterviewSession, generateNextInterviewBeat } from "@/lib/server/services/interview";
 import { executeInterviewAnalysis } from "@/lib/server/services/analysis";

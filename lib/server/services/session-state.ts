@@ -12,7 +12,9 @@ export function isAnalysisRetryable(session: InterviewSession) {
   if (
     session.status === "report_ready" ||
     session.status === "accepted" ||
-    session.status === "hub_active"
+    session.status === "hub_active" ||
+    session.status === "live" ||
+    session.status === "draft"
   ) {
     return false;
   }

@@ -106,9 +106,14 @@ export async function executeInterviewAnalysis(params: {
       userId: session.userId,
       profile: memoryProfile,
     });
-    const embeddings = await ai.generateEmbeddings?.(
-      evidence.map((entry) => `${entry.kind}: ${entry.label}. ${entry.summary}`),
-    );
+    let embeddings: number[][] | null = null;
+    try {
+      embeddings = (await ai.generateEmbeddings?.(
+        evidence.map((entry) => `${entry.kind}: ${entry.label}. ${entry.summary}`),
+      )) ?? null;
+    } catch (embeddingError) {
+      console.error("Embedding generation failed, proceeding without embeddings:", embeddingError);
+    }
     const evidenceWithEmbeddings = evidence.map((entry, index) => ({
       ...entry,
       embedding: embeddings?.[index],

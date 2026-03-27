@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { getViewer } from "@/lib/server/auth";
+import { createUnexpectedErrorResponse } from "@/lib/server/route-errors";
 import { getDataStore } from "@/lib/server/store/repository";
 import { canActivateCommandCenter } from "@/lib/server/services/session-state";
 
@@ -14,25 +15,29 @@ export async function POST(
     return NextResponse.json({ error: "未授权" }, { status: 401 });
   }
 
-  const store = await getDataStore({ viewer });
-  const session = await store.getSession(sessionId);
+  try {
+    const store = await getDataStore({ viewer });
+    const session = await store.getSession(sessionId);
 
-  if (!session) {
-    return NextResponse.json({ error: "未找到会话" }, { status: 404 });
+    if (!session) {
+      return NextResponse.json({ error: "未找到会话" }, { status: 404 });
+    }
+
+    if (!canActivateCommandCenter(session)) {
+      return NextResponse.json(
+        { error: "必须先接受录用，才能进入指挥中心" },
+        { status: 409 },
+      );
+    }
+
+    await store.updateSession(sessionId, {
+      status: "hub_active",
+    });
+    await store.setWorkspaceMode(viewer.id, "command_center");
+    await store.activateMemoryProfile(sessionId, viewer.id);
+
+    return NextResponse.json({ ok: true, nextStatus: "hub_active" });
+  } catch (error) {
+    return createUnexpectedErrorResponse(error);
   }
-
-  if (!canActivateCommandCenter(session)) {
-    return NextResponse.json(
-      { error: "必须先接受录用，才能进入指挥中心" },
-      { status: 409 },
-    );
-  }
-
-  await store.updateSession(sessionId, {
-    status: "hub_active",
-  });
-  await store.setWorkspaceMode(viewer.id, "command_center");
-  await store.activateMemoryProfile(sessionId, viewer.id);
-
-  return NextResponse.json({ ok: true, nextStatus: "hub_active" });
 }

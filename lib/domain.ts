@@ -65,7 +65,7 @@ export type UploadReference = z.infer<typeof UploadReferenceSchema>;
 export const SessionConfigSchema = z.object({
   rolePack: z.enum(rolePackIds),
   targetCompany: z.string().min(2).max(120),
-  industry: z.string().min(2).max(120).optional().default(""),
+  industry: z.string().min(0).max(120).default(""),
   level: z.string().min(2).max(60),
   jobDescription: z.string().min(20).max(8000),
   interviewers: z.array(z.string()).min(1).max(4),
@@ -292,7 +292,7 @@ export const StrategySectionSchema = z.object({
 export const StrategyReportSchema = z.object({
   id: z.string(),
   mode: z.literal("strategy"),
-  sections: z.array(StrategySectionSchema).length(6),
+  sections: z.array(StrategySectionSchema).min(4).max(8),
   citations: z.array(CitationSchema).default([]),
   diagramSpec: DiagramSpecSchema,
   timelineSpec: TimelineSpecSchema,
@@ -324,7 +324,7 @@ export const SandboxOutcomeSchema = z.object({
   recommendedMove: z.string(),
   longTermCost: z.string(),
   pressurePoints: z.array(z.string()).default([]),
-  talkTracks: z.array(z.string()).min(3).max(5),
+  talkTracks: z.array(z.string()).min(2).max(8),
   scenarioBranches: z.array(SandboxScenarioBranchSchema).default([]),
 });
 

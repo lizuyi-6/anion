@@ -12,15 +12,12 @@ export function createAiErrorResponse(error: unknown, provider: AiProvider) {
 }
 
 export function createUnexpectedErrorResponse(error: unknown) {
-  const message =
-    error instanceof Error && error.message.trim().length > 0
-      ? error.message
-      : "Unexpected server error.";
+  console.error("Unexpected server error:", error);
 
   return NextResponse.json(
     {
       error: "internal_server_error",
-      message,
+      message: "服务器内部错误，请稍后重试。",
     },
     { status: 500 },
   );

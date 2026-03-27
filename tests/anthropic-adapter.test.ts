@@ -88,6 +88,7 @@ describe("Anthropic adapter", () => {
   it("uses output_config.format and parsed_output for Anthropic structured calls", async () => {
     vi.stubEnv("ANTHROPIC_API_KEY", "anthropic-key");
     vi.stubEnv("ANTHROPIC_MODEL", "claude-sonnet-4-20250514");
+    vi.stubEnv("ANTHROPIC_BASE_URL", "");
 
     anthropicMocks.parse.mockResolvedValue({
       parsed_output: {

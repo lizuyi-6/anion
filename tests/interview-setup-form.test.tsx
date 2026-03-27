@@ -69,7 +69,7 @@ describe("InterviewSetupForm", () => {
     expect(submitButton).toHaveTextContent("进入面试模拟器");
     expect(submitButton).toBeEnabled();
 
-    fireEvent.change(screen.getByLabelText("上传简历、项目材料、日志或补充文档。"), {
+    fireEvent.change(screen.getByLabelText(/上传简历、项目材料、日志或补充文档/), {
       target: {
         files: [new File(["resume"], "resume.pdf", { type: "application/pdf" })],
       },

@@ -3,7 +3,7 @@ import { createServerClient } from "@supabase/ssr";
 
 import { hasSupabase, runtimeEnv } from "@/lib/env";
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   if (!hasSupabase()) {
     return NextResponse.next();
   }

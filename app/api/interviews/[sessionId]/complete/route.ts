@@ -3,7 +3,10 @@ import { NextResponse } from "next/server";
 import { CompleteSessionInputSchema } from "@/lib/domain";
 import { resolveAiProvider } from "@/lib/env";
 import { getViewer } from "@/lib/server/auth";
-import { createAiErrorResponse } from "@/lib/server/route-errors";
+import {
+  createAiErrorResponse,
+  createUnexpectedErrorResponse,
+} from "@/lib/server/route-errors";
 import { getDataStore } from "@/lib/server/store/repository";
 import { queueInterviewAnalysis } from "@/lib/server/services/analysis";
 
@@ -17,17 +20,17 @@ export async function POST(
     return NextResponse.json({ error: "未授权" }, { status: 401 });
   }
 
-  const json = await request.json();
-  CompleteSessionInputSchema.parse(json);
-
-  const store = await getDataStore({ viewer });
-  const session = await store.getSession(sessionId);
-
-  if (!session) {
-    return NextResponse.json({ error: "未找到会话" }, { status: 404 });
-  }
-
   try {
+    const json = await request.json();
+    CompleteSessionInputSchema.parse(json);
+
+    const store = await getDataStore({ viewer });
+    const session = await store.getSession(sessionId);
+
+    if (!session) {
+      return NextResponse.json({ error: "未找到会话" }, { status: 404 });
+    }
+
     const analysis = await queueInterviewAnalysis({
       sessionId,
       store,
@@ -39,6 +42,9 @@ export async function POST(
       memoryProfileId: analysis.memoryProfile?.id ?? null,
     });
   } catch (error) {
-    return createAiErrorResponse(error, resolveAiProvider());
+    if (error instanceof Error && error.name === "AiProviderFailure") {
+      return createAiErrorResponse(error, resolveAiProvider());
+    }
+    return createUnexpectedErrorResponse(error);
   }
 }

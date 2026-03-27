@@ -803,6 +803,7 @@ class AnthropicProvider implements AiProviderAdapter {
   private client = new Anthropic({
     apiKey: runtimeEnv.anthropicApiKey,
     baseURL: runtimeEnv.anthropicBaseUrl ?? undefined,
+    dangerouslyAllowBrowser: true,
   });
 
   private getRequestOptions() {
@@ -1089,12 +1090,23 @@ class AnthropicProvider implements AiProviderAdapter {
   }
 }
 
+let _provider: AiProviderAdapter | undefined;
+
 export function getAiProvider(): AiProviderAdapter {
-  if (hasAnthropic()) {
-    return new AnthropicProvider();
+  if (!_provider) {
+    if (hasAnthropic()) {
+      _provider = new AnthropicProvider();
+    } else if (hasOpenAi()) {
+      _provider = new OpenAiProvider();
+    } else {
+      _provider = new MockAiProvider();
+    }
   }
-  if (hasOpenAi()) {
-    return new OpenAiProvider();
-  }
-  return new MockAiProvider();
+  return _provider;
+}
+
+export { MockAiProvider };
+
+export function resetAiProvider(): void {
+  _provider = undefined;
 }
