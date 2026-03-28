@@ -68,3 +68,8 @@ pnpm build
 - `supabase/migrations/0001_mobius.sql` 包含基础表结构和 RLS。
 - `supabase/migrations/0002_phase2_runtime.sql` 增加分析状态和 `session-artifacts` 存储策略。
 - `trigger/interview-analysis.ts` 是启用 Trigger.dev 时的后台分析任务。
+
+## License
+
+本仓库核心代码按 `MIT OR Apache-2.0` 双许可证发布，你可以任选其一使用。
+详细条款见根目录的 `LICENSE`、`LICENSE-MIT` 和 `LICENSE-APACHE`。
