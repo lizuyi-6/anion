@@ -70,7 +70,7 @@ const report: DiagnosticReport = {
 };
 
 describe("visual components", () => {
-  it("renders the command shell with the localized wordmark", () => {
+  it("renders the command shell with the new wordmark", () => {
     const { container } = render(
       <AppFrame
         viewer={viewer}
@@ -82,14 +82,14 @@ describe("visual components", () => {
       </AppFrame>,
     );
 
-    expect(screen.getByText("莫比乌斯计划")).toBeInTheDocument();
+    expect(screen.getByText("Mobius Project")).toBeInTheDocument();
     expect(container.querySelector('[data-shell="command"]')).toBeInTheDocument();
   });
 
   it("renders the radar chart heading and svg", () => {
     render(<RadarChart report={report} />);
 
-    expect(screen.getByText("高维雷达图")).toBeInTheDocument();
-    expect(screen.getByLabelText("诊断雷达图")).toBeInTheDocument();
+    expect(screen.getByText("Multidimensional strengths")).toBeInTheDocument();
+    expect(screen.getByLabelText("Diagnostic radar chart")).toBeInTheDocument();
   });
 });

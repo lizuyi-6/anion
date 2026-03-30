@@ -1,11 +1,22 @@
 import type { Metadata } from "next";
+import { Inter, Manrope } from "next/font/google";
 
 import "./globals.css";
 
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-body",
+});
+
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-display",
+});
+
 export const metadata: Metadata = {
-  title: "莫比乌斯计划",
+  title: "Mobius Project",
   description:
-    "面试模拟器、诊断报告、记忆重构与高压职场备战指挥中心。",
+    "AI-guided interview simulations, diagnostics, and command center workflows for focused career preparation.",
 };
 
 export default function RootLayout({
@@ -14,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN">
+    <html lang="zh-CN" className={`${inter.variable} ${manrope.variable}`}>
       <body>{children}</body>
     </html>
   );

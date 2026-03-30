@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { ThemeToggle } from "@/components/theme-toggle";
 import { completeSession, streamInterviewTurn } from "@/lib/client/api";
 import { formatRolePackLabel, getInterviewerDefinition } from "@/lib/domain";
 import type { InterviewSession, InterviewTurn, LiveTurnEvent } from "@/lib/domain";
@@ -15,13 +17,16 @@ type TurnView = {
   kind: string;
 };
 
+const interviewerPortrait =
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuAPkgOD1h7LdVqZ4HkSug3BmyMUruVM5XPGdiNSwBMFjeHpWUxnkUDwhRyUwGMQASbf2hRva7lhVYGZoa0C0nObyCGGLOxM_sJUmnKUklBtSo3OhDpTks7BshKqgbQuNJDTfFcyB4353Z92wduAX28nqHKqsJ4vmKIJIBZwHwBN4wLxo914gMnxiOJkkILaoQEErPLfir7X1gqnc8OXpRLs3_ZFWL_cxzfEZg8KHVML9Gj_tewKSxWj2WX4Xk5xUVT6Qqfj3nI4U7w";
+
 const turnKindLabels: Record<string, string> = {
-  question: "问题",
-  follow_up: "追问",
-  interrupt: "打断",
-  conflict: "冲突",
-  candidate: "候选人",
-  system: "系统",
+  question: "Question",
+  follow_up: "Follow-up",
+  interrupt: "Interrupt",
+  conflict: "Conflict",
+  candidate: "Candidate",
+  system: "System",
 };
 
 function formatTurnKind(kind: string) {
@@ -67,6 +72,17 @@ export function InterviewConsole({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [answerStartTime, setAnswerStartTime] = useState<number | null>(null);
 
+  const interviewer = getInterviewerDefinition(
+    session.config.rolePack,
+    session.directorState.nextSpeakerId,
+  );
+  const currentPrompt =
+    [...transcript].reverse().find((turn) => turn.role === "interviewer")?.content ??
+    "The interviewer is preparing the next prompt.";
+  const interviewerTurns = transcript.filter((turn) => turn.role === "interviewer").length;
+  const totalQuestions = Math.max(6, session.config.interviewers.length + 3);
+  const progress = Math.min(100, Math.round((interviewerTurns / totalQuestions) * 100));
+
   const handleAnswerChange = (value: string) => {
     setAnswer(value);
     if (!answerStartTime && value.length > 0) {
@@ -87,7 +103,7 @@ export function InterviewConsole({
       {
         id: `candidate-${Date.now()}`,
         role: "candidate",
-        speakerLabel: session.config.candidateName ?? "候选人",
+        speakerLabel: session.config.candidateName?.trim() || "Candidate",
         content: answerText,
         kind: "candidate",
       },
@@ -133,75 +149,132 @@ export function InterviewConsole({
   };
 
   return (
-    <div className="stack-lg" data-testid="interview-console">
-      <div className="panel">
-        <div className="section-head">
-          <div>
-            <p className="panel-label">A2 / 动态博弈</p>
-            <h3>实时多轮对话</h3>
-          </div>
-          <div className="chip-row">
-            <span className="status-pill">压力值 {pressure}</span>
-            <span className="status-pill subtle">{formatRolePackLabel(session.config.rolePack)}</span>
-          </div>
+    <div className="interview-workspace" data-testid="interview-console">
+      <header className="workspace-topbar">
+        <div className="workspace-brand-row">
+          <Link href="/" className="workspace-brand">
+            Mobius Project
+          </Link>
+          <nav className="workspace-primary-nav" aria-label="Primary navigation">
+            <Link href="/" className="workspace-primary-link">
+              Home
+            </Link>
+            <Link href="/simulator/new" className="workspace-primary-link active">
+              Simulator
+            </Link>
+            <Link href="/hub" className="workspace-primary-link">
+              Hub
+            </Link>
+          </nav>
         </div>
-        <div className="chip-row">
-          {session.config.interviewers.map((interviewerId) => (
-            <span key={interviewerId} className="status-pill subtle">
-              {getInterviewerDefinition(session.config.rolePack, interviewerId)?.label ??
-                interviewerId}
-            </span>
-          ))}
+        <div className="workspace-user-tools">
+          <span className="status-pill subtle">
+            <span className="breathing-light" aria-hidden="true" />
+            Live interview running
+          </span>
+          <ThemeToggle />
         </div>
-        <div className="transcript" data-testid="interview-transcript">
-          {transcript.map((turn) => (
-            <article
-              key={turn.id}
-              className={`transcript-row ${turn.role === "candidate" ? "candidate" : ""}`}
-              data-testid={`transcript-row-${turn.role}`}
-            >
-              <div className="transcript-meta">
-                <span>{turn.speakerLabel}</span>
-                <small>{formatTurnKind(turn.kind)}</small>
+      </header>
+
+      {errorMessage ? (
+        <div className="interview-error-banner">
+          <p className="error-copy" data-testid="interview-error-message">
+            {errorMessage}
+          </p>
+        </div>
+      ) : null}
+
+      <main className="interview-stage">
+        <aside className="interview-rail" aria-hidden="true">
+          <div className="interview-rail-button">M</div>
+          <div className="interview-rail-button">V</div>
+          <div className="interview-rail-button">T</div>
+        </aside>
+
+        <section className="interview-main-column">
+          <div className="interview-avatar-panel">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={interviewerPortrait}
+              alt="AI interviewer"
+              className="interview-avatar-image"
+            />
+            <div className="interview-tone-chip">Pressure {pressure}</div>
+            <div className="interview-avatar-badge">
+              <div className="interview-avatar-mark">AI</div>
+              <div>
+                <p>Interviewer</p>
+                <strong>{interviewer?.label ?? "Mobius interviewer"}</strong>
               </div>
-              <p>{turn.content}</p>
-            </article>
-          ))}
-          {isStreaming ? (
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }} aria-hidden data-testid="interview-streaming-indicator">
-              <div className="breathing-light" />
-              <div className="terminal-caret" />
-              {thinkingStatus ? (
-                <span className="muted-copy" style={{ fontSize: "0.78rem", fontFamily: "var(--font-mono)" }}>{thinkingStatus === "director_analyzing" ? "导演分析中…" : thinkingStatus}</span>
+            </div>
+          </div>
+
+          <section className="interview-question-panel">
+            <p className="panel-label">Current prompt</p>
+            <h2>{currentPrompt}</h2>
+            <p className="hero-copy">
+              Track: {formatRolePackLabel(session.config.rolePack)} · {session.config.targetCompany}
+            </p>
+          </section>
+        </section>
+
+        <aside className="interview-side-column">
+          <section className="interview-transcript-panel">
+            <div className="interview-live-row">
+              <strong>Live transcript</strong>
+              <span className="interview-live-badge">LIVE</span>
+            </div>
+            <div className="transcript" data-testid="interview-transcript">
+              {transcript.map((turn) => (
+                <article
+                  key={turn.id}
+                  className={`transcript-row ${turn.role === "candidate" ? "candidate" : ""}`}
+                  data-testid={`transcript-row-${turn.role}`}
+                >
+                  <div className="transcript-meta">
+                    <span>{turn.speakerLabel}</span>
+                    <small>{formatTurnKind(turn.kind)}</small>
+                  </div>
+                  <p>{turn.content}</p>
+                </article>
+              ))}
+              {isStreaming ? (
+                <div className="chip-row" aria-hidden="true">
+                  <div className="breathing-light" />
+                  <div className="terminal-caret" />
+                  {thinkingStatus ? (
+                    <span className="muted-copy">
+                      {thinkingStatus === "director_analyzing"
+                        ? "Director is analyzing..."
+                        : thinkingStatus}
+                    </span>
+                  ) : null}
+                </div>
               ) : null}
             </div>
-          ) : null}
-        </div>
-      </div>
+          </section>
 
-      <div className="panel">
-        <label className="field">
-          <span>你的回答</span>
-          <textarea
-            rows={6}
-            value={answer}
-            onChange={(event) => handleAnswerChange(event.target.value)}
-            data-testid="interview-answer-input"
-            placeholder="给出一个短、硬、可验证的回答。先结论，再补证据。"
-          />
-        </label>
-        <div className="action-row">
-          <button
-            type="button"
-            className="primary-button"
-            disabled={isStreaming || !answer.trim()}
-            data-testid="interview-send-button"
-            onClick={() => {
-              void sendAnswer();
-            }}
-          >
-            {isStreaming ? "面试官正在追压..." : "发送回答"}
-          </button>
+          <section className="interview-progress-panel">
+            <div className="interview-progress-row">
+              <div>
+                <p className="panel-label">Simulation progress</p>
+                <p className="muted-copy">Round coverage and pressure pacing</p>
+              </div>
+              <div>
+                <strong>
+                  {Math.min(interviewerTurns, totalQuestions)} / {totalQuestions}
+                </strong>
+              </div>
+            </div>
+            <div className="interview-progress-bar">
+              <div className="interview-progress-fill" style={{ width: `${progress}%` }} />
+            </div>
+          </section>
+        </aside>
+      </main>
+
+      <footer className="interview-footer">
+        <div className="interview-footer-left">
           <button
             type="button"
             className="secondary-button"
@@ -211,15 +284,37 @@ export function InterviewConsole({
               void finalize();
             }}
           >
-            {isCompleting ? "分析中..." : "结束本场面试"}
+            {isCompleting ? "Finishing..." : "End interview"}
           </button>
         </div>
-        {errorMessage ? (
-          <p className="error-copy" data-testid="interview-error-message">
-            {errorMessage}
-          </p>
-        ) : null}
-      </div>
+
+        <div className="interview-answer-box">
+          <textarea
+            rows={3}
+            value={answer}
+            onChange={(event) => handleAnswerChange(event.target.value)}
+            data-testid="interview-answer-input"
+            placeholder="Answer with a short claim, your evidence, and the trade-off you chose."
+          />
+        </div>
+
+        <div className="interview-footer-actions">
+          <button type="button" className="secondary-button" disabled>
+            Skip
+          </button>
+          <button
+            type="button"
+            className="primary-button"
+            disabled={isStreaming || !answer.trim()}
+            data-testid="interview-send-button"
+            onClick={() => {
+              void sendAnswer();
+            }}
+          >
+            {isStreaming ? "Interviewer responding..." : "Submit answer"}
+          </button>
+        </div>
+      </footer>
     </div>
   );
 }
