@@ -6,36 +6,49 @@ export function RadarChart({ report }: { report: DiagnosticReport }) {
   const labels = buildRadarAxisLabels(report.scores);
 
   return (
-    <div className="chart-card">
+    <section className="workspace-card report-radar-card">
       <div className="section-head">
         <div>
-          <p className="panel-label">终局诊断</p>
-          <h3>高维雷达图</h3>
+          <p className="panel-label">Diagnostic profile</p>
+          <h3>Multidimensional strengths</h3>
         </div>
       </div>
-      <svg viewBox="-220 -220 440 440" className="radar-svg" aria-label="诊断雷达图">
-        {[40, 80, 120, 160].map((radius) => (
-          <circle key={radius} r={radius} fill="none" className="radar-ring" />
-        ))}
-        {labels.map((label) => (
-          <g key={label.label}>
-            <line x1="0" y1="0" x2={label.x * 0.88} y2={label.y * 0.88} className="radar-axis" />
-            <text x={label.x} y={label.y} className="radar-label" textAnchor="middle">
-              {label.label}
-            </text>
-          </g>
-        ))}
-        <polygon points={points} className="radar-shape" />
-      </svg>
-      <div className="metric-grid">
-        {report.scores.map((score) => (
-          <div key={score.key} className="metric-card">
-            <strong>{score.score}</strong>
-            <span>{score.label}</span>
-            <p>{score.signal}</p>
-          </div>
-        ))}
+
+      <div className="report-radar-layout">
+        <svg
+          viewBox="-220 -220 440 440"
+          className="radar-svg"
+          aria-label="Diagnostic radar chart"
+        >
+          {[40, 80, 120, 160].map((radius) => (
+            <circle key={radius} r={radius} fill="none" className="radar-ring" />
+          ))}
+          {labels.map((label) => (
+            <g key={label.label}>
+              <line x1="0" y1="0" x2={label.x * 0.88} y2={label.y * 0.88} className="radar-axis" />
+              <text x={label.x} y={label.y} className="radar-label" textAnchor="middle">
+                {label.label}
+              </text>
+            </g>
+          ))}
+          <polygon points={points} className="radar-shape" />
+        </svg>
+
+        <div className="report-radar-summary">
+          {report.scores.map((score) => (
+            <div key={score.key} className="report-radar-meter">
+              <div className="report-radar-meter-head">
+                <span>{score.label}</span>
+                <span>{score.score}/100</span>
+              </div>
+              <div className="report-radar-track">
+                <div className="report-radar-fill" style={{ width: `${score.score}%` }} />
+              </div>
+              <p className="muted-copy">{score.signal}</p>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

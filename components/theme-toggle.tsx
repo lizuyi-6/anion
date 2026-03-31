@@ -2,21 +2,27 @@
 
 import { useEffect, useState } from "react";
 
+type ThemeMode = "light" | "dark";
+
+function getStoredTheme(): ThemeMode {
+  if (typeof window === "undefined") {
+    return "light";
+  }
+
+  const stored = window.localStorage.getItem("mobius-theme");
+  return stored === "dark" ? "dark" : "light";
+}
+
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [theme, setTheme] = useState<ThemeMode>(getStoredTheme);
 
   useEffect(() => {
-    const stored = localStorage.getItem("mobius-theme") as "light" | "dark" | null;
-    const initial = stored ?? "light";
-    setTheme(initial);
-    document.documentElement.setAttribute("data-theme", initial);
-  }, []);
+    document.documentElement.setAttribute("data-theme", theme);
+    window.localStorage.setItem("mobius-theme", theme);
+  }, [theme]);
 
   const toggle = () => {
-    const next = theme === "light" ? "dark" : "light";
-    setTheme(next);
-    document.documentElement.setAttribute("data-theme", next);
-    localStorage.setItem("mobius-theme", next);
+    setTheme((current) => (current === "light" ? "dark" : "light"));
   };
 
   return (

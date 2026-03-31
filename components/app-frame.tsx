@@ -2,20 +2,20 @@ import Link from "next/link";
 
 import { ThemeToggle } from "@/components/theme-toggle";
 import type { Viewer } from "@/lib/domain";
-import { formatRolePackLabel } from "@/lib/domain";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/", label: "概览" },
-  { href: "/simulator/new", label: "模拟器" },
-  { href: "/hub/copilot", label: "副驾" },
-  { href: "/hub/strategy", label: "战略" },
-  { href: "/hub/sandbox", label: "沙盒" },
+  { href: "/", label: "Overview" },
+  { href: "/simulator/new", label: "New Simulation" },
+  { href: "/hub", label: "Hub" },
+  { href: "/hub/copilot", label: "Copilot" },
+  { href: "/hub/strategy", label: "Strategy" },
+  { href: "/hub/sandbox", label: "Sandbox" },
 ];
 
 const workspaceLabels: Record<Viewer["workspaceMode"], string> = {
-  interview: "面试协议",
-  command_center: "指挥中心",
+  interview: "Interview mode",
+  command_center: "Command center",
 };
 
 export type AppShellMode = "interview" | "command";
@@ -36,26 +36,30 @@ export function AppFrame({
   shellMode?: AppShellMode;
 }) {
   const workspaceLabel =
-    shellMode === "command" ? "指挥中心" : workspaceLabels[viewer.workspaceMode] ?? "默认模式";
+    shellMode === "command"
+      ? "Command center"
+      : workspaceLabels[viewer.workspaceMode] ?? "Workspace";
 
   return (
     <div className={cn("app-shell", `shell-${shellMode}`)} data-shell={shellMode}>
       <header className="topbar">
         <div>
           <Link href="/" className="wordmark">
-            莫比乌斯计划
+            Mobius Project
           </Link>
           <p className="eyebrow">
-            {shellMode === "command" ? "个人指挥中心" : "面试模拟器 + 指挥中心"}
+            {shellMode === "command"
+              ? "Private operating workspace"
+              : "Guided interview practice"}
           </p>
         </div>
         <div className="topbar-meta">
-          <span className="status-pill">{viewer.isDemo ? "演示模式" : "已认证"}</span>
+          <span className="status-pill">{viewer.isDemo ? "Demo" : "Signed in"}</span>
           <span className="status-pill subtle">{workspaceLabel}</span>
           <ThemeToggle />
           {!viewer.isDemo ? (
             <Link href="/auth/sign-out" className="nav-link">
-              退出登录
+              Sign out
             </Link>
           ) : null}
         </div>
@@ -64,9 +68,11 @@ export function AppFrame({
       <div className="layout-grid">
         <aside className="sidebar">
           <div className="panel">
-            <p className="panel-label">查看者</p>
+            <p className="panel-label">Viewer</p>
             <h3>{viewer.displayName}</h3>
-            <p className="muted-copy">首选角色包：{formatRolePackLabel(viewer.preferredRolePack)}</p>
+            <p className="muted-copy">
+              Preferred track: {viewer.preferredRolePack.replace("_", " ")}
+            </p>
           </div>
           <nav className="nav-list">
             {navItems.map((item) => (
@@ -84,7 +90,7 @@ export function AppFrame({
         <main className="content">
           <section className="hero-card">
             <p className="eyebrow">
-              {shellMode === "command" ? "系统协议 / 忠诚模式" : "系统状态"}
+              {shellMode === "command" ? "Guided perspective" : "Simulation workspace"}
             </p>
             <h1>{title}</h1>
             <p className="hero-copy">{subtitle}</p>
