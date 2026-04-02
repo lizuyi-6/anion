@@ -1,55 +1,47 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const routeMocks = vi.hoisted(() => ({
-  getViewer: vi.fn(),
+  viewer: {
+    id: "viewer_1",
+    displayName: "Abraham",
+    isDemo: true,
+    workspaceMode: "command_center" as const,
+    preferredRolePack: "engineering" as const,
+  },
   getDataStore: vi.fn(),
-  resolveAiProvider: vi.fn(() => "anthropic"),
+  getAiProvider: vi.fn(() => ({ provider: "mock" })),
+  createJobQueue: vi.fn(() => undefined),
   runCommandMode: vi.fn(),
   generateNextInterviewBeat: vi.fn(),
   queueInterviewAnalysis: vi.fn(),
   retryInterviewAnalysis: vi.fn(),
 }));
 
-vi.mock("@/lib/server/auth", () => ({
-  getViewer: routeMocks.getViewer,
-}));
-
-vi.mock("@/lib/server/store/repository", () => ({
-  getDataStore: routeMocks.getDataStore,
-}));
-
-vi.mock("@/lib/env", async () => {
-  const actual = await vi.importActual<typeof import("@/lib/env")>("@/lib/env");
+vi.mock("@anion/infrastructure", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@anion/infrastructure")>();
   return {
     ...actual,
-    resolveAiProvider: routeMocks.resolveAiProvider,
+    buildLocalViewer: vi.fn(() => routeMocks.viewer),
+    createJobQueue: routeMocks.createJobQueue,
+    getAiProvider: routeMocks.getAiProvider,
+    getDataStore: routeMocks.getDataStore,
   };
 });
 
-vi.mock("@/lib/server/services/command-center", () => ({
-  runCommandMode: routeMocks.runCommandMode,
-}));
-
-vi.mock("@/lib/server/services/interview", () => ({
-  generateNextInterviewBeat: routeMocks.generateNextInterviewBeat,
-}));
-
-vi.mock("@/lib/server/services/analysis", () => ({
-  queueInterviewAnalysis: routeMocks.queueInterviewAnalysis,
-  retryInterviewAnalysis: routeMocks.retryInterviewAnalysis,
-}));
-
-const viewer = {
-  id: "viewer_1",
-  displayName: "Abraham",
-  isDemo: true,
-  workspaceMode: "command_center" as const,
-  preferredRolePack: "engineering" as const,
-};
+vi.mock("@anion/application", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@anion/application")>();
+  return {
+    ...actual,
+    runCommandMode: routeMocks.runCommandMode,
+    generateNextInterviewBeat: routeMocks.generateNextInterviewBeat,
+    queueInterviewAnalysis: routeMocks.queueInterviewAnalysis,
+    retryInterviewAnalysis: routeMocks.retryInterviewAnalysis,
+  };
+});
 
 const session = {
   id: "session_1",
-  userId: viewer.id,
+  userId: routeMocks.viewer.id,
   status: "live" as const,
   config: {
     rolePack: "engineering" as const,
@@ -77,10 +69,17 @@ const session = {
 };
 
 describe("AI API routes", () => {
-  beforeEach(() => {
+  let app: Awaited<ReturnType<(typeof import("../apps/api/src/server"))["buildApiServer"]>>;
+
+  beforeEach(async () => {
     vi.resetModules();
     vi.clearAllMocks();
-    routeMocks.getViewer.mockResolvedValue(viewer);
+    const { buildApiServer } = await import("../apps/api/src/server");
+    app = buildApiServer();
+  });
+
+  afterEach(async () => {
+    await app.close();
   });
 
   it("returns structured JSON errors for command mode failures", async () => {
@@ -96,21 +95,17 @@ describe("AI API routes", () => {
       }),
     );
 
-    const { POST } = await import("@/app/api/command/[mode]/route");
-    const response = await POST(
-      new Request("http://localhost/api/command/copilot", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          input: "debug this issue",
-          attachments: [],
-        }),
-      }),
-      { params: Promise.resolve({ mode: "copilot" }) },
-    );
+    const response = await app.inject({
+      method: "POST",
+      url: "/api/v1/command/copilot",
+      payload: {
+        input: "debug this issue",
+        attachments: [],
+      },
+    });
 
-    expect(response.status).toBe(502);
-    await expect(response.json()).resolves.toEqual({
+    expect(response.statusCode).toBe(502);
+    expect(response.json()).toEqual({
       error: "ai_provider_error",
       message: "Anthropic request failed: invalid API key",
       provider: "anthropic",
@@ -139,21 +134,17 @@ describe("AI API routes", () => {
       ],
     });
 
-    const { POST } = await import("@/app/api/interviews/[sessionId]/turn/route");
-    const response = await POST(
-      new Request("http://localhost/api/interviews/session_1/turn", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          answer: "I would guard the write path first.",
-          elapsedSeconds: 90,
-        }),
-      }),
-      { params: Promise.resolve({ sessionId: session.id }) },
-    );
+    const response = await app.inject({
+      method: "POST",
+      url: `/api/v1/interviews/${session.id}/turn`,
+      payload: {
+        answer: "I would guard the write path first.",
+        elapsedSeconds: 90,
+      },
+    });
 
-    expect(response.headers.get("Content-Type")).toBe("text/event-stream");
-    await expect(response.text()).resolves.toContain("data: ");
+    expect(response.headers["content-type"]).toContain("text/event-stream");
+    expect(response.body).toContain("data: ");
   });
 
   it("returns structured JSON errors before starting interview SSE when AI fails", async () => {
@@ -170,21 +161,17 @@ describe("AI API routes", () => {
       }),
     );
 
-    const { POST } = await import("@/app/api/interviews/[sessionId]/turn/route");
-    const response = await POST(
-      new Request("http://localhost/api/interviews/session_1/turn", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          answer: "I would guard the write path first.",
-          elapsedSeconds: 90,
-        }),
-      }),
-      { params: Promise.resolve({ sessionId: session.id }) },
-    );
+    const response = await app.inject({
+      method: "POST",
+      url: `/api/v1/interviews/${session.id}/turn`,
+      payload: {
+        answer: "I would guard the write path first.",
+        elapsedSeconds: 90,
+      },
+    });
 
-    expect(response.status).toBe(503);
-    await expect(response.json()).resolves.toEqual({
+    expect(response.statusCode).toBe(503);
+    expect(response.json()).toEqual({
       error: "ai_provider_error",
       message: "Anthropic request failed: upstream timeout",
       provider: "anthropic",
@@ -212,34 +199,27 @@ describe("AI API routes", () => {
       }),
     );
 
-    const completeRoute = await import("@/app/api/interviews/[sessionId]/complete/route");
-    const completeResponse = await completeRoute.POST(
-      new Request("http://localhost/api/interviews/session_1/complete", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
-      }),
-      { params: Promise.resolve({ sessionId: session.id }) },
-    );
+    const completeResponse = await app.inject({
+      method: "POST",
+      url: `/api/v1/interviews/${session.id}/complete`,
+      payload: {},
+    });
 
-    expect(completeResponse.status).toBe(502);
-    await expect(completeResponse.json()).resolves.toEqual({
+    expect(completeResponse.statusCode).toBe(502);
+    expect(completeResponse.json()).toEqual({
       error: "ai_provider_error",
       message: "Anthropic request failed: invalid API key",
       provider: "anthropic",
       retryable: false,
     });
 
-    const retryRoute = await import("@/app/api/reports/[sessionId]/retry/route");
-    const retryResponse = await retryRoute.POST(
-      new Request("http://localhost/api/reports/session_1/retry", {
-        method: "POST",
-      }),
-      { params: Promise.resolve({ sessionId: session.id }) },
-    );
+    const retryResponse = await app.inject({
+      method: "POST",
+      url: `/api/v1/reports/${session.id}/retry`,
+    });
 
-    expect(retryResponse.status).toBe(503);
-    await expect(retryResponse.json()).resolves.toEqual({
+    expect(retryResponse.statusCode).toBe(503);
+    expect(retryResponse.json()).toEqual({
       error: "ai_provider_error",
       message: "Anthropic request failed: rate limit",
       provider: "anthropic",

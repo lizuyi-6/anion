@@ -1,0 +1,15 @@
+{
+  "name": "@anion/worker",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch ./src/dev.ts",
+    "start": "tsx ./src/dev.ts"
+  },
+  "dependencies": {
+    "@anion/application": "workspace:*",
+    "@anion/config": "workspace:*",
+    "@anion/contracts": "workspace:*",
+    "@anion/infrastructure": "workspace:*",
+    "@trigger.dev/sdk": "^4.4.3"
+  }
+}

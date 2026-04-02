@@ -1,33 +1,33 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
+    "target": "ES2022",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./apps/web/*"],
+      "@anion/application": ["./packages/application/src/index.ts"],
+      "@anion/config": ["./packages/config/src/index.ts"],
+      "@anion/contracts": ["./packages/contracts/src/index.ts"],
+      "@anion/infrastructure": ["./packages/infrastructure/src/index.ts"],
+      "@anion/shared": ["./packages/shared/src/index.ts"],
+      "@anion/shared/command-artifacts": ["./packages/shared/src/command-artifacts.ts"],
+      "@anion/shared/utils": ["./packages/shared/src/utils.ts"],
+      "@anion/shared/visuals/renderers": ["./packages/shared/src/visuals/renderers.ts"]
     }
   },
   "include": [
-    "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
   "exclude": ["node_modules"]
