@@ -16,7 +16,7 @@ const uiMocks = vi.hoisted(() => ({
   retryReport: vi.fn(),
 }));
 
-vi.mock("next/navigation", () => ({
+vi.mock("@/lib/client/router", () => ({
   useRouter: () => ({
     push: uiMocks.push,
     refresh: uiMocks.refresh,

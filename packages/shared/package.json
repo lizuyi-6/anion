@@ -1,0 +1,11 @@
+{
+  "name": "@anion/shared",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./command-artifacts": "./src/command-artifacts.ts",
+    "./utils": "./src/utils.ts",
+    "./visuals/renderers": "./src/visuals/renderers.ts"
+  }
+}

@@ -1,19 +1,6 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
-const { MockAiProvider } = vi.hoisted(() => {
-  // Force mock provider via dynamic import with stubbed env
-  return { MockAiProvider: null as any };
-});
-
-vi.mock("@/lib/ai/adapter", async (importOriginal) => {
-  const original = await importOriginal<typeof import("@/lib/ai/adapter")>();
-  const mockProvider = new original.MockAiProvider();
-  return {
-    ...original,
-    getAiProvider: () => mockProvider,
-  };
-});
-
+import { MockAiProvider } from "@/lib/ai/adapter";
 import { createInterviewSession, generateNextInterviewBeat } from "@/lib/server/services/interview";
 import { executeInterviewAnalysis } from "@/lib/server/services/analysis";
 import { runCommandMode } from "@/lib/server/services/command-center";
@@ -22,33 +9,39 @@ import { MemoryDataStore } from "@/lib/server/store/repository";
 describe("interview to command center flow", () => {
   it("runs a full session from interview through hub activation", async () => {
     const store = new MemoryDataStore();
-    globalThis.__mobiusStore = store;
+    const ai = new MockAiProvider();
 
     const viewer = store.getDemoViewer("engineering");
-    const session = await createInterviewSession(viewer, {
-      rolePack: "engineering",
-      targetCompany: "OpenAI",
-      industry: "AI",
-      level: "Senior",
-      jobDescription: "Build reliable systems and defend architecture trade-offs under pressure.",
-      interviewers: ["hacker", "architect", "founder"],
-      materials: [],
-      candidateName: "Abraham",
+    const session = await createInterviewSession({
+      store,
+      viewer,
+      config: {
+        rolePack: "engineering",
+        targetCompany: "OpenAI",
+        industry: "AI",
+        level: "Senior",
+        jobDescription: "Build reliable systems and defend architecture trade-offs under pressure.",
+        interviewers: ["hacker", "architect", "founder"],
+        materials: [],
+        candidateName: "Abraham",
+      },
     });
     const initialTurns = await store.listTurns(session.id);
 
     const beat = await generateNextInterviewBeat({
       store,
+      ai,
       session,
       turns: initialTurns,
       answer:
-        "我会先守住接口边界，再用版本化写入保证弱网重试的一致性，因为最先失控的是写路径的并发和回滚成本。",
+        "I would protect the write boundary first, then use versioned writes to keep retries idempotent because the highest-cost failure mode is concurrent corruption and rollback drag.",
     });
     expect(beat.events.length).toBeGreaterThan(0);
 
     const analysis = await executeInterviewAnalysis({
       sessionId: session.id,
       store,
+      ai,
     });
     expect(analysis.report.evidenceAnchors.length).toBeGreaterThan(0);
     expect(analysis.memoryProfile.replayMoments.length).toBeGreaterThan(0);
@@ -66,19 +59,20 @@ describe("interview to command center flow", () => {
     const memoryContext = await store.getActiveMemoryContext(viewer.id);
     const result = await runCommandMode({
       store,
+      ai,
       viewer: {
         ...viewer,
         workspaceMode: "command_center",
       },
       mode: "copilot",
-      input: "线上出现一个状态切换后 UI 不刷新的 bug，帮我定位根因。",
+      input: "The UI stops refreshing after a status transition. Find the root cause.",
       attachments: [],
       memoryContext,
     });
 
     expect(result.artifact.mode).toBe("copilot");
     if (result.artifact.mode !== "copilot") {
-      throw new Error("期望得到副驾产物");
+      throw new Error("Expected a copilot artifact");
     }
     expect(result.artifact.watchouts.length).toBeGreaterThan(0);
     expect((await store.getSession(session.id))?.status).toBe("hub_active");

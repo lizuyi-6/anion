@@ -1,0 +1,17 @@
+{
+  "name": "@anion/infrastructure",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.ts",
+  "dependencies": {
+    "@anion/application": "workspace:*",
+    "@anion/config": "workspace:*",
+    "@anion/contracts": "workspace:*",
+    "@anion/shared": "workspace:*",
+    "@anthropic-ai/sdk": "^0.80.0",
+    "@supabase/supabase-js": "^2.100.0",
+    "@trigger.dev/sdk": "^4.4.3",
+    "openai": "^6.32.0",
+    "zod": "^4.3.6"
+  }
+}

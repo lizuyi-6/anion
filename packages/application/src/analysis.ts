@@ -1,0 +1,253 @@
+﻿import type {
+  DiagnosticReport,
+  InterviewSession,
+  MemoryEvidence,
+  MemoryProfile,
+} from "@anion/contracts";
+import { toId } from "@anion/shared/utils";
+import { isAnalysisRetryable } from "./session-state";
+import type { AnalysisAiProvider, ApplicationStore, JobQueue } from "./ports";
+
+function normalizeMemoryEntries(params: {
+  userId: string;
+  profile: MemoryProfile;
+  kind: MemoryEvidence["kind"];
+  nodes: MemoryProfile["skills"];
+}) {
+  return params.nodes.map((node) => ({
+    id: toId("memory_evidence"),
+    memoryProfileId: params.profile.id,
+    userId: params.userId,
+    label: node.label,
+    summary: node.summary,
+    kind: params.kind,
+    confidence: node.confidence,
+    sourceTurnIds: node.sourceTurnIds,
+    createdAt: params.profile.generatedAt,
+  }));
+}
+
+export function buildMemoryEvidence(params: {
+  userId: string;
+  profile: MemoryProfile;
+}) {
+  return [
+    ...normalizeMemoryEntries({
+      userId: params.userId,
+      profile: params.profile,
+      kind: "skill",
+      nodes: params.profile.skills,
+    }),
+    ...normalizeMemoryEntries({
+      userId: params.userId,
+      profile: params.profile,
+      kind: "gap",
+      nodes: params.profile.gaps,
+    }),
+    ...normalizeMemoryEntries({
+      userId: params.userId,
+      profile: params.profile,
+      kind: "behavior",
+      nodes: params.profile.behaviorTraits,
+    }),
+    ...normalizeMemoryEntries({
+      userId: params.userId,
+      profile: params.profile,
+      kind: "win",
+      nodes: params.profile.wins,
+    }),
+  ] satisfies MemoryEvidence[];
+}
+
+export async function executeInterviewAnalysis(params: {
+  sessionId: string;
+  store: Pick<ApplicationStore, "getSession" | "listTurns" | "updateSession" | "saveReport" | "saveMemoryProfile" | "saveMemoryEvidence">;
+  ai: AnalysisAiProvider;
+}) {
+  const store = params.store;
+  const session = await store.getSession(params.sessionId);
+
+  if (!session) {
+    throw new Error(`未找到会话：${params.sessionId}`);
+  }
+
+  const turns = await store.listTurns(params.sessionId);
+  const ai = params.ai;
+
+  await store.updateSession(session.id, {
+    status: "analyzing",
+    analysisError: undefined,
+    analysisStartedAt: session.analysisStartedAt ?? new Date().toISOString(),
+    analysisCompletedAt: undefined,
+  });
+
+  try {
+    const report = await ai.generateDiagnosticReport({ session, turns });
+    const memoryProfile = await ai.generateMemoryProfile({
+      report,
+      session,
+      turns,
+    });
+    const evidence = buildMemoryEvidence({
+      userId: session.userId,
+      profile: memoryProfile,
+    });
+    let embeddings: number[][] | null = null;
+    try {
+      embeddings = (await ai.generateEmbeddings?.(
+        evidence.map((entry) => `${entry.kind}: ${entry.label}. ${entry.summary}`),
+      )) ?? null;
+    } catch (embeddingError) {
+      console.error("Embedding generation failed, proceeding without embeddings:", embeddingError);
+    }
+    const evidenceWithEmbeddings = evidence.map((entry, index) => ({
+      ...entry,
+      embedding: embeddings?.[index],
+    }));
+
+    await store.saveReport(report);
+    await store.saveMemoryProfile(memoryProfile);
+    await store.saveMemoryEvidence(evidenceWithEmbeddings);
+    await store.updateSession(session.id, {
+      status: "report_ready",
+      reportId: report.id,
+      memoryProfileId: memoryProfile.id,
+      analysisError: undefined,
+      analysisCompletedAt: new Date().toISOString(),
+    });
+
+    return {
+      report,
+      memoryProfile,
+      evidence: evidenceWithEmbeddings,
+    };
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "分析失败";
+    await store.updateSession(session.id, {
+      status: "analyzing",
+      analysisError: message,
+      analysisCompletedAt: undefined,
+    });
+    throw error;
+  }
+}
+
+export async function queueInterviewAnalysis(params: {
+  sessionId: string;
+  store: Pick<ApplicationStore, "getSession" | "updateSession" | "getReportBySession" | "getMemoryProfileBySession" | "listTurns" | "saveReport" | "saveMemoryProfile" | "saveMemoryEvidence">;
+  ai: AnalysisAiProvider;
+  jobs?: JobQueue;
+}) {
+  const session = await params.store.getSession(params.sessionId);
+
+  if (!session) {
+    throw new Error(`未找到会话：${params.sessionId}`);
+  }
+
+  await params.store.updateSession(params.sessionId, {
+    status: "analyzing",
+    analysisError: undefined,
+    analysisStartedAt: new Date().toISOString(),
+    analysisCompletedAt: undefined,
+  });
+
+  if (params.jobs) {
+    const handle = await params.jobs.enqueueInterviewAnalysis(params.sessionId);
+
+    await params.store.updateSession(params.sessionId, {
+      analysisJobId: handle.id || toId("analysis_job"),
+    });
+
+    return {
+      queued: true,
+      report: null,
+      memoryProfile: null,
+    };
+  }
+
+  const result = await executeInterviewAnalysis({
+    sessionId: params.sessionId,
+    store: params.store,
+    ai: params.ai,
+  });
+  return {
+    queued: false,
+    report: result.report,
+    memoryProfile: result.memoryProfile,
+  };
+}
+
+export async function getSessionDiagnostics(
+  sessionId: string,
+  store: Pick<ApplicationStore, "getSession" | "getReportBySession" | "getMemoryProfileBySession">,
+): Promise<{
+  session: InterviewSession | null;
+  report: DiagnosticReport | null;
+  memoryProfile: MemoryProfile | null;
+}> {
+  const session = await store.getSession(sessionId);
+  if (!session) {
+    return {
+      session: null,
+      report: null,
+      memoryProfile: null,
+    };
+  }
+
+  return {
+    session,
+    report: await store.getReportBySession(sessionId),
+    memoryProfile: await store.getMemoryProfileBySession(sessionId),
+  };
+}
+
+export async function getReportStatus(
+  sessionId: string,
+  store: Pick<ApplicationStore, "getSession" | "getReportBySession" | "getMemoryProfileBySession">,
+) {
+  const session = await store.getSession(sessionId);
+  if (!session) {
+    return null;
+  }
+
+  const [report, memoryProfile] = await Promise.all([
+    store.getReportBySession(sessionId),
+    store.getMemoryProfileBySession(sessionId),
+  ]);
+
+  return {
+    status: session.status,
+    reportReady: Boolean(report),
+    memoryReady: Boolean(memoryProfile),
+    lastError: session.analysisError ?? null,
+    retryable: isAnalysisRetryable(session),
+  };
+}
+
+export async function retryInterviewAnalysis(params: {
+  sessionId: string;
+  store: Pick<ApplicationStore, "getSession" | "updateSession" | "getReportBySession" | "getMemoryProfileBySession" | "listTurns" | "saveReport" | "saveMemoryProfile" | "saveMemoryEvidence">;
+  ai: AnalysisAiProvider;
+  jobs?: JobQueue;
+}) {
+  const session = await params.store.getSession(params.sessionId);
+  if (!session) {
+    throw new Error(`未找到会话：${params.sessionId}`);
+  }
+
+  if (!isAnalysisRetryable(session)) {
+    return {
+      queued: false,
+      report: await params.store.getReportBySession(params.sessionId),
+      memoryProfile: await params.store.getMemoryProfileBySession(params.sessionId),
+    };
+  }
+
+  return queueInterviewAnalysis(params);
+}
+
+
+
+
+
