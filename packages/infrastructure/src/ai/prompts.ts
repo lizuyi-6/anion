@@ -19,7 +19,7 @@ import type {
   InterviewGenerationInput,
   MemoryProfileInput,
   SandboxTurnInput,
-} from "./types.js";
+} from "./types";
 
 // ---------------------------------------------------------------------------
 // System prompts — used by AnthropicProvider.callWithSchema()

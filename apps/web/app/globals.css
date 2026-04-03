@@ -976,6 +976,16 @@ img {
   min-height: 100vh;
 }
 
+@media (min-width: 1024px) and (min-height: 700px) {
+  .marketing-page,
+  .overview-page {
+    height: 100dvh;
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+}
+
 .marketing-topbar {
   display: flex;
   justify-content: space-between;
@@ -1176,6 +1186,39 @@ img {
 
 .marketing-section {
   padding: 3rem 0;
+}
+
+@media (min-width: 1024px) and (min-height: 700px) {
+  .marketing-main {
+    height: 100%;
+    padding: 0 1.5rem;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+  }
+
+  .marketing-hero,
+  .marketing-section {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  .marketing-hero {
+    padding: 2.5rem 0 3rem;
+  }
+
+  .marketing-section {
+    padding: 2.5rem 0;
+  }
+
+  .marketing-footer {
+    margin-top: auto;
+  }
 }
 
 .marketing-section-head {

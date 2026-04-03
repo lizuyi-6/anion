@@ -28,7 +28,7 @@ import {
   SANDBOX_SYSTEM,
   SANDBOX_TURN_SYSTEM,
   STRATEGY_SYSTEM,
-} from "./prompts.js";
+} from "./prompts";
 import { hasMiniMax, hasOpenAi, hasAnthropic, runtimeEnv } from "@anion/config";
 import type {
   ActiveMemoryContext,
