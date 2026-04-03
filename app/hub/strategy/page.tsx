@@ -10,8 +10,8 @@ export default async function StrategyPage() {
   return (
     <HubConsole
       mode="strategy"
-      title="可行性研究与战略生成"
-      description="输入模糊需求或老板的一句话指令，系统会生成带结构、图示和排期的 FSR，并在可用时保留联网引用。"
+      title="生成下一周准备计划"
+      description="把这轮复盘压成一份真正可执行的计划：先练什么、先补什么、什么算完成。"
       memoryContext={memoryContext}
     />
   );

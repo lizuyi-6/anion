@@ -1,0 +1,42 @@
+
+> anion@0.1.0 dev X:\github-repos\anion
+> next dev
+
+▲ Next.js 16.2.1 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://198.18.0.1:3000
+- Environments: .env.local
+✓ Ready in 358ms
+○ Compiling middleware ...
+
+○ Compiling / ...
+ GET / 200 in 212ms (next.js: 17ms, proxy.ts: 12ms, application-code: 183ms)
+ GET /landing 200 in 5.2s (next.js: 4.7s, proxy.ts: 16ms, application-code: 555ms)
+✓ Finished filesystem cache database compaction in 10.8s
+ GET / 200 in 120ms (next.js: 17ms, proxy.ts: 10ms, application-code: 94ms)
+ GET / 200 in 193ms (next.js: 5ms, proxy.ts: 8ms, application-code: 180ms)
+ GET /simulator/new 200 in 718ms (next.js: 114ms, proxy.ts: 8ms, application-code: 596ms)
+ GET /hub/copilot 200 in 480ms (next.js: 127ms, proxy.ts: 16ms, application-code: 337ms)
+✓ Compiled in 26.1s
+✓ Compiled in 6.1s
+ GET / 200 in 1570ms (next.js: 311ms, proxy.ts: 127ms, application-code: 1132ms)
+ GET /landing 200 in 916ms (next.js: 235ms, proxy.ts: 8ms, application-code: 674ms)
+ GET /hub 200 in 2.3s (next.js: 1916ms, proxy.ts: 6ms, application-code: 356ms)
+✓ Finished filesystem cache database compaction in 14.0s
+ GET /hub/copilot 200 in 1139ms (next.js: 404ms, proxy.ts: 8ms, application-code: 728ms)
+ GET /hub/copilot 200 in 186ms (next.js: 9ms, proxy.ts: 8ms, application-code: 169ms)
+ GET / 200 in 180ms (next.js: 5ms, proxy.ts: 4ms, application-code: 172ms)
+ GET /simulator/new 200 in 1577ms (next.js: 459ms, proxy.ts: 7ms, application-code: 1111ms)
+ GET /simulator/new 200 in 257ms (next.js: 18ms, proxy.ts: 16ms, application-code: 223ms)
+ GET /landing 200 in 137ms (next.js: 5ms, proxy.ts: 4ms, application-code: 128ms)
+ GET /auth/sign-in 307 in 369ms (next.js: 96ms, proxy.ts: 5ms, application-code: 268ms)
+ GET /simulator/new 200 in 181ms (next.js: 10ms, proxy.ts: 11ms, application-code: 160ms)
+ GET /hub 200 in 229ms (next.js: 8ms, proxy.ts: 9ms, application-code: 212ms)
+ GET /simulator/new 200 in 213ms (next.js: 14ms, proxy.ts: 11ms, application-code: 189ms)
+ GET /simulator/new 200 in 250ms (next.js: 15ms, proxy.ts: 8ms, application-code: 227ms)
+ GET /simulator/new 200 in 246ms (next.js: 11ms, proxy.ts: 12ms, application-code: 223ms)
+ GET /simulator/new 200 in 239ms (next.js: 15ms, proxy.ts: 20ms, application-code: 204ms)
+ GET /simulator/new 200 in 189ms (next.js: 15ms, proxy.ts: 8ms, application-code: 166ms)
+ GET /simulator/new 200 in 196ms (next.js: 8ms, proxy.ts: 6ms, application-code: 182ms)
+ GET /simulator/new 200 in 231ms (next.js: 10ms, proxy.ts: 8ms, application-code: 213ms)
+✓ Compiled in 673ms

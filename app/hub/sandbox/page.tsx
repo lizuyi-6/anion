@@ -10,8 +10,8 @@ export default async function SandboxPage() {
   return (
     <HubConsole
       mode="sandbox"
-      title="职场博弈沙盘模拟"
-      description="设定对手人格、冲突议题和会议背景，系统会分析当前均衡点、推荐动作和长期代价。"
+      title="练一次高风险沟通场景"
+      description="先在低风险环境里预演冲突、谈判或高压协作场景，把真正会失分的点提前暴露出来。"
       memoryContext={memoryContext}
     />
   );

@@ -1,0 +1,37 @@
+
+> anion@0.1.0 dev X:\github-repos\anion
+> next dev
+
+▲ Next.js 16.2.1 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://198.18.0.1:3000
+- Environments: .env.local
+✓ Ready in 433ms
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+
+⚠ Slow filesystem detected. The benchmark took 1002ms. If X:\github-repos\anion\.next/dev is a network drive, consider moving it to a local folder.
+See more: https://nextjs.org/docs/app/guides/local-development
+ GET /landing 200 in 866ms (next.js: 231ms, proxy.ts: 92ms, application-code: 543ms)
+ GET / 200 in 779ms (next.js: 576ms, proxy.ts: 6ms, application-code: 197ms)
+✓ Finished filesystem cache database compaction in 11.0s
+ GET /simulator/new 200 in 430ms (next.js: 44ms, proxy.ts: 5ms, application-code: 380ms)
+ GET /auth/sign-in 200 in 600ms (next.js: 209ms, proxy.ts: 90ms, application-code: 301ms)
+ GET /hub 200 in 514ms (next.js: 128ms, proxy.ts: 151ms, application-code: 235ms)
+ GET /landing 200 in 515ms (next.js: 154ms, proxy.ts: 151ms, application-code: 210ms)
+✓ Compiled in 14ms
+ GET /landing 200 in 333ms (next.js: 76ms, proxy.ts: 3ms, application-code: 254ms)
+ GET / 200 in 191ms (next.js: 11ms, proxy.ts: 12ms, application-code: 167ms)
+⚠ Blocked cross-origin request to Next.js dev resource /_next/webpack-hmr from "127.0.0.1".
+Cross-origin access to Next.js dev resources is blocked by default for safety.
+
+To allow this host in development, add it to "allowedDevOrigins" in next.config.js and restart the dev server:
+
+// next.config.js
+module.exports = {
+  allowedDevOrigins: ['127.0.0.1'],
+}
+
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ GET /simulator/new 200 in 181ms (next.js: 9ms, proxy.ts: 10ms, application-code: 161ms)
+ GET /hub 200 in 199ms (next.js: 8ms, proxy.ts: 7ms, application-code: 185ms)
+ GET / 200 in 167ms (next.js: 7ms, proxy.ts: 5ms, application-code: 154ms)

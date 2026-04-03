@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 
-import { AppFrame } from "@/components/app-frame";
 import { InterviewConsole } from "@/components/interview-console";
+import { SessionShell } from "@/components/session-shell";
+import { formatSessionStatus } from "@/lib/domain";
 import { requireViewer } from "@/lib/server/auth";
 import { getDataStore } from "@/lib/server/store/repository";
 
@@ -24,14 +25,20 @@ export default async function SimulatorSessionPage({
   const turns = await store.listTurns(sessionId);
 
   return (
-    <AppFrame
+    <SessionShell
       viewer={viewer}
       activeHref="/simulator/new"
-      title={`${session.config.targetCompany} / ${session.config.level}`}
-      subtitle="用短句、证据和因果链活下来。系统会根据回答实时决定是否打断、是否换人以及是否制造冲突。"
-      shellMode="interview"
+      stage="practice"
+      eyebrow="模拟训练"
+      title={`${session.config.targetCompany} · ${session.config.level}`}
+      description="这一页只做一件事：在压力里把答案说清楚。结束后会自动进入本轮复盘，不需要再切工具。"
+      supportingMeta={[
+        { label: "当前状态", value: formatSessionStatus(session.status) },
+        { label: "目标岗位", value: session.config.targetCompany },
+        { label: "完成后", value: "自动生成本轮复盘" },
+      ]}
     >
       <InterviewConsole session={session} turns={turns} />
-    </AppFrame>
+    </SessionShell>
   );
 }

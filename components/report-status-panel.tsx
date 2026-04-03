@@ -35,9 +35,7 @@ export function ReportStatusPanel({
         })
         .catch((error) => {
           if (!cancelled) {
-            setLastError(
-              error instanceof Error ? error.message : "Failed to refresh analysis status",
-            );
+            setLastError(error instanceof Error ? error.message : "无法刷新复盘状态");
           }
         });
     }, 2500);
@@ -55,7 +53,7 @@ export function ReportStatusPanel({
       setLastError(null);
       setStatus("analyzing");
     } catch (error) {
-      setLastError(error instanceof Error ? error.message : "Failed to retry analysis");
+      setLastError(error instanceof Error ? error.message : "无法重新生成复盘");
     } finally {
       setIsRetrying(false);
     }
@@ -63,11 +61,10 @@ export function ReportStatusPanel({
 
   return (
     <section className="panel transition-panel" data-testid="report-status-panel">
-      <p className="panel-label">A3 / Analysis</p>
-      <h3>{status === "analyzing" ? "Report is still processing" : "Analysis needs a retry"}</h3>
+      <p className="panel-label">复盘洞察</p>
+      <h3>{status === "analyzing" ? "本轮复盘仍在生成" : "复盘生成失败，需要重试"}</h3>
       <p className="hero-copy">
-        The report page keeps polling while analysis is running and refreshes itself once the
-        report becomes available.
+        页面会持续刷新复盘状态。一旦分析完成，这里会自动更新成完整的亮点、短板和下一周行动建议。
       </p>
       <div className="terminal-caret" aria-hidden />
       {lastError ? <p className="error-copy">{lastError}</p> : null}
@@ -80,7 +77,7 @@ export function ReportStatusPanel({
             void onRetry();
           }}
         >
-          {isRetrying ? "Retrying..." : "Retry analysis"}
+          {isRetrying ? "正在重试..." : "重新生成复盘"}
         </button>
       </div>
     </section>

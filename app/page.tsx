@@ -1,7 +1,15 @@
 import Link from "next/link";
 
-import { AppFrame } from "@/components/app-frame";
-import { formatRolePackLabel, formatSessionStatus } from "@/lib/domain";
+import { JourneyShell } from "@/components/journey-shell";
+import { formatRolePackLabel } from "@/lib/domain";
+import {
+  formatAudienceSessionStatus,
+  formatJourneyStage,
+  getJourneyStageFromStatus,
+  getJourneySteps,
+  getNextRecommendedAction,
+  getPrimarySession,
+} from "@/lib/journey";
 import { requireViewer } from "@/lib/server/auth";
 import { getDataStore } from "@/lib/server/store/repository";
 import { formatDate } from "@/lib/utils";
@@ -11,72 +19,130 @@ export const dynamic = "force-dynamic";
 export default async function Home() {
   const viewer = await requireViewer();
   const store = await getDataStore({ viewer });
-  const sessions = (await store.listSessions(viewer.id)) || [];
+  const sessions = ((await store.listSessions(viewer.id)) ?? []).sort((left, right) =>
+    right.updatedAt.localeCompare(left.updatedAt),
+  );
+
+  const latestSession = getPrimarySession(sessions);
+  const nextAction = getNextRecommendedAction(viewer, sessions);
+  const currentStage = latestSession
+    ? getJourneyStageFromStatus(latestSession.status)
+    : nextAction.stage;
+  const journeySteps = getJourneySteps();
 
   return (
-    <AppFrame
-      viewer={viewer}
-      activeHref="/"
-      title="莫比乌斯计划"
-      subtitle="从高压面试沙盒切换到专属职场外脑。首版支持模拟面试、终局报告、接受录用转场与三种中枢工作台。"
-    >
-      <div className="card-grid">
-        <section className="panel">
-          <p className="panel-label">A / 面试模拟器</p>
-          <h3>千面考官沙盒</h3>
-          <p className="hero-copy">
-            支持非线性追问、群面冲突、规则优先的打断机制，以及可沉淀成能力图谱的终局报告。
+    <JourneyShell viewer={viewer} activeHref="/">
+      <section className="journey-hero-card">
+        <div className="journey-hero-copy">
+          <span className="landing-kicker">我的旅程</span>
+          <h1>从一次准备，走到持续提升。</h1>
+          <p>
+            这里不会把功能堆成工具箱，而是根据你当前阶段，只给你最该做的下一步。
           </p>
-          <Link href="/simulator/new" className="primary-button inline-button">
-            创建新会话
-          </Link>
-        </section>
-        <section className="panel">
-          <p className="panel-label">B / 转场</p>
-          <h3>接受录用状态切换</h3>
-          <p className="hero-copy">
-            当报告确认后，把冷启动考场切换成高科技中枢，系统目标从“找漏洞”改为“补短板并赢下战役”。
-          </p>
-        </section>
-        <section className="panel">
-          <p className="panel-label">C / 指挥中心</p>
-          <h3>工程 / 战略 / 沙盒</h3>
-          <p className="hero-copy">
-            工程副驾、可行性研究生成器和职场博弈沙盘，共享同一份长期记忆图谱。
-          </p>
-        </section>
-      </div>
 
-      <section className="panel session-list-panel">
-        <div className="section-head">
-          <div>
-            <p className="panel-label">最近会话</p>
-            <h3>历史会话</h3>
+          <div className="journey-next-card">
+            <div className="chip-row">
+              <span className="workspace-pill primary">{formatJourneyStage(nextAction.stage)}</span>
+              {latestSession ? (
+                <span className="workspace-pill">
+                  {formatAudienceSessionStatus(latestSession.status)}
+                </span>
+              ) : null}
+            </div>
+            <h2>{nextAction.label}</h2>
+            <p>{nextAction.description}</p>
+            <div className="journey-hero-actions">
+              <Link href={nextAction.href} className="primary-button">
+                {nextAction.label}
+              </Link>
+              <Link href="/landing#journey" className="secondary-button">
+                查看陪跑方式
+              </Link>
+            </div>
           </div>
         </div>
-        {sessions.length === 0 ? (
-          <p className="muted-copy">
-            还没有面试记录。先创建一场会话，把压力测试和记忆图谱跑起来。
-          </p>
-        ) : (
-          <div className="stack-sm">
-            {sessions.map((session) => (
-              <Link key={session.id} href={`/report/${session.id}`} className="list-row">
-                <div>
-                  <strong>{session.config.targetCompany}</strong>
-                  <p className="muted-copy">
-                    {session.config.level} · {formatRolePackLabel(session.config.rolePack)}
-                  </p>
-                </div>
-                <div className="list-meta">
-                  <span className="status-pill subtle">{formatSessionStatus(session.status)}</span>
-                  <small>{formatDate(session.updatedAt)}</small>
-                </div>
-              </Link>
-            ))}
+
+        <aside className="journey-summary-card">
+          <span className="panel-label">当前概览</span>
+          <h2>{latestSession ? "你已经在旅程中" : "你还没开始第一轮准备"}</h2>
+          <div className="journey-summary-list">
+            <div className="journey-summary-item">
+              <strong>默认受众</strong>
+              <span>{formatRolePackLabel(viewer.preferredRolePack)}岗位</span>
+            </div>
+            <div className="journey-summary-item">
+              <strong>当前阶段</strong>
+              <span>{formatJourneyStage(currentStage)}</span>
+            </div>
+            <div className="journey-summary-item">
+              <strong>最近更新</strong>
+              <span>{latestSession ? formatDate(latestSession.updatedAt) : "还没有记录"}</span>
+            </div>
           </div>
-        )}
+        </aside>
       </section>
-    </AppFrame>
+
+      <section className="journey-stage-grid">
+        {journeySteps.map((step) => {
+          const latestIndex = journeySteps.findIndex((item) => item.id === currentStage);
+          const stepIndex = journeySteps.findIndex((item) => item.id === step.id);
+          const state =
+            stepIndex < latestIndex ? "done" : stepIndex === latestIndex ? "active" : "upcoming";
+
+          return (
+            <article key={step.id} className={`journey-stage-card ${state}`}>
+              <span className="journey-stage-tag">{step.label}</span>
+              <h3>{step.description}</h3>
+            </article>
+          );
+        })}
+      </section>
+
+      <section className="journey-support-grid">
+        <article className="workspace-card">
+          <div className="section-head">
+            <div>
+              <p className="panel-label">最近进展</p>
+              <h3>最近几次训练记录</h3>
+            </div>
+          </div>
+          <div className="overview-session-list">
+            {sessions.length === 0 ? (
+              <p className="muted-copy">
+                还没有开始第一轮训练。先创建准备目标，后面的模拟、复盘和行动计划会自动接上。
+              </p>
+            ) : (
+              sessions.slice(0, 4).map((session) => (
+                <Link key={session.id} href={`/report/${session.id}`} className="list-row">
+                  <div>
+                    <strong>{session.config.targetCompany}</strong>
+                    <p className="muted-copy">
+                      {session.config.level} · {formatAudienceSessionStatus(session.status)}
+                    </p>
+                  </div>
+                  <small>{formatDate(session.updatedAt)}</small>
+                </Link>
+              ))
+            )}
+          </div>
+        </article>
+
+        <article className="workspace-card workspace-highlight-card">
+          <div className="section-head">
+            <div>
+              <p className="panel-label">下一步提醒</p>
+              <h3>始终只做当前阶段最重要的一件事</h3>
+            </div>
+          </div>
+          <p className="hero-copy">
+            {latestSession
+              ? `你最近一次准备停留在“${formatJourneyStage(
+                  currentStage,
+                )}”阶段。先完成这一环，再进入下一步，体验会最连贯。`
+              : "如果你是第一次进入，先创建目标岗位和材料。先把目标说清楚，比先开工具更重要。"}
+          </p>
+        </article>
+      </section>
+    </JourneyShell>
   );
 }

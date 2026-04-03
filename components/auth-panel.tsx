@@ -33,9 +33,9 @@ export function AuthPanel({
         throw error;
       }
 
-      setMessage("魔法链接已发送。请检查收件箱。");
+      setMessage("Magic link 已发送，请检查你的邮箱。");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "无法发送魔法链接。");
+      setMessage(error instanceof Error ? error.message : "无法发送 magic link。");
     } finally {
       setIsPending(false);
     }
@@ -62,12 +62,15 @@ export function AuthPanel({
   };
 
   return (
-    <section className="panel">
-      <p className="panel-label">身份验证</p>
-      <h3>登录以启用Supabase模式</h3>
-      <p className="hero-copy">
-        使用邮箱魔法链接或Google登录。当Supabase未配置时，演示模式仍然可用。
-      </p>
+    <div className="auth-panel-form stack-md">
+      <div>
+        <p className="panel-label">登录方式</p>
+        <h3>登录后可以长期保存你的准备记录</h3>
+        <p className="hero-copy">
+          可以先用邮箱 magic link，也可以直接使用 Google 登录。完成登录后，后续模拟、
+          复盘和行动计划都会绑定到你的个人空间里。
+        </p>
+      </div>
       <label className="field">
         <span>邮箱</span>
         <input
@@ -77,7 +80,7 @@ export function AuthPanel({
           placeholder="your@email.com"
         />
       </label>
-      <div className="action-row">
+      <div className="auth-panel-actions">
         <button
           type="button"
           className="primary-button"
@@ -86,7 +89,7 @@ export function AuthPanel({
             void onMagicLink();
           }}
         >
-          {isPending ? "发送中..." : "发送魔法链接"}
+          {isPending ? "发送中..." : "发送 magic link"}
         </button>
         <button
           type="button"
@@ -96,10 +99,10 @@ export function AuthPanel({
             void onGoogle();
           }}
         >
-          继续使用Google登录
+          使用 Google 登录
         </button>
       </div>
-      {message ? <p className="muted-copy">{message}</p> : null}
-    </section>
+      {message ? <p className="muted-copy auth-status-message">{message}</p> : null}
+    </div>
   );
 }

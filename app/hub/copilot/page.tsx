@@ -10,8 +10,8 @@ export default async function CopilotPage() {
   return (
     <HubConsole
       mode="copilot"
-      title="全栈与架构副驾"
-      description="把报错、日志、代码片段扔进来。系统会结合你在模拟面试暴露出的短板，跳过废话，直接切根因和修复路径。"
+      title="修复一个高风险回答"
+      description="把最近一次复盘里最需要优先修正的问题、日志或代码片段带进来，先把最影响结果的地方拆开处理。"
       memoryContext={memoryContext}
     />
   );

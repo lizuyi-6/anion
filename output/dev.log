@@ -1,0 +1,1521 @@
+
+> anion@0.1.0 dev X:\github-repos\anion
+> concurrently -n web,api,worker "pnpm dev:web" "pnpm dev:api" "pnpm dev:worker"
+
+[api] 
+[api] > anion@0.1.0 dev:api X:\github-repos\anion
+[api] > node ./scripts/run-workspace.mjs api dev
+[api] 
+[web] 
+[web] > anion@0.1.0 dev:web X:\github-repos\anion
+[web] > node ./scripts/run-workspace.mjs web dev
+[web] 
+[worker] 
+[worker] > anion@0.1.0 dev:worker X:\github-repos\anion
+[worker] > node ./scripts/run-workspace.mjs worker dev
+[worker] 
+[api] (node:39860) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[api] (Use `node --trace-deprecation ...` to show where the warning was created)
+[web] (node:3032) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[web] (Use `node --trace-deprecation ...` to show where the warning was created)
+[worker] (node:28228) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+[worker] (Use `node --trace-deprecation ...` to show where the warning was created)
+[api] 
+[api] > @anion/api@ dev X:\github-repos\anion\apps\api
+[api] > tsx watch ./src/server.ts
+[api] 
+[worker] 
+[worker] > @anion/worker@ dev X:\github-repos\anion\apps\worker
+[worker] > tsx watch ./src/dev.ts
+[worker] 
+[web] 
+[web] > @anion/web@ dev X:\github-repos\anion\apps\web
+[web] > next dev
+[web] 
+[worker] [worker] queueDriver=inline workerPort=3002 triggerProject=unset
+[web] ▲ Next.js 16.2.1 (Turbopack)
+[web] - Local:         http://localhost:3000
+[web] - Network:       http://198.18.0.1:3000
+[web] ✓ Ready in 2.4s
+[web] ⚠ Slow filesystem detected. The benchmark took 348ms. If X:\github-repos\anion\apps/web/.next/dev is a network drive, consider moving it to a local folder.
+[web] See more: https://nextjs.org/docs/app/guides/local-development
+[web] ○ Compiling proxy ...
+[web] 
+[api] {"level":30,"time":1775178136813,"pid":33376,"hostname":"DESKTOP-RM48ODG","msg":"Server listening at http://127.0.0.1:3001"}
+[api] {"level":30,"time":1775178139369,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1","req":{"method":"GET","url":"/","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52821},"msg":"incoming request"}
+[api] {"level":30,"time":1775178139369,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1","msg":"Route GET:/ not found"}
+[api] {"level":30,"time":1775178139372,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1","res":{"statusCode":404},"responseTime":3.1968000009655952,"msg":"request completed"}
+[web] ○ Compiling / ...
+[web] ⨯ ./packages/infrastructure/src/ai/adapter.ts:8:1
+[web] Module not found: Can't resolve './prompts.js'
+[web]   [90m 6 |[0m
+[web]   [90m 7 |[0m [36mimport[0m { toAiProviderFailure } [36mfrom[0m [32m"./errors"[0m;
+[web] [31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+[web]   [90m   |[0m [31m[1m^^^^^^^[0m
+[web] [31m[1m>[0m [90m 9 |[0m   buildCopilotUserPrompt,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m10 |[0m   buildCopilotUserPromptOpenAi,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m11 |[0m   buildDiagnosticUserPrompt,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m12 |[0m   buildDiagnosticUserPromptOpenAi,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m13 |[0m   buildGatewaySystemSuffix,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m14 |[0m   buildInterviewUserPrompt,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m15 |[0m   buildInterviewUserPromptOpenAi,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m16 |[0m   buildMemoryUserPrompt,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m17 |[0m   buildMemoryUserPromptOpenAi,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m18 |[0m   buildSandboxTurnUserPrompt,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m19 |[0m   buildSandboxTurnUserPromptOpenAi,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m20 |[0m   buildSandboxUserPrompt,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m21 |[0m   buildSandboxUserPromptOpenAi,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m22 |[0m   buildStrategyUserPrompt,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m23 |[0m   buildStrategyUserPromptOpenAi,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m24 |[0m   [33mCOPILOT_SYSTEM[0m,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m25 |[0m   [33mDIAGNOSTIC_SYSTEM[0m,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m26 |[0m   [33mINTERVIEW_SYSTEM[0m,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m27 |[0m   [33mMEMORY_SYSTEM[0m,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m28 |[0m   [33mSANDBOX_SYSTEM[0m,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m29 |[0m   [33mSANDBOX_TURN_SYSTEM[0m,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m30 |[0m   [33mSTRATEGY_SYSTEM[0m,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m31 |[0m } [36mfrom[0m [32m"./prompts.js"[0m;
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[web]   [90m32 |[0m [36mimport[0m { hasMiniMax, hasOpenAi, hasAnthropic, runtimeEnv } [36mfrom[0m [32m"@anion/config"[0m;
+[web]   [90m33 |[0m [36mimport[0m [36mtype[0m {
+[web]   [90m34 |[0m   [33mActiveMemoryContext[0m,
+[web] 
+[web] 
+[web] 
+[web] Import trace:
+[web]   Server Component:
+[web]     ./packages/infrastructure/src/ai/adapter.ts
+[web]     ./packages/infrastructure/src/index.ts
+[web]     ./apps/web/lib/server/store/repository.ts
+[web]     ./apps/web/app/page.tsx
+[web] 
+[web] https://nextjs.org/docs/messages/module-not-found
+[web] 
+[web] 
+[web] ⨯ ./packages/infrastructure/src/ai/adapter.ts:8:1
+[web] Module not found: Can't resolve './prompts.js'
+[web]   [90m 6 |[0m
+[web]   [90m 7 |[0m [36mimport[0m { toAiProviderFailure } [36mfrom[0m [32m"./errors"[0m;
+[web] [31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+[web]   [90m   |[0m [31m[1m^^^^^^^[0m
+[web] [31m[1m>[0m [90m 9 |[0m   buildCopilotUserPrompt,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m10 |[0m   buildCopilotUserPromptOpenAi,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m11 |[0m   buildDiagnosticUserPrompt,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m12 |[0m   buildDiagnosticUserPromptOpenAi,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m13 |[0m   buildGatewaySystemSuffix,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m14 |[0m   buildInterviewUserPrompt,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m15 |[0m   buildInterviewUserPromptOpenAi,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m16 |[0m   buildMemoryUserPrompt,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m17 |[0m   buildMemoryUserPromptOpenAi,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m18 |[0m   buildSandboxTurnUserPrompt,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m19 |[0m   buildSandboxTurnUserPromptOpenAi,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m20 |[0m   buildSandboxUserPrompt,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m21 |[0m   buildSandboxUserPromptOpenAi,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m22 |[0m   buildStrategyUserPrompt,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m23 |[0m   buildStrategyUserPromptOpenAi,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m24 |[0m   [33mCOPILOT_SYSTEM[0m,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m25 |[0m   [33mDIAGNOSTIC_SYSTEM[0m,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m26 |[0m   [33mINTERVIEW_SYSTEM[0m,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m27 |[0m   [33mMEMORY_SYSTEM[0m,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m28 |[0m   [33mSANDBOX_SYSTEM[0m,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m29 |[0m   [33mSANDBOX_TURN_SYSTEM[0m,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m30 |[0m   [33mSTRATEGY_SYSTEM[0m,
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[web] [31m[1m>[0m [90m31 |[0m } [36mfrom[0m [32m"./prompts.js"[0m;
+[web]   [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+[web]   [90m32 |[0m [36mimport[0m { hasMiniMax, hasOpenAi, hasAnthropic, runtimeEnv } [36mfrom[0m [32m"@anion/config"[0m;
+[web]   [90m33 |[0m [36mimport[0m [36mtype[0m {
+[web]   [90m34 |[0m   [33mActiveMemoryContext[0m,
+[web] 
+[web] 
+[web] 
+[web] Import trace:
+[web]   Server Component:
+[web]     ./packages/infrastructure/src/ai/adapter.ts
+[web]     ./packages/infrastructure/src/index.ts
+[web]     ./apps/web/lib/server/store/repository.ts
+[web]     ./apps/web/app/page.tsx
+[web] 
+[web] https://nextjs.org/docs/messages/module-not-found
+[web] 
+[web] 
+[web]  GET / 500 in 44ms (next.js: 16ms, proxy.ts: 12ms, application-code: 16ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[web] ✓ Compiled in 742ms
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775178297785,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":54274},"msg":"incoming request"}
+[api] {"level":30,"time":1775178297788,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2","res":{"statusCode":200},"responseTime":2.065700002014637,"msg":"request completed"}
+[api] {"level":30,"time":1775178299530,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":54277},"msg":"incoming request"}
+[api] {"level":30,"time":1775178299532,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3","res":{"statusCode":200},"responseTime":1.0004999935626984,"msg":"request completed"}
+[web]  GET / 200 in 4.1s (next.js: 483ms, proxy.ts: 100ms, application-code: 3.5s)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775178375123,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178375125,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4","res":{"statusCode":200},"responseTime":1.1742000058293343,"msg":"request completed"}
+[web]  GET / 200 in 148ms (next.js: 9ms, proxy.ts: 10ms, application-code: 130ms)
+[web] ⚠ Blocked cross-origin request to Next.js dev resource /_next/webpack-hmr from "127.0.0.1".
+[web] Cross-origin access to Next.js dev resources is blocked by default for safety.
+[web] 
+[web] To allow this host in development, add it to "allowedDevOrigins" in next.config.js and restart the dev server:
+[web] 
+[web] // next.config.js
+[web] module.exports = {
+[web]   allowedDevOrigins: ['127.0.0.1'],
+[web] }
+[web] 
+[web] Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775178416263,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178416264,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5","res":{"statusCode":200},"responseTime":0.6243000030517578,"msg":"request completed"}
+[web]  GET / 200 in 310ms (next.js: 9ms, proxy.ts: 14ms, application-code: 286ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775178483926,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178483927,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6","res":{"statusCode":200},"responseTime":1.0995000004768372,"msg":"request completed"}
+[web]  GET / 200 in 243ms (next.js: 10ms, proxy.ts: 9ms, application-code: 224ms)
+[api] {"level":30,"time":1775178532022,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178532024,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7","res":{"statusCode":200},"responseTime":1.089599996805191,"msg":"request completed"}
+[worker] [worker] heartbeat
+[web]  GET / 200 in 260ms (next.js: 11ms, proxy.ts: 10ms, application-code: 240ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775178596951,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-8","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178596953,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-8","res":{"statusCode":200},"responseTime":0.996399998664856,"msg":"request completed"}
+[web]  GET / 200 in 213ms (next.js: 9ms, proxy.ts: 13ms, application-code: 190ms)
+[api] {"level":30,"time":1775178647349,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-9","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178647351,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-9","res":{"statusCode":200},"responseTime":1.1193000003695488,"msg":"request completed"}
+[web]  GET /landing 200 in 1849ms (next.js: 984ms, proxy.ts: 7ms, application-code: 858ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775178652451,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-a","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178652453,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-a","res":{"statusCode":200},"responseTime":0.9259000048041344,"msg":"request completed"}
+[web]  GET / 200 in 217ms (next.js: 12ms, proxy.ts: 12ms, application-code: 192ms)
+[api] {"level":30,"time":1775178689146,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-b","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178689147,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-b","res":{"statusCode":200},"responseTime":0.851500004529953,"msg":"request completed"}
+[web]  GET /landing 200 in 304ms (next.js: 18ms, proxy.ts: 13ms, application-code: 274ms)
+[api] {"level":30,"time":1775178699377,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-c","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178699378,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-c","res":{"statusCode":200},"responseTime":0.8330000042915344,"msg":"request completed"}
+[web]  GET /landing 200 in 280ms (next.js: 9ms, proxy.ts: 11ms, application-code: 261ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775178716528,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-d","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178716529,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-d","res":{"statusCode":200},"responseTime":0.677499994635582,"msg":"request completed"}
+[web]  GET / 200 in 254ms (next.js: 6ms, proxy.ts: 9ms, application-code: 239ms)
+[api] {"level":30,"time":1775178718052,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-e","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178718053,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-e","res":{"statusCode":200},"responseTime":0.7637000009417534,"msg":"request completed"}
+[web]  GET / 200 in 234ms (next.js: 9ms, proxy.ts: 14ms, application-code: 211ms)
+[api] {"level":30,"time":1775178759768,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-f","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178759769,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-f","res":{"statusCode":200},"responseTime":0.7453000023961067,"msg":"request completed"}
+[web]  GET /landing 200 in 247ms (next.js: 9ms, proxy.ts: 10ms, application-code: 228ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775178792518,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-g","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178792519,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-g","res":{"statusCode":200},"responseTime":0.7321000024676323,"msg":"request completed"}
+[api] {"level":30,"time":1775178792658,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-h","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178792659,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-h","res":{"statusCode":200},"responseTime":0.598800003528595,"msg":"request completed"}
+[api] {"level":30,"time":1775178792899,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-i","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178792900,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-i","res":{"statusCode":200},"responseTime":0.3222000002861023,"msg":"request completed"}
+[web]  GET / 200 in 656ms (next.js: 17ms, proxy.ts: 22ms, application-code: 617ms)
+[web]  GET /landing 200 in 659ms (next.js: 86ms, proxy.ts: 25ms, application-code: 547ms)
+[web]  GET /landing 200 in 657ms (next.js: 236ms, proxy.ts: 86ms, application-code: 336ms)
+[api] {"level":30,"time":1775178798974,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-j","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178798976,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-j","res":{"statusCode":200},"responseTime":1.9285999983549118,"msg":"request completed"}
+[web]  GET / 200 in 201ms (next.js: 11ms, proxy.ts: 12ms, application-code: 179ms)
+[api] {"level":30,"time":1775178811673,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-k","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178811675,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-k","res":{"statusCode":200},"responseTime":0.6607000008225441,"msg":"request completed"}
+[web]  GET /landing 200 in 240ms (next.js: 6ms, proxy.ts: 9ms, application-code: 225ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775178839205,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-l","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178839206,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-l","res":{"statusCode":200},"responseTime":0.7338999956846237,"msg":"request completed"}
+[web]  GET /landing 200 in 243ms (next.js: 14ms, proxy.ts: 17ms, application-code: 212ms)
+[api] {"level":30,"time":1775178852192,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-m","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178852193,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-m","res":{"statusCode":200},"responseTime":0.6694999933242798,"msg":"request completed"}
+[api] {"level":30,"time":1775178852303,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-n","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178852304,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-n","res":{"statusCode":200},"responseTime":0.6288999989628792,"msg":"request completed"}
+[web]  GET /landing 200 in 380ms (next.js: 9ms, proxy.ts: 8ms, application-code: 363ms)
+[web]  GET / 200 in 388ms (next.js: 79ms, proxy.ts: 8ms, application-code: 302ms)
+[api] {"level":30,"time":1775178863961,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-o","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178863962,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-o","res":{"statusCode":200},"responseTime":0.7160999998450279,"msg":"request completed"}
+[web]  GET /landing 200 in 262ms (next.js: 9ms, proxy.ts: 10ms, application-code: 242ms)
+[api] {"level":30,"time":1775178875344,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-p","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178875344,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-p","res":{"statusCode":200},"responseTime":0.5505999997258186,"msg":"request completed"}
+[web]  GET /landing 200 in 262ms (next.js: 7ms, proxy.ts: 11ms, application-code: 244ms)
+[api] {"level":30,"time":1775178884682,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-q","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178884683,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-q","res":{"statusCode":200},"responseTime":0.38359999656677246,"msg":"request completed"}
+[web]  GET / 200 in 187ms (next.js: 8ms, proxy.ts: 13ms, application-code: 166ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775178917204,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-r","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178917204,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-r","res":{"statusCode":200},"responseTime":0.3620000034570694,"msg":"request completed"}
+[web]  GET /landing 200 in 296ms (next.js: 12ms, proxy.ts: 16ms, application-code: 268ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775178968183,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-s","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178968184,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-s","res":{"statusCode":200},"responseTime":0.8044999986886978,"msg":"request completed"}
+[web]  GET / 200 in 218ms (next.js: 8ms, proxy.ts: 9ms, application-code: 200ms)
+[api] {"level":30,"time":1775178993848,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-t","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775178993849,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-t","res":{"statusCode":200},"responseTime":0.7628000006079674,"msg":"request completed"}
+[web]  GET /landing 200 in 283ms (next.js: 13ms, proxy.ts: 10ms, application-code: 260ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775179052274,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-u","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775179052275,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-u","res":{"statusCode":200},"responseTime":0.8290000036358833,"msg":"request completed"}
+[web]  GET / 200 in 251ms (next.js: 9ms, proxy.ts: 21ms, application-code: 221ms)
+[api] {"level":30,"time":1775179067545,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-v","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775179067546,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-v","res":{"statusCode":200},"responseTime":0.65990000218153,"msg":"request completed"}
+[web]  GET /landing 200 in 283ms (next.js: 10ms, proxy.ts: 13ms, application-code: 260ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775179125496,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-w","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775179125497,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-w","res":{"statusCode":200},"responseTime":0.7719999998807907,"msg":"request completed"}
+[web]  GET / 200 in 271ms (next.js: 10ms, proxy.ts: 13ms, application-code: 247ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775179138868,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-x","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775179138869,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-x","res":{"statusCode":200},"responseTime":1.0839999988675117,"msg":"request completed"}
+[web]  GET /landing 200 in 302ms (next.js: 11ms, proxy.ts: 13ms, application-code: 278ms)
+[api] {"level":30,"time":1775179181779,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-y","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775179181781,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-y","res":{"statusCode":200},"responseTime":0.7552000060677528,"msg":"request completed"}
+[web]  GET /landing 200 in 272ms (next.js: 9ms, proxy.ts: 5ms, application-code: 258ms)
+[api] {"level":30,"time":1775179185290,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-z","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52259},"msg":"incoming request"}
+[api] {"level":30,"time":1775179185291,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-z","res":{"statusCode":200},"responseTime":0.6129000037908554,"msg":"request completed"}
+[web]  GET / 200 in 257ms (next.js: 9ms, proxy.ts: 12ms, application-code: 236ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775179255473,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-10","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179255474,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-10","res":{"statusCode":200},"responseTime":0.9821999967098236,"msg":"request completed"}
+[web]  GET / 200 in 257ms (next.js: 14ms, proxy.ts: 12ms, application-code: 231ms)
+[api] {"level":30,"time":1775179258379,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-11","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179258380,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-11","res":{"statusCode":200},"responseTime":0.6348000019788742,"msg":"request completed"}
+[web]  GET /landing 200 in 312ms (next.js: 9ms, proxy.ts: 10ms, application-code: 293ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775179315905,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-12","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179315906,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-12","res":{"statusCode":200},"responseTime":0.6441000029444695,"msg":"request completed"}
+[web]  GET / 200 in 255ms (next.js: 9ms, proxy.ts: 12ms, application-code: 234ms)
+[api] {"level":30,"time":1775179330207,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-13","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179330208,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-13","res":{"statusCode":200},"responseTime":0.2953999936580658,"msg":"request completed"}
+[web]  GET /landing 200 in 284ms (next.js: 12ms, proxy.ts: 10ms, application-code: 262ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775179382479,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-14","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179382480,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-14","res":{"statusCode":200},"responseTime":0.7392000034451485,"msg":"request completed"}
+[web]  GET / 200 in 265ms (next.js: 9ms, proxy.ts: 11ms, application-code: 245ms)
+[api] {"level":30,"time":1775179392667,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-15","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179392668,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-15","res":{"statusCode":200},"responseTime":0.8218999952077866,"msg":"request completed"}
+[web]  GET /landing 200 in 226ms (next.js: 7ms, proxy.ts: 11ms, application-code: 208ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775179440898,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-16","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179440899,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-16","res":{"statusCode":200},"responseTime":0.6424000039696693,"msg":"request completed"}
+[web]  GET /landing 200 in 308ms (next.js: 11ms, proxy.ts: 18ms, application-code: 279ms)
+[api] {"level":30,"time":1775179448918,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-17","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179448919,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-17","res":{"statusCode":200},"responseTime":0.4657000005245209,"msg":"request completed"}
+[web]  GET / 200 in 243ms (next.js: 11ms, proxy.ts: 14ms, application-code: 219ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775179511243,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-18","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179511244,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-18","res":{"statusCode":200},"responseTime":0.5837000012397766,"msg":"request completed"}
+[web]  GET /landing 200 in 287ms (next.js: 9ms, proxy.ts: 13ms, application-code: 265ms)
+[api] {"level":30,"time":1775179534002,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-19","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179534003,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-19","res":{"statusCode":200},"responseTime":0.7373000010848045,"msg":"request completed"}
+[web]  GET / 200 in 278ms (next.js: 10ms, proxy.ts: 13ms, application-code: 255ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775179557202,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1a","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179557203,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1a","res":{"statusCode":200},"responseTime":0.6269999966025352,"msg":"request completed"}
+[web]  GET /landing 200 in 299ms (next.js: 11ms, proxy.ts: 15ms, application-code: 272ms)
+[api] {"level":30,"time":1775179611446,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1b","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179611447,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1b","res":{"statusCode":200},"responseTime":0.6420000046491623,"msg":"request completed"}
+[web]  GET / 200 in 239ms (next.js: 11ms, proxy.ts: 13ms, application-code: 214ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775179629257,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1c","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179629258,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1c","res":{"statusCode":200},"responseTime":0.47099999338388443,"msg":"request completed"}
+[web]  GET /landing 200 in 285ms (next.js: 12ms, proxy.ts: 9ms, application-code: 264ms)
+[api] {"level":30,"time":1775179671542,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1d","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179671543,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1d","res":{"statusCode":200},"responseTime":0.7031999975442886,"msg":"request completed"}
+[api] {"level":30,"time":1775179671795,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1e","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179671796,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1e","res":{"statusCode":200},"responseTime":0.6050000041723251,"msg":"request completed"}
+[web]  GET / 200 in 533ms (next.js: 9ms, proxy.ts: 9ms, application-code: 516ms)
+[web]  GET /landing 200 in 335ms (next.js: 14ms, proxy.ts: 16ms, application-code: 305ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775179738419,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1f","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179738420,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1f","res":{"statusCode":200},"responseTime":0.5922999978065491,"msg":"request completed"}
+[web]  GET / 200 in 202ms (next.js: 7ms, proxy.ts: 6ms, application-code: 189ms)
+[api] {"level":30,"time":1775179745420,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1g","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179745421,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1g","res":{"statusCode":200},"responseTime":0.6169000044465065,"msg":"request completed"}
+[web]  GET /landing 200 in 248ms (next.js: 8ms, proxy.ts: 7ms, application-code: 232ms)
+[api] {"level":30,"time":1775179787927,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1h","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179787928,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1h","res":{"statusCode":200},"responseTime":0.634600006043911,"msg":"request completed"}
+[web]  GET /landing 200 in 330ms (next.js: 12ms, proxy.ts: 13ms, application-code: 305ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775179802659,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1i","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179802660,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1i","res":{"statusCode":200},"responseTime":0.624600000679493,"msg":"request completed"}
+[web]  GET / 200 in 254ms (next.js: 9ms, proxy.ts: 12ms, application-code: 233ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775179865176,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1j","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179865177,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1j","res":{"statusCode":200},"responseTime":0.665800005197525,"msg":"request completed"}
+[web]  GET /landing 200 in 265ms (next.js: 8ms, proxy.ts: 12ms, application-code: 245ms)
+[api] {"level":30,"time":1775179868460,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1k","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179868461,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1k","res":{"statusCode":200},"responseTime":0.6087999939918518,"msg":"request completed"}
+[web]  GET / 200 in 249ms (next.js: 9ms, proxy.ts: 11ms, application-code: 229ms)
+[api] {"level":30,"time":1775179906498,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1l","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179906499,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1l","res":{"statusCode":200},"responseTime":0.6981000006198883,"msg":"request completed"}
+[web]  GET /landing 200 in 339ms (next.js: 8ms, proxy.ts: 9ms, application-code: 322ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775179930668,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1m","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179930670,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1m","res":{"statusCode":200},"responseTime":1.1156999990344048,"msg":"request completed"}
+[web]  GET / 200 in 258ms (next.js: 12ms, proxy.ts: 13ms, application-code: 233ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775179984914,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1n","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179984915,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1n","res":{"statusCode":200},"responseTime":0.7243999987840652,"msg":"request completed"}
+[web]  GET /landing 200 in 308ms (next.js: 11ms, proxy.ts: 10ms, application-code: 287ms)
+[api] {"level":30,"time":1775179994465,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1o","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775179994466,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1o","res":{"statusCode":200},"responseTime":0.6218999996781349,"msg":"request completed"}
+[web]  GET / 200 in 258ms (next.js: 14ms, proxy.ts: 12ms, application-code: 233ms)
+[api] {"level":30,"time":1775180025994,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1p","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775180025995,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1p","res":{"statusCode":200},"responseTime":0.6459999978542328,"msg":"request completed"}
+[web]  GET /landing 200 in 280ms (next.js: 9ms, proxy.ts: 8ms, application-code: 263ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775180062826,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1q","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775180062827,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1q","res":{"statusCode":200},"responseTime":0.6178999990224838,"msg":"request completed"}
+[web]  GET / 200 in 280ms (next.js: 14ms, proxy.ts: 14ms, application-code: 252ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775180096055,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1r","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775180096056,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1r","res":{"statusCode":200},"responseTime":0.6407999992370605,"msg":"request completed"}
+[web]  GET /landing 200 in 272ms (next.js: 9ms, proxy.ts: 10ms, application-code: 253ms)
+[api] {"level":30,"time":1775180144204,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1s","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775180144205,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1s","res":{"statusCode":200},"responseTime":0.6568999961018562,"msg":"request completed"}
+[web]  GET / 200 in 261ms (next.js: 10ms, proxy.ts: 16ms, application-code: 236ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775180181573,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1t","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775180181574,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1t","res":{"statusCode":200},"responseTime":0.6701999977231026,"msg":"request completed"}
+[web]  GET /landing 200 in 256ms (next.js: 9ms, proxy.ts: 14ms, application-code: 232ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775180227560,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1u","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775180227561,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1u","res":{"statusCode":200},"responseTime":0.6896999999880791,"msg":"request completed"}
+[web]  GET / 200 in 259ms (next.js: 11ms, proxy.ts: 13ms, application-code: 235ms)
+[api] {"level":30,"time":1775180248492,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1v","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775180248493,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1v","res":{"statusCode":200},"responseTime":0.5710999965667725,"msg":"request completed"}
+[web]  GET /landing 200 in 281ms (next.js: 11ms, proxy.ts: 10ms, application-code: 260ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775180300675,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1w","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775180300676,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1w","res":{"statusCode":200},"responseTime":0.5224000066518784,"msg":"request completed"}
+[web]  GET /landing 200 in 202ms (next.js: 8ms, proxy.ts: 10ms, application-code: 185ms)
+[api] {"level":30,"time":1775180308137,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1x","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775180308138,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1x","res":{"statusCode":200},"responseTime":0.6653999984264374,"msg":"request completed"}
+[web]  GET / 200 in 313ms (next.js: 11ms, proxy.ts: 11ms, application-code: 291ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775180367604,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1y","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775180367606,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1y","res":{"statusCode":200},"responseTime":1.0333000048995018,"msg":"request completed"}
+[web]  GET /landing 200 in 284ms (next.js: 10ms, proxy.ts: 13ms, application-code: 260ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775180397718,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1z","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775180397720,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-1z","res":{"statusCode":200},"responseTime":0.7338999956846237,"msg":"request completed"}
+[web]  GET / 200 in 235ms (next.js: 10ms, proxy.ts: 10ms, application-code: 215ms)
+[api] {"level":30,"time":1775180413254,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-20","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775180413255,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-20","res":{"statusCode":200},"responseTime":0.5943000018596649,"msg":"request completed"}
+[web]  GET /landing 200 in 322ms (next.js: 14ms, proxy.ts: 14ms, application-code: 294ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775180466461,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-21","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775180466462,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-21","res":{"statusCode":200},"responseTime":0.5799999982118607,"msg":"request completed"}
+[web]  GET / 200 in 256ms (next.js: 10ms, proxy.ts: 14ms, application-code: 231ms)
+[api] {"level":30,"time":1775180485890,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-22","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775180485890,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-22","res":{"statusCode":200},"responseTime":0.5736999958753586,"msg":"request completed"}
+[web]  GET /landing 200 in 340ms (next.js: 13ms, proxy.ts: 18ms, application-code: 309ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775180527260,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-23","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775180527261,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-23","res":{"statusCode":200},"responseTime":0.6688000038266182,"msg":"request completed"}
+[web]  GET / 200 in 215ms (next.js: 10ms, proxy.ts: 8ms, application-code: 197ms)
+[api] {"level":30,"time":1775180528528,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-24","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50965},"msg":"incoming request"}
+[api] {"level":30,"time":1775180528529,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-24","res":{"statusCode":200},"responseTime":0.6652999967336655,"msg":"request completed"}
+[web]  GET /landing 200 in 300ms (next.js: 8ms, proxy.ts: 15ms, application-code: 277ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775180601150,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-25","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64384},"msg":"incoming request"}
+[api] {"level":30,"time":1775180601151,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-25","res":{"statusCode":200},"responseTime":0.5965999960899353,"msg":"request completed"}
+[web]  GET /landing 200 in 295ms (next.js: 14ms, proxy.ts: 15ms, application-code: 267ms)
+[api] {"level":30,"time":1775180619105,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-26","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64384},"msg":"incoming request"}
+[api] {"level":30,"time":1775180619106,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-26","res":{"statusCode":200},"responseTime":0.6532000005245209,"msg":"request completed"}
+[web]  GET / 200 in 322ms (next.js: 12ms, proxy.ts: 16ms, application-code: 295ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775180643273,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-27","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64384},"msg":"incoming request"}
+[api] {"level":30,"time":1775180643274,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-27","res":{"statusCode":200},"responseTime":0.7180000022053719,"msg":"request completed"}
+[web]  GET /landing 200 in 284ms (next.js: 8ms, proxy.ts: 15ms, application-code: 260ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775180698512,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-28","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64384},"msg":"incoming request"}
+[api] {"level":30,"time":1775180698513,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-28","res":{"statusCode":200},"responseTime":1.4179000034928322,"msg":"request completed"}
+[web]  GET / 200 in 313ms (next.js: 11ms, proxy.ts: 11ms, application-code: 291ms)
+[api] {"level":30,"time":1775180722638,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-29","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64384},"msg":"incoming request"}
+[api] {"level":30,"time":1775180722639,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-29","res":{"statusCode":200},"responseTime":0.6354999989271164,"msg":"request completed"}
+[web]  GET /landing 200 in 341ms (next.js: 17ms, proxy.ts: 16ms, application-code: 308ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775180753290,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2a","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64384},"msg":"incoming request"}
+[api] {"level":30,"time":1775180753291,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2a","res":{"statusCode":200},"responseTime":0.7539999932050705,"msg":"request completed"}
+[web]  GET / 200 in 311ms (next.js: 11ms, proxy.ts: 15ms, application-code: 285ms)
+[api] {"level":30,"time":1775180805432,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2b","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64384},"msg":"incoming request"}
+[api] {"level":30,"time":1775180805433,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2b","res":{"statusCode":200},"responseTime":0.7386999949812889,"msg":"request completed"}
+[web]  GET /landing 200 in 274ms (next.js: 7ms, proxy.ts: 9ms, application-code: 258ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775180829516,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2c","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64384},"msg":"incoming request"}
+[api] {"level":30,"time":1775180829517,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2c","res":{"statusCode":200},"responseTime":0.7644000053405762,"msg":"request completed"}
+[web]  GET / 200 in 301ms (next.js: 12ms, proxy.ts: 13ms, application-code: 276ms)
+[api] {"level":30,"time":1775180865000,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2d","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64384},"msg":"incoming request"}
+[api] {"level":30,"time":1775180865001,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2d","res":{"statusCode":200},"responseTime":0.7675999999046326,"msg":"request completed"}
+[web]  GET /landing 200 in 391ms (next.js: 21ms, proxy.ts: 18ms, application-code: 352ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775180893925,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2e","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64384},"msg":"incoming request"}
+[api] {"level":30,"time":1775180893926,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2e","res":{"statusCode":200},"responseTime":1.0157999992370605,"msg":"request completed"}
+[web]  GET / 200 in 318ms (next.js: 11ms, proxy.ts: 15ms, application-code: 291ms)
+[api] {"level":30,"time":1775180917108,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2f","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64384},"msg":"incoming request"}
+[api] {"level":30,"time":1775180917109,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2f","res":{"statusCode":200},"responseTime":0.6648999974131584,"msg":"request completed"}
+[web]  GET /landing 200 in 337ms (next.js: 12ms, proxy.ts: 17ms, application-code: 307ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775180979651,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2g","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64384},"msg":"incoming request"}
+[api] {"level":30,"time":1775180979652,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2g","res":{"statusCode":200},"responseTime":0.5689999982714653,"msg":"request completed"}
+[web]  GET /landing 200 in 304ms (next.js: 13ms, proxy.ts: 12ms, application-code: 279ms)
+[api] {"level":30,"time":1775180980480,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2h","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64384},"msg":"incoming request"}
+[api] {"level":30,"time":1775180980481,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2h","res":{"statusCode":200},"responseTime":0.7076999992132187,"msg":"request completed"}
+[web]  GET / 200 in 292ms (next.js: 10ms, proxy.ts: 12ms, application-code: 270ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775181023942,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2i","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64384},"msg":"incoming request"}
+[web]  GET /landing 200 in 303ms (next.js: 12ms, proxy.ts: 12ms, application-code: 279ms)
+[api] {"level":30,"time":1775181023943,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2i","res":{"statusCode":200},"responseTime":0.6639000028371811,"msg":"request completed"}
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775181056483,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2j","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64384},"msg":"incoming request"}
+[api] {"level":30,"time":1775181056484,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2j","res":{"statusCode":200},"responseTime":0.6653999984264374,"msg":"request completed"}
+[web]  GET / 200 in 273ms (next.js: 12ms, proxy.ts: 12ms, application-code: 250ms)
+[api] {"level":30,"time":1775181093135,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2k","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64384},"msg":"incoming request"}
+[api] {"level":30,"time":1775181093136,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2k","res":{"statusCode":200},"responseTime":0.8536000028252602,"msg":"request completed"}
+[web]  GET /landing 200 in 341ms (next.js: 12ms, proxy.ts: 10ms, application-code: 320ms)
+[api] {"level":30,"time":1775181109566,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2l","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64384},"msg":"incoming request"}
+[api] {"level":30,"time":1775181109567,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2l","res":{"statusCode":200},"responseTime":0.692500002682209,"msg":"request completed"}
+[web]  GET / 200 in 317ms (next.js: 11ms, proxy.ts: 12ms, application-code: 295ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775181135845,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2m","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64384},"msg":"incoming request"}
+[api] {"level":30,"time":1775181135846,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2m","res":{"statusCode":200},"responseTime":0.848800003528595,"msg":"request completed"}
+[web]  GET /landing 200 in 360ms (next.js: 16ms, proxy.ts: 16ms, application-code: 329ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775181192461,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2n","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64384},"msg":"incoming request"}
+[api] {"level":30,"time":1775181192462,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2n","res":{"statusCode":200},"responseTime":0.7335999980568886,"msg":"request completed"}
+[web]  GET / 200 in 274ms (next.js: 13ms, proxy.ts: 16ms, application-code: 246ms)
+[api] {"level":30,"time":1775181209352,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2o","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64384},"msg":"incoming request"}
+[api] {"level":30,"time":1775181209353,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2o","res":{"statusCode":200},"responseTime":0.7360000014305115,"msg":"request completed"}
+[web]  GET /landing 200 in 346ms (next.js: 10ms, proxy.ts: 11ms, application-code: 325ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775181249663,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2p","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64384},"msg":"incoming request"}
+[api] {"level":30,"time":1775181249666,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2p","res":{"statusCode":200},"responseTime":2.4475999996066093,"msg":"request completed"}
+[web]  GET / 200 in 266ms (next.js: 9ms, proxy.ts: 12ms, application-code: 245ms)
+[api] {"level":30,"time":1775181250887,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2q","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64384},"msg":"incoming request"}
+[api] {"level":30,"time":1775181250888,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2q","res":{"statusCode":200},"responseTime":0.7308000028133392,"msg":"request completed"}
+[web]  GET /landing 200 in 354ms (next.js: 13ms, proxy.ts: 14ms, application-code: 326ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775181323382,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2r","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775181323383,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2r","res":{"statusCode":200},"responseTime":0.7116999998688698,"msg":"request completed"}
+[web]  GET /landing 200 in 262ms (next.js: 10ms, proxy.ts: 14ms, application-code: 238ms)
+[api] {"level":30,"time":1775181341580,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2s","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775181341580,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2s","res":{"statusCode":200},"responseTime":0.6216999962925911,"msg":"request completed"}
+[web]  GET / 200 in 284ms (next.js: 15ms, proxy.ts: 10ms, application-code: 259ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775181368048,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2t","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775181368049,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2t","res":{"statusCode":200},"responseTime":1.0509999990463257,"msg":"request completed"}
+[web]  GET /landing 200 in 328ms (next.js: 13ms, proxy.ts: 10ms, application-code: 305ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775181423513,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2u","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775181423514,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2u","res":{"statusCode":200},"responseTime":0.6789000034332275,"msg":"request completed"}
+[web]  GET / 200 in 307ms (next.js: 12ms, proxy.ts: 13ms, application-code: 283ms)
+[api] {"level":30,"time":1775181428727,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2v","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775181428728,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2v","res":{"statusCode":200},"responseTime":0.8065000027418137,"msg":"request completed"}
+[web]  GET /landing 200 in 367ms (next.js: 11ms, proxy.ts: 11ms, application-code: 345ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775181475302,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2w","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775181475303,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2w","res":{"statusCode":200},"responseTime":0.6701000034809113,"msg":"request completed"}
+[web]  GET / 200 in 278ms (next.js: 9ms, proxy.ts: 11ms, application-code: 258ms)
+[api] {"level":30,"time":1775181504043,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2x","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775181504044,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2x","res":{"statusCode":200},"responseTime":0.6127000004053116,"msg":"request completed"}
+[web]  GET /landing 200 in 345ms (next.js: 17ms, proxy.ts: 15ms, application-code: 313ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775181553472,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2y","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775181553473,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2y","res":{"statusCode":200},"responseTime":0.6142000034451485,"msg":"request completed"}
+[web]  GET / 200 in 261ms (next.js: 10ms, proxy.ts: 12ms, application-code: 240ms)
+[api] {"level":30,"time":1775181580434,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2z","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775181580435,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-2z","res":{"statusCode":200},"responseTime":0.5966999977827072,"msg":"request completed"}
+[web]  GET /landing 200 in 381ms (next.js: 16ms, proxy.ts: 15ms, application-code: 351ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775181606109,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-30","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775181606110,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-30","res":{"statusCode":200},"responseTime":0.7738000005483627,"msg":"request completed"}
+[web]  GET / 200 in 312ms (next.js: 14ms, proxy.ts: 10ms, application-code: 287ms)
+[api] {"level":30,"time":1775181623727,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-31","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775181623728,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-31","res":{"statusCode":200},"responseTime":0.6145000010728836,"msg":"request completed"}
+[web]  GET /landing 200 in 274ms (next.js: 9ms, proxy.ts: 12ms, application-code: 253ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775181683439,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-32","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775181683440,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-32","res":{"statusCode":200},"responseTime":0.711899995803833,"msg":"request completed"}
+[web]  GET / 200 in 239ms (next.js: 9ms, proxy.ts: 8ms, application-code: 222ms)
+[api] {"level":30,"time":1775181710664,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-33","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775181710665,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-33","res":{"statusCode":200},"responseTime":0.6453000009059906,"msg":"request completed"}
+[web]  GET /landing 200 in 333ms (next.js: 12ms, proxy.ts: 12ms, application-code: 309ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775181741806,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-34","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775181741807,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-34","res":{"statusCode":200},"responseTime":0.7277000024914742,"msg":"request completed"}
+[web]  GET / 200 in 302ms (next.js: 10ms, proxy.ts: 12ms, application-code: 281ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775181793409,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-35","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775181793410,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-35","res":{"statusCode":200},"responseTime":0.5820000022649765,"msg":"request completed"}
+[web]  GET /landing 200 in 344ms (next.js: 14ms, proxy.ts: 11ms, application-code: 319ms)
+[api] {"level":30,"time":1775181811479,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-36","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775181811480,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-36","res":{"statusCode":200},"responseTime":0.6665000021457672,"msg":"request completed"}
+[web]  GET / 200 in 267ms (next.js: 9ms, proxy.ts: 8ms, application-code: 250ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775181845978,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-37","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775181845979,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-37","res":{"statusCode":200},"responseTime":0.5883000046014786,"msg":"request completed"}
+[web]  GET /landing 200 in 288ms (next.js: 8ms, proxy.ts: 11ms, application-code: 268ms)
+[api] {"level":30,"time":1775181868996,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-38","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775181868997,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-38","res":{"statusCode":200},"responseTime":0.7890999987721443,"msg":"request completed"}
+[web]  GET / 200 in 312ms (next.js: 17ms, proxy.ts: 14ms, application-code: 281ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775181906689,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-39","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775181906690,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-39","res":{"statusCode":200},"responseTime":0.618199996650219,"msg":"request completed"}
+[web]  GET /landing 200 in 379ms (next.js: 12ms, proxy.ts: 11ms, application-code: 356ms)
+[api] {"level":30,"time":1775181941518,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3a","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775181941519,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3a","res":{"statusCode":200},"responseTime":0.5795999988913536,"msg":"request completed"}
+[web]  GET / 200 in 332ms (next.js: 26ms, proxy.ts: 3ms, application-code: 303ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775181976428,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3b","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775181976428,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3b","res":{"statusCode":200},"responseTime":0.6995999962091446,"msg":"request completed"}
+[web]  GET /landing 200 in 349ms (next.js: 13ms, proxy.ts: 13ms, application-code: 323ms)
+[api] {"level":30,"time":1775182002523,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3c","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775182002524,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3c","res":{"statusCode":200},"responseTime":0.7448000013828278,"msg":"request completed"}
+[web]  GET / 200 in 250ms (next.js: 10ms, proxy.ts: 4ms, application-code: 236ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775182053261,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3d","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775182053262,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3d","res":{"statusCode":200},"responseTime":0.7391000017523766,"msg":"request completed"}
+[web]  GET /landing 200 in 352ms (next.js: 11ms, proxy.ts: 12ms, application-code: 330ms)
+[api] {"level":30,"time":1775182070483,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3e","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775182070484,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3e","res":{"statusCode":200},"responseTime":0.7302000001072884,"msg":"request completed"}
+[web]  GET / 200 in 276ms (next.js: 11ms, proxy.ts: 8ms, application-code: 258ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775182094716,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3f","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775182094717,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3f","res":{"statusCode":200},"responseTime":0.6096000000834465,"msg":"request completed"}
+[web]  GET /landing 200 in 335ms (next.js: 18ms, proxy.ts: 14ms, application-code: 304ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775182132933,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3g","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775182132934,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3g","res":{"statusCode":200},"responseTime":0.9326000064611435,"msg":"request completed"}
+[web]  GET / 200 in 275ms (next.js: 11ms, proxy.ts: 12ms, application-code: 252ms)
+[api] {"level":30,"time":1775182173996,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3h","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775182173997,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3h","res":{"statusCode":200},"responseTime":0.6269000023603439,"msg":"request completed"}
+[web]  GET /landing 200 in 400ms (next.js: 11ms, proxy.ts: 13ms, application-code: 376ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775182215203,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3i","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775182215203,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3i","res":{"statusCode":200},"responseTime":0.4780000001192093,"msg":"request completed"}
+[web]  GET / 200 in 295ms (next.js: 11ms, proxy.ts: 10ms, application-code: 274ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775182259409,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3j","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59113},"msg":"incoming request"}
+[api] {"level":30,"time":1775182259410,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3j","res":{"statusCode":200},"responseTime":0.8137999996542931,"msg":"request completed"}
+[web]  GET /landing 200 in 337ms (next.js: 19ms, proxy.ts: 14ms, application-code: 305ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775182335436,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3k","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":53759},"msg":"incoming request"}
+[api] {"level":30,"time":1775182335437,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3k","res":{"statusCode":200},"responseTime":0.7679999992251396,"msg":"request completed"}
+[web]  GET /landing 200 in 338ms (next.js: 14ms, proxy.ts: 11ms, application-code: 313ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775182414472,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3l","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":62590},"msg":"incoming request"}
+[api] {"level":30,"time":1775182414474,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3l","res":{"statusCode":200},"responseTime":1.2234999984502792,"msg":"request completed"}
+[web]  GET /landing 200 in 307ms (next.js: 11ms, proxy.ts: 12ms, application-code: 285ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775182497480,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3m","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64810},"msg":"incoming request"}
+[api] {"level":30,"time":1775182497481,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3m","res":{"statusCode":200},"responseTime":0.6162000000476837,"msg":"request completed"}
+[web]  GET /landing 200 in 382ms (next.js: 12ms, proxy.ts: 19ms, application-code: 351ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775182560021,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3n","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64810},"msg":"incoming request"}
+[api] {"level":30,"time":1775182560022,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3n","res":{"statusCode":200},"responseTime":0.9202999994158745,"msg":"request completed"}
+[web]  GET /landing 200 in 344ms (next.js: 16ms, proxy.ts: 12ms, application-code: 316ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775182613768,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3o","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64810},"msg":"incoming request"}
+[api] {"level":30,"time":1775182613769,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3o","res":{"statusCode":200},"responseTime":0.7329000011086464,"msg":"request completed"}
+[web]  GET /landing 200 in 306ms (next.js: 14ms, proxy.ts: 11ms, application-code: 281ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775182689204,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3p","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59974},"msg":"incoming request"}
+[api] {"level":30,"time":1775182689205,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3p","res":{"statusCode":200},"responseTime":0.6023000031709671,"msg":"request completed"}
+[web]  GET /landing 200 in 319ms (next.js: 13ms, proxy.ts: 11ms, application-code: 295ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775182766897,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3q","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":62753},"msg":"incoming request"}
+[api] {"level":30,"time":1775182766898,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3q","res":{"statusCode":200},"responseTime":0.7933000028133392,"msg":"request completed"}
+[web]  GET /landing 200 in 371ms (next.js: 12ms, proxy.ts: 11ms, application-code: 348ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775182813212,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3r","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":62753},"msg":"incoming request"}
+[api] {"level":30,"time":1775182813213,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3r","res":{"statusCode":200},"responseTime":0.8902000039815903,"msg":"request completed"}
+[web]  GET /landing 200 in 336ms (next.js: 10ms, proxy.ts: 13ms, application-code: 313ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775182876043,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3s","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":62753},"msg":"incoming request"}
+[api] {"level":30,"time":1775182876044,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3s","res":{"statusCode":200},"responseTime":0.683399997651577,"msg":"request completed"}
+[web]  GET /landing 200 in 363ms (next.js: 12ms, proxy.ts: 14ms, application-code: 337ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775182930183,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3t","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":62753},"msg":"incoming request"}
+[api] {"level":30,"time":1775182930184,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3t","res":{"statusCode":200},"responseTime":0.663500003516674,"msg":"request completed"}
+[web]  GET /landing 200 in 341ms (next.js: 15ms, proxy.ts: 15ms, application-code: 311ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775182985596,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3u","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":62753},"msg":"incoming request"}
+[api] {"level":30,"time":1775182985597,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3u","res":{"statusCode":200},"responseTime":0.6534000039100647,"msg":"request completed"}
+[web]  GET /landing 200 in 324ms (next.js: 13ms, proxy.ts: 15ms, application-code: 295ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775183065882,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3v","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":63725},"msg":"incoming request"}
+[api] {"level":30,"time":1775183065883,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3v","res":{"statusCode":200},"responseTime":0.9165999963879585,"msg":"request completed"}
+[web]  GET /landing 200 in 374ms (next.js: 9ms, proxy.ts: 15ms, application-code: 350ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775183153702,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3w","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":54066},"msg":"incoming request"}
+[api] {"level":30,"time":1775183153703,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3w","res":{"statusCode":200},"responseTime":0.6097000017762184,"msg":"request completed"}
+[web]  GET /landing 200 in 281ms (next.js: 9ms, proxy.ts: 11ms, application-code: 260ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775183233094,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3x","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":57200},"msg":"incoming request"}
+[api] {"level":30,"time":1775183233095,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3x","res":{"statusCode":200},"responseTime":0.6504999995231628,"msg":"request completed"}
+[web]  GET /landing 200 in 343ms (next.js: 10ms, proxy.ts: 11ms, application-code: 322ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775183315117,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3y","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":49454},"msg":"incoming request"}
+[api] {"level":30,"time":1775183315118,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3y","res":{"statusCode":200},"responseTime":0.7050999999046326,"msg":"request completed"}
+[web]  GET /landing 200 in 414ms (next.js: 10ms, proxy.ts: 13ms, application-code: 392ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775183400548,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3z","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":53491},"msg":"incoming request"}
+[api] {"level":30,"time":1775183400549,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-3z","res":{"statusCode":200},"responseTime":0.6855000033974648,"msg":"request completed"}
+[web]  GET /landing 200 in 309ms (next.js: 11ms, proxy.ts: 16ms, application-code: 281ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775183482917,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-40","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":53197},"msg":"incoming request"}
+[api] {"level":30,"time":1775183482918,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-40","res":{"statusCode":200},"responseTime":0.7052999958395958,"msg":"request completed"}
+[web]  GET /landing 200 in 410ms (next.js: 12ms, proxy.ts: 20ms, application-code: 377ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775183565230,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-41","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64377},"msg":"incoming request"}
+[api] {"level":30,"time":1775183565231,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-41","res":{"statusCode":200},"responseTime":0.6557000055909157,"msg":"request completed"}
+[web]  GET /landing 200 in 297ms (next.js: 10ms, proxy.ts: 12ms, application-code: 276ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775183637129,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-42","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":65403},"msg":"incoming request"}
+[api] {"level":30,"time":1775183637130,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-42","res":{"statusCode":200},"responseTime":0.7000000029802322,"msg":"request completed"}
+[web]  GET /landing 200 in 336ms (next.js: 11ms, proxy.ts: 14ms, application-code: 312ms)
+[api] {"level":30,"time":1775183687791,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-43","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":65403},"msg":"incoming request"}
+[api] {"level":30,"time":1775183687791,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-43","res":{"statusCode":200},"responseTime":0.5816999971866608,"msg":"request completed"}
+[web]  GET /landing 200 in 317ms (next.js: 9ms, proxy.ts: 12ms, application-code: 296ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775183757000,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-44","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":65403},"msg":"incoming request"}
+[api] {"level":30,"time":1775183757001,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-44","res":{"statusCode":200},"responseTime":0.7134000062942505,"msg":"request completed"}
+[web]  GET /landing 200 in 366ms (next.js: 13ms, proxy.ts: 16ms, application-code: 337ms)
+[api] {"level":30,"time":1775183803125,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-45","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":65403},"msg":"incoming request"}
+[api] {"level":30,"time":1775183803126,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-45","res":{"statusCode":200},"responseTime":0.5852000042796135,"msg":"request completed"}
+[web]  GET /landing 200 in 361ms (next.js: 11ms, proxy.ts: 12ms, application-code: 338ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775183873864,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-46","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":65157},"msg":"incoming request"}
+[web]  GET /landing 200 in 261ms (next.js: 13ms, proxy.ts: 15ms, application-code: 233ms)
+[api] {"level":30,"time":1775183873864,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-46","res":{"statusCode":200},"responseTime":0.5865999981760979,"msg":"request completed"}
+[api] {"level":30,"time":1775183918422,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-47","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":65157},"msg":"incoming request"}
+[api] {"level":30,"time":1775183918423,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-47","res":{"statusCode":200},"responseTime":0.7151000052690506,"msg":"request completed"}
+[web]  GET /landing 200 in 383ms (next.js: 11ms, proxy.ts: 12ms, application-code: 360ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775183991256,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-48","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":53158},"msg":"incoming request"}
+[api] {"level":30,"time":1775183991257,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-48","res":{"statusCode":200},"responseTime":0.7644999995827675,"msg":"request completed"}
+[web]  GET /landing 200 in 346ms (next.js: 42ms, proxy.ts: 49ms, application-code: 255ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775184034179,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-49","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":53158},"msg":"incoming request"}
+[api] {"level":30,"time":1775184034180,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-49","res":{"statusCode":200},"responseTime":0.589699998497963,"msg":"request completed"}
+[web]  GET /landing 200 in 284ms (next.js: 11ms, proxy.ts: 15ms, application-code: 258ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775184109100,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4a","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":53981},"msg":"incoming request"}
+[api] {"level":30,"time":1775184109100,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4a","res":{"statusCode":200},"responseTime":0.5337999984622002,"msg":"request completed"}
+[web]  GET /landing 200 in 257ms (next.js: 8ms, proxy.ts: 8ms, application-code: 240ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775184150650,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4b","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":53981},"msg":"incoming request"}
+[api] {"level":30,"time":1775184150650,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4b","res":{"statusCode":200},"responseTime":0.6441999971866608,"msg":"request completed"}
+[web]  GET /landing 200 in 317ms (next.js: 15ms, proxy.ts: 14ms, application-code: 288ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775184227389,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4c","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":53650},"msg":"incoming request"}
+[api] {"level":30,"time":1775184227390,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4c","res":{"statusCode":200},"responseTime":0.8200000002980232,"msg":"request completed"}
+[web]  GET /landing 200 in 354ms (next.js: 11ms, proxy.ts: 12ms, application-code: 331ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775184294632,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4d","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":53650},"msg":"incoming request"}
+[api] {"level":30,"time":1775184294633,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4d","res":{"statusCode":200},"responseTime":0.8513999953866005,"msg":"request completed"}
+[web]  GET /landing 200 in 329ms (next.js: 10ms, proxy.ts: 12ms, application-code: 307ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775184376288,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4e","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52934},"msg":"incoming request"}
+[api] {"level":30,"time":1775184376289,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4e","res":{"statusCode":200},"responseTime":0.6655000001192093,"msg":"request completed"}
+[web]  GET /landing 200 in 317ms (next.js: 16ms, proxy.ts: 11ms, application-code: 291ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775184458101,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4f","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64613},"msg":"incoming request"}
+[api] {"level":30,"time":1775184458102,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4f","res":{"statusCode":200},"responseTime":0.5819000005722046,"msg":"request completed"}
+[web]  GET /landing 200 in 323ms (next.js: 10ms, proxy.ts: 12ms, application-code: 300ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775184506671,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4g","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64613},"msg":"incoming request"}
+[api] {"level":30,"time":1775184506672,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4g","res":{"statusCode":200},"responseTime":0.6702999994158745,"msg":"request completed"}
+[web]  GET /landing 200 in 329ms (next.js: 12ms, proxy.ts: 21ms, application-code: 296ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775184571169,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4h","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64613},"msg":"incoming request"}
+[api] {"level":30,"time":1775184571170,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4h","res":{"statusCode":200},"responseTime":0.7263000011444092,"msg":"request completed"}
+[web]  GET /landing 200 in 368ms (next.js: 17ms, proxy.ts: 16ms, application-code: 336ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775184647350,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4i","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50569},"msg":"incoming request"}
+[api] {"level":30,"time":1775184647351,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4i","res":{"statusCode":200},"responseTime":0.5792000070214272,"msg":"request completed"}
+[web]  GET /landing 200 in 381ms (next.js: 11ms, proxy.ts: 14ms, application-code: 356ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775184718760,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4j","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50351},"msg":"incoming request"}
+[api] {"level":30,"time":1775184718761,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4j","res":{"statusCode":200},"responseTime":0.7122000008821487,"msg":"request completed"}
+[web]  GET /landing 200 in 341ms (next.js: 13ms, proxy.ts: 12ms, application-code: 316ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775184799427,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4k","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":49373},"msg":"incoming request"}
+[api] {"level":30,"time":1775184799428,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4k","res":{"statusCode":200},"responseTime":0.635500006377697,"msg":"request completed"}
+[web]  GET /landing 200 in 317ms (next.js: 11ms, proxy.ts: 11ms, application-code: 295ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775184857105,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4l","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":49373},"msg":"incoming request"}
+[api] {"level":30,"time":1775184857106,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4l","res":{"statusCode":200},"responseTime":0.7185999974608421,"msg":"request completed"}
+[web]  GET /landing 200 in 312ms (next.js: 11ms, proxy.ts: 12ms, application-code: 289ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775184909482,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4m","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":49373},"msg":"incoming request"}
+[api] {"level":30,"time":1775184909482,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4m","res":{"statusCode":200},"responseTime":0.4984999969601631,"msg":"request completed"}
+[web]  GET /landing 200 in 325ms (next.js: 15ms, proxy.ts: 14ms, application-code: 296ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775184973736,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4n","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":49373},"msg":"incoming request"}
+[api] {"level":30,"time":1775184973737,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4n","res":{"statusCode":200},"responseTime":0.6129999980330467,"msg":"request completed"}
+[web]  GET /landing 200 in 338ms (next.js: 10ms, proxy.ts: 11ms, application-code: 318ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775185024357,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4o","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":49373},"msg":"incoming request"}
+[api] {"level":30,"time":1775185024358,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4o","res":{"statusCode":200},"responseTime":0.6559999957680702,"msg":"request completed"}
+[web]  GET /landing 200 in 366ms (next.js: 12ms, proxy.ts: 18ms, application-code: 336ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775185109177,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4p","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":56555},"msg":"incoming request"}
+[api] {"level":30,"time":1775185109178,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4p","res":{"statusCode":200},"responseTime":1.08839999884367,"msg":"request completed"}
+[web]  GET /landing 200 in 329ms (next.js: 15ms, proxy.ts: 11ms, application-code: 304ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775185191977,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4q","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":56533},"msg":"incoming request"}
+[api] {"level":30,"time":1775185191979,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4q","res":{"statusCode":200},"responseTime":0.6929999962449074,"msg":"request completed"}
+[web]  GET /landing 200 in 368ms (next.js: 11ms, proxy.ts: 12ms, application-code: 345ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775185233989,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4r","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":56533},"msg":"incoming request"}
+[api] {"level":30,"time":1775185233990,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4r","res":{"statusCode":200},"responseTime":0.933799996972084,"msg":"request completed"}
+[web]  GET /landing 200 in 296ms (next.js: 11ms, proxy.ts: 12ms, application-code: 273ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775185301604,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4s","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":56533},"msg":"incoming request"}
+[api] {"level":30,"time":1775185301605,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4s","res":{"statusCode":200},"responseTime":0.7043000012636185,"msg":"request completed"}
+[web]  GET /landing 200 in 363ms (next.js: 11ms, proxy.ts: 12ms, application-code: 341ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775185380830,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4t","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":56557},"msg":"incoming request"}
+[api] {"level":30,"time":1775185380831,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4t","res":{"statusCode":200},"responseTime":0.7247999981045723,"msg":"request completed"}
+[web]  GET /landing 200 in 332ms (next.js: 13ms, proxy.ts: 13ms, application-code: 306ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775185462211,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4u","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64669},"msg":"incoming request"}
+[api] {"level":30,"time":1775185462213,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4u","res":{"statusCode":200},"responseTime":0.7967999950051308,"msg":"request completed"}
+[web]  GET /landing 200 in 317ms (next.js: 11ms, proxy.ts: 10ms, application-code: 297ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775185541521,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4v","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64351},"msg":"incoming request"}
+[api] {"level":30,"time":1775185541522,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4v","res":{"statusCode":200},"responseTime":0.755900003015995,"msg":"request completed"}
+[web]  GET /landing 200 in 330ms (next.js: 12ms, proxy.ts: 15ms, application-code: 303ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775185618809,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4w","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":60858},"msg":"incoming request"}
+[api] {"level":30,"time":1775185618810,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4w","res":{"statusCode":200},"responseTime":0.5929000005126,"msg":"request completed"}
+[web]  GET /landing 200 in 359ms (next.js: 8ms, proxy.ts: 13ms, application-code: 338ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775185692548,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4x","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":61827},"msg":"incoming request"}
+[api] {"level":30,"time":1775185692549,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4x","res":{"statusCode":200},"responseTime":0.6308999955654144,"msg":"request completed"}
+[web]  GET /landing 200 in 376ms (next.js: 21ms, proxy.ts: 18ms, application-code: 338ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775185738967,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4y","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":61827},"msg":"incoming request"}
+[api] {"level":30,"time":1775185738968,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4y","res":{"statusCode":200},"responseTime":0.5693999975919724,"msg":"request completed"}
+[web]  GET /landing 200 in 356ms (next.js: 12ms, proxy.ts: 13ms, application-code: 331ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775185821080,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4z","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":55043},"msg":"incoming request"}
+[api] {"level":30,"time":1775185821081,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-4z","res":{"statusCode":200},"responseTime":0.6579999998211861,"msg":"request completed"}
+[web]  GET /landing 200 in 330ms (next.js: 9ms, proxy.ts: 10ms, application-code: 311ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775185902232,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-50","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":55490},"msg":"incoming request"}
+[api] {"level":30,"time":1775185902233,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-50","res":{"statusCode":200},"responseTime":0.7761000022292137,"msg":"request completed"}
+[web]  GET /landing 200 in 333ms (next.js: 16ms, proxy.ts: 13ms, application-code: 304ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775185986542,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-51","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":57761},"msg":"incoming request"}
+[api] {"level":30,"time":1775185986543,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-51","res":{"statusCode":200},"responseTime":0.592399999499321,"msg":"request completed"}
+[web]  GET /landing 200 in 311ms (next.js: 9ms, proxy.ts: 12ms, application-code: 289ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775186053760,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-52","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":57761},"msg":"incoming request"}
+[api] {"level":30,"time":1775186053761,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-52","res":{"statusCode":200},"responseTime":0.5782999992370605,"msg":"request completed"}
+[web]  GET /landing 200 in 298ms (next.js: 10ms, proxy.ts: 13ms, application-code: 275ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775186099359,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-53","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":57761},"msg":"incoming request"}
+[api] {"level":30,"time":1775186099360,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-53","res":{"statusCode":200},"responseTime":0.692100003361702,"msg":"request completed"}
+[web]  GET /landing 200 in 354ms (next.js: 11ms, proxy.ts: 11ms, application-code: 332ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775186167750,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-54","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":57761},"msg":"incoming request"}
+[api] {"level":30,"time":1775186167752,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-54","res":{"statusCode":200},"responseTime":1.2238999977707863,"msg":"request completed"}
+[web]  GET /landing 200 in 373ms (next.js: 11ms, proxy.ts: 13ms, application-code: 349ms)
+[api] {"level":30,"time":1775186209841,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-55","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":57761},"msg":"incoming request"}
+[api] {"level":30,"time":1775186209842,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-55","res":{"statusCode":200},"responseTime":0.6455000042915344,"msg":"request completed"}
+[web]  GET /landing 200 in 345ms (next.js: 12ms, proxy.ts: 15ms, application-code: 318ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775186287344,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-56","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":51823},"msg":"incoming request"}
+[api] {"level":30,"time":1775186287344,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-56","res":{"statusCode":200},"responseTime":0.5463999956846237,"msg":"request completed"}
+[web]  GET /landing 200 in 332ms (next.js: 10ms, proxy.ts: 14ms, application-code: 309ms)
+[api] {"level":30,"time":1775186329103,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-57","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":51823},"msg":"incoming request"}
+[api] {"level":30,"time":1775186329104,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-57","res":{"statusCode":200},"responseTime":0.6477999985218048,"msg":"request completed"}
+[web]  GET /landing 200 in 354ms (next.js: 10ms, proxy.ts: 11ms, application-code: 334ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775186409956,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-58","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":63392},"msg":"incoming request"}
+[api] {"level":30,"time":1775186409959,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-58","res":{"statusCode":200},"responseTime":2.462899997830391,"msg":"request completed"}
+[web]  GET /landing 200 in 333ms (next.js: 14ms, proxy.ts: 11ms, application-code: 308ms)
+[api] {"level":30,"time":1775186451340,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-59","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":63392},"msg":"incoming request"}
+[api] {"level":30,"time":1775186451341,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-59","res":{"statusCode":200},"responseTime":0.9033999964594841,"msg":"request completed"}
+[web]  GET /landing 200 in 359ms (next.js: 14ms, proxy.ts: 10ms, application-code: 335ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775186528526,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5a","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64115},"msg":"incoming request"}
+[api] {"level":30,"time":1775186528528,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5a","res":{"statusCode":200},"responseTime":1.096400000154972,"msg":"request completed"}
+[web]  GET /landing 200 in 350ms (next.js: 15ms, proxy.ts: 11ms, application-code: 325ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775186611548,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5b","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":51729},"msg":"incoming request"}
+[api] {"level":30,"time":1775186611548,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5b","res":{"statusCode":200},"responseTime":0.5952999964356422,"msg":"request completed"}
+[web]  GET /landing 200 in 358ms (next.js: 12ms, proxy.ts: 11ms, application-code: 335ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775186672439,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5c","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":51729},"msg":"incoming request"}
+[api] {"level":30,"time":1775186672440,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5c","res":{"statusCode":200},"responseTime":0.7189999967813492,"msg":"request completed"}
+[web]  GET /landing 200 in 345ms (next.js: 11ms, proxy.ts: 10ms, application-code: 324ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775186722249,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5d","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":51729},"msg":"incoming request"}
+[api] {"level":30,"time":1775186722250,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5d","res":{"statusCode":200},"responseTime":0.6466000005602837,"msg":"request completed"}
+[web]  GET /landing 200 in 317ms (next.js: 13ms, proxy.ts: 15ms, application-code: 289ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775186799050,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5e","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64562},"msg":"incoming request"}
+[api] {"level":30,"time":1775186799051,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5e","res":{"statusCode":200},"responseTime":0.7135999947786331,"msg":"request completed"}
+[web]  GET /landing 200 in 356ms (next.js: 13ms, proxy.ts: 15ms, application-code: 329ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775186875130,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5f","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":54277},"msg":"incoming request"}
+[api] {"level":30,"time":1775186875131,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5f","res":{"statusCode":200},"responseTime":0.714699998497963,"msg":"request completed"}
+[web]  GET /landing 200 in 350ms (next.js: 11ms, proxy.ts: 13ms, application-code: 326ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775186947135,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5g","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":55502},"msg":"incoming request"}
+[api] {"level":30,"time":1775186947136,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5g","res":{"statusCode":200},"responseTime":0.6340000033378601,"msg":"request completed"}
+[web]  GET /landing 200 in 356ms (next.js: 9ms, proxy.ts: 12ms, application-code: 335ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775187024670,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5h","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52641},"msg":"incoming request"}
+[api] {"level":30,"time":1775187024671,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5h","res":{"statusCode":200},"responseTime":0.7075000032782555,"msg":"request completed"}
+[web]  GET /landing 200 in 313ms (next.js: 16ms, proxy.ts: 11ms, application-code: 286ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775187069838,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5i","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52641},"msg":"incoming request"}
+[api] {"level":30,"time":1775187069838,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5i","res":{"statusCode":200},"responseTime":0.5740000009536743,"msg":"request completed"}
+[web]  GET /landing 200 in 346ms (next.js: 10ms, proxy.ts: 11ms, application-code: 325ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775187144086,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5j","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":63800},"msg":"incoming request"}
+[api] {"level":30,"time":1775187144086,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5j","res":{"statusCode":200},"responseTime":0.5975999981164932,"msg":"request completed"}
+[web]  GET /landing 200 in 327ms (next.js: 15ms, proxy.ts: 11ms, application-code: 301ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775187186141,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5k","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":63800},"msg":"incoming request"}
+[api] {"level":30,"time":1775187186142,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5k","res":{"statusCode":200},"responseTime":0.651199996471405,"msg":"request completed"}
+[web]  GET /landing 200 in 335ms (next.js: 12ms, proxy.ts: 13ms, application-code: 310ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775187263073,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5l","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":62632},"msg":"incoming request"}
+[api] {"level":30,"time":1775187263074,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5l","res":{"statusCode":200},"responseTime":0.6252999976277351,"msg":"request completed"}
+[web]  GET /landing 200 in 319ms (next.js: 10ms, proxy.ts: 11ms, application-code: 298ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775187349084,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5m","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59815},"msg":"incoming request"}
+[api] {"level":30,"time":1775187349084,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5m","res":{"statusCode":200},"responseTime":0.5723000019788742,"msg":"request completed"}
+[web]  GET /landing 200 in 381ms (next.js: 16ms, proxy.ts: 13ms, application-code: 352ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775187410345,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5n","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59815},"msg":"incoming request"}
+[api] {"level":30,"time":1775187410346,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5n","res":{"statusCode":200},"responseTime":0.7651999965310097,"msg":"request completed"}
+[web]  GET /landing 200 in 317ms (next.js: 12ms, proxy.ts: 11ms, application-code: 293ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775187470266,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5o","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59815},"msg":"incoming request"}
+[api] {"level":30,"time":1775187470267,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5o","res":{"statusCode":200},"responseTime":0.6077999994158745,"msg":"request completed"}
+[web]  GET /landing 200 in 303ms (next.js: 17ms, proxy.ts: 13ms, application-code: 274ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775187553358,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5p","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":58816},"msg":"incoming request"}
+[api] {"level":30,"time":1775187553359,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5p","res":{"statusCode":200},"responseTime":0.5776999965310097,"msg":"request completed"}
+[web]  GET /landing 200 in 352ms (next.js: 12ms, proxy.ts: 14ms, application-code: 326ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775187638051,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5q","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":65454},"msg":"incoming request"}
+[api] {"level":30,"time":1775187638052,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5q","res":{"statusCode":200},"responseTime":0.8633999973535538,"msg":"request completed"}
+[web]  GET /landing 200 in 379ms (next.js: 17ms, proxy.ts: 12ms, application-code: 350ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775187728507,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5r","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":58817},"msg":"incoming request"}
+[api] {"level":30,"time":1775187728508,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5r","res":{"statusCode":200},"responseTime":0.6331999972462654,"msg":"request completed"}
+[web]  GET /landing 200 in 338ms (next.js: 12ms, proxy.ts: 15ms, application-code: 311ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775187777879,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5s","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":58817},"msg":"incoming request"}
+[api] {"level":30,"time":1775187777880,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5s","res":{"statusCode":200},"responseTime":0.8000999987125397,"msg":"request completed"}
+[web]  GET /landing 200 in 354ms (next.js: 16ms, proxy.ts: 16ms, application-code: 322ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775187840860,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5t","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":58817},"msg":"incoming request"}
+[api] {"level":30,"time":1775187840861,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5t","res":{"statusCode":200},"responseTime":0.6612000018358231,"msg":"request completed"}
+[web]  GET /landing 200 in 277ms (next.js: 11ms, proxy.ts: 13ms, application-code: 254ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775187925016,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5u","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59434},"msg":"incoming request"}
+[api] {"level":30,"time":1775187925017,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5u","res":{"statusCode":200},"responseTime":0.7580999955534935,"msg":"request completed"}
+[web]  GET /landing 200 in 317ms (next.js: 8ms, proxy.ts: 10ms, application-code: 299ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775188005659,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5v","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59402},"msg":"incoming request"}
+[api] {"level":30,"time":1775188005660,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5v","res":{"statusCode":200},"responseTime":0.6758000031113625,"msg":"request completed"}
+[web]  GET /landing 200 in 319ms (next.js: 16ms, proxy.ts: 14ms, application-code: 288ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775188086528,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5w","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":65006},"msg":"incoming request"}
+[api] {"level":30,"time":1775188086529,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5w","res":{"statusCode":200},"responseTime":0.7151999995112419,"msg":"request completed"}
+[web]  GET /landing 200 in 364ms (next.js: 18ms, proxy.ts: 26ms, application-code: 320ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775188170567,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5x","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59537},"msg":"incoming request"}
+[api] {"level":30,"time":1775188170569,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5x","res":{"statusCode":200},"responseTime":0.8532999977469444,"msg":"request completed"}
+[web]  GET /landing 200 in 307ms (next.js: 14ms, proxy.ts: 17ms, application-code: 276ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775188246826,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5y","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50256},"msg":"incoming request"}
+[api] {"level":30,"time":1775188246827,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5y","res":{"statusCode":200},"responseTime":0.592799998819828,"msg":"request completed"}
+[web]  GET /landing 200 in 346ms (next.js: 11ms, proxy.ts: 14ms, application-code: 321ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775188324333,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5z","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52371},"msg":"incoming request"}
+[api] {"level":30,"time":1775188324334,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-5z","res":{"statusCode":200},"responseTime":0.6550999954342842,"msg":"request completed"}
+[web]  GET /landing 200 in 303ms (next.js: 12ms, proxy.ts: 13ms, application-code: 279ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775188403098,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-60","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":55127},"msg":"incoming request"}
+[api] {"level":30,"time":1775188403099,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-60","res":{"statusCode":200},"responseTime":0.6538999974727631,"msg":"request completed"}
+[web]  GET /landing 200 in 358ms (next.js: 12ms, proxy.ts: 11ms, application-code: 335ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775188474039,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-61","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":55218},"msg":"incoming request"}
+[api] {"level":30,"time":1775188474040,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-61","res":{"statusCode":200},"responseTime":0.6686000004410744,"msg":"request completed"}
+[web]  GET /landing 200 in 380ms (next.js: 15ms, proxy.ts: 14ms, application-code: 351ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775188518263,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-62","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":55218},"msg":"incoming request"}
+[api] {"level":30,"time":1775188518264,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-62","res":{"statusCode":200},"responseTime":0.5645999982953072,"msg":"request completed"}
+[web]  GET /landing 200 in 327ms (next.js: 10ms, proxy.ts: 12ms, application-code: 305ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775188592956,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-63","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64240},"msg":"incoming request"}
+[api] {"level":30,"time":1775188592957,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-63","res":{"statusCode":200},"responseTime":0.5714000016450882,"msg":"request completed"}
+[web]  GET /landing 200 in 409ms (next.js: 13ms, proxy.ts: 12ms, application-code: 383ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775188635249,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-64","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64240},"msg":"incoming request"}
+[api] {"level":30,"time":1775188635250,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-64","res":{"statusCode":200},"responseTime":0.7211999967694283,"msg":"request completed"}
+[web]  GET /landing 200 in 377ms (next.js: 11ms, proxy.ts: 13ms, application-code: 352ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775188709480,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-65","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":55577},"msg":"incoming request"}
+[api] {"level":30,"time":1775188709480,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-65","res":{"statusCode":200},"responseTime":0.6970999985933304,"msg":"request completed"}
+[web]  GET /landing 200 in 337ms (next.js: 10ms, proxy.ts: 13ms, application-code: 314ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775188751264,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-66","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":55577},"msg":"incoming request"}
+[api] {"level":30,"time":1775188751265,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-66","res":{"statusCode":200},"responseTime":0.9826999977231026,"msg":"request completed"}
+[web]  GET /landing 200 in 360ms (next.js: 10ms, proxy.ts: 12ms, application-code: 337ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775188831418,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-67","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64079},"msg":"incoming request"}
+[api] {"level":30,"time":1775188831419,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-67","res":{"statusCode":200},"responseTime":0.7572999969124794,"msg":"request completed"}
+[web]  GET /landing 200 in 353ms (next.js: 14ms, proxy.ts: 12ms, application-code: 328ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775188913943,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-68","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":60347},"msg":"incoming request"}
+[api] {"level":30,"time":1775188913943,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-68","res":{"statusCode":200},"responseTime":0.6416999995708466,"msg":"request completed"}
+[web]  GET /landing 200 in 265ms (next.js: 11ms, proxy.ts: 11ms, application-code: 244ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775188975713,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-69","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":60347},"msg":"incoming request"}
+[api] {"level":30,"time":1775188975714,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-69","res":{"statusCode":200},"responseTime":0.7907000035047531,"msg":"request completed"}
+[web]  GET /landing 200 in 248ms (next.js: 10ms, proxy.ts: 9ms, application-code: 229ms)
+[api] {"level":30,"time":1775189025123,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6a","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":60347},"msg":"incoming request"}
+[api] {"level":30,"time":1775189025124,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6a","res":{"statusCode":200},"responseTime":0.5830000042915344,"msg":"request completed"}
+[web]  GET /landing 200 in 211ms (next.js: 13ms, proxy.ts: 10ms, application-code: 189ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775189107159,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6b","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":57452},"msg":"incoming request"}
+[api] {"level":30,"time":1775189107160,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6b","res":{"statusCode":200},"responseTime":0.6446999981999397,"msg":"request completed"}
+[web]  GET /landing 200 in 280ms (next.js: 13ms, proxy.ts: 13ms, application-code: 255ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775189184275,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6c","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":58819},"msg":"incoming request"}
+[api] {"level":30,"time":1775189184276,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6c","res":{"statusCode":200},"responseTime":1.1004000008106232,"msg":"request completed"}
+[web]  GET /landing 200 in 424ms (next.js: 9ms, proxy.ts: 9ms, application-code: 406ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775189229338,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6d","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":58819},"msg":"incoming request"}
+[api] {"level":30,"time":1775189229339,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6d","res":{"statusCode":200},"responseTime":0.685699999332428,"msg":"request completed"}
+[web]  GET /landing 200 in 288ms (next.js: 12ms, proxy.ts: 12ms, application-code: 264ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775189292886,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6e","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":58819},"msg":"incoming request"}
+[api] {"level":30,"time":1775189292887,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6e","res":{"statusCode":200},"responseTime":0.5925000011920929,"msg":"request completed"}
+[web]  GET /landing 200 in 195ms (next.js: 7ms, proxy.ts: 13ms, application-code: 175ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775189347303,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6f","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":58819},"msg":"incoming request"}
+[api] {"level":30,"time":1775189347304,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6f","res":{"statusCode":200},"responseTime":0.5262999981641769,"msg":"request completed"}
+[web]  GET /landing 200 in 200ms (next.js: 11ms, proxy.ts: 10ms, application-code: 179ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775189413878,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6g","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":58819},"msg":"incoming request"}
+[api] {"level":30,"time":1775189413878,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6g","res":{"statusCode":200},"responseTime":0.32249999791383743,"msg":"request completed"}
+[web]  GET /landing 200 in 200ms (next.js: 10ms, proxy.ts: 9ms, application-code: 181ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775189497876,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6h","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":51050},"msg":"incoming request"}
+[api] {"level":30,"time":1775189497877,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6h","res":{"statusCode":200},"responseTime":0.6284999996423721,"msg":"request completed"}
+[web]  GET /landing 200 in 246ms (next.js: 10ms, proxy.ts: 11ms, application-code: 225ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775189582891,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6i","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":52396},"msg":"incoming request"}
+[api] {"level":30,"time":1775189582891,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6i","res":{"statusCode":200},"responseTime":0.6680999994277954,"msg":"request completed"}
+[web]  GET /landing 200 in 275ms (next.js: 7ms, proxy.ts: 8ms, application-code: 260ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775189658304,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6j","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":56366},"msg":"incoming request"}
+[api] {"level":30,"time":1775189658305,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6j","res":{"statusCode":200},"responseTime":0.2930000051856041,"msg":"request completed"}
+[web]  GET /landing 200 in 235ms (next.js: 10ms, proxy.ts: 13ms, application-code: 212ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775189740612,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6k","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":57053},"msg":"incoming request"}
+[api] {"level":30,"time":1775189740612,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6k","res":{"statusCode":200},"responseTime":0.559799998998642,"msg":"request completed"}
+[web]  GET /landing 200 in 240ms (next.js: 10ms, proxy.ts: 10ms, application-code: 220ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775189804057,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6l","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":57053},"msg":"incoming request"}
+[api] {"level":30,"time":1775189804058,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6l","res":{"statusCode":200},"responseTime":0.6331000030040741,"msg":"request completed"}
+[web]  GET /landing 200 in 253ms (next.js: 9ms, proxy.ts: 16ms, application-code: 228ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775189847219,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6m","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":57053},"msg":"incoming request"}
+[api] {"level":30,"time":1775189847220,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6m","res":{"statusCode":200},"responseTime":0.5349999964237213,"msg":"request completed"}
+[web]  GET /landing 200 in 258ms (next.js: 11ms, proxy.ts: 11ms, application-code: 235ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775189923145,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6n","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":51990},"msg":"incoming request"}
+[api] {"level":30,"time":1775189923146,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6n","res":{"statusCode":200},"responseTime":0.6955000013113022,"msg":"request completed"}
+[web]  GET /landing 200 in 245ms (next.js: 7ms, proxy.ts: 10ms, application-code: 227ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775189965295,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6o","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":51990},"msg":"incoming request"}
+[api] {"level":30,"time":1775189965297,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6o","res":{"statusCode":200},"responseTime":1.0663999989628792,"msg":"request completed"}
+[web]  GET /landing 200 in 194ms (next.js: 13ms, proxy.ts: 10ms, application-code: 171ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775190038243,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6p","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":53017},"msg":"incoming request"}
+[api] {"level":30,"time":1775190038244,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6p","res":{"statusCode":200},"responseTime":0.2823000028729439,"msg":"request completed"}
+[web]  GET /landing 200 in 287ms (next.js: 10ms, proxy.ts: 13ms, application-code: 263ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775190122608,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6q","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":53686},"msg":"incoming request"}
+[api] {"level":30,"time":1775190122609,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6q","res":{"statusCode":200},"responseTime":0.6024999991059303,"msg":"request completed"}
+[web]  GET /landing 200 in 233ms (next.js: 10ms, proxy.ts: 10ms, application-code: 213ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775190180670,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6r","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":53686},"msg":"incoming request"}
+[api] {"level":30,"time":1775190180671,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6r","res":{"statusCode":200},"responseTime":0.777199998497963,"msg":"request completed"}
+[web]  GET /landing 200 in 178ms (next.js: 4ms, proxy.ts: 8ms, application-code: 166ms)
+[api] {"level":30,"time":1775190229293,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6s","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":53686},"msg":"incoming request"}
+[api] {"level":30,"time":1775190229294,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6s","res":{"statusCode":200},"responseTime":0.6107999980449677,"msg":"request completed"}
+[web]  GET /landing 200 in 201ms (next.js: 8ms, proxy.ts: 15ms, application-code: 178ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775190295007,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6t","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":53686},"msg":"incoming request"}
+[api] {"level":30,"time":1775190295007,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6t","res":{"statusCode":200},"responseTime":0.5644000023603439,"msg":"request completed"}
+[web]  GET /landing 200 in 245ms (next.js: 9ms, proxy.ts: 10ms, application-code: 226ms)
+[api] {"level":30,"time":1775190339191,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6u","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":53686},"msg":"incoming request"}
+[api] {"level":30,"time":1775190339192,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6u","res":{"statusCode":200},"responseTime":0.8205999955534935,"msg":"request completed"}
+[web]  GET /landing 200 in 261ms (next.js: 9ms, proxy.ts: 10ms, application-code: 242ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775190413126,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6v","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":53740},"msg":"incoming request"}
+[api] {"level":30,"time":1775190413127,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6v","res":{"statusCode":200},"responseTime":0.6707999929785728,"msg":"request completed"}
+[web]  GET /landing 200 in 228ms (next.js: 11ms, proxy.ts: 10ms, application-code: 207ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775190455328,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6w","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":53740},"msg":"incoming request"}
+[api] {"level":30,"time":1775190455329,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6w","res":{"statusCode":200},"responseTime":0.5714999958872795,"msg":"request completed"}
+[web]  GET /landing 200 in 242ms (next.js: 10ms, proxy.ts: 13ms, application-code: 220ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775190529925,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6x","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":56648},"msg":"incoming request"}
+[api] {"level":30,"time":1775190529926,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6x","res":{"statusCode":200},"responseTime":0.6375000029802322,"msg":"request completed"}
+[web]  GET /landing 200 in 284ms (next.js: 12ms, proxy.ts: 17ms, application-code: 255ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775190571605,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6y","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":56648},"msg":"incoming request"}
+[api] {"level":30,"time":1775190571606,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6y","res":{"statusCode":200},"responseTime":0.5993999987840652,"msg":"request completed"}
+[web]  GET /landing 200 in 279ms (next.js: 11ms, proxy.ts: 10ms, application-code: 257ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775190649533,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6z","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":51585},"msg":"incoming request"}
+[api] {"level":30,"time":1775190649534,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-6z","res":{"statusCode":200},"responseTime":0.6053000018000603,"msg":"request completed"}
+[web]  GET /landing 200 in 252ms (next.js: 9ms, proxy.ts: 11ms, application-code: 231ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775190731576,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-70","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":58818},"msg":"incoming request"}
+[api] {"level":30,"time":1775190731577,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-70","res":{"statusCode":200},"responseTime":0.5271000042557716,"msg":"request completed"}
+[web]  GET /landing 200 in 262ms (next.js: 9ms, proxy.ts: 13ms, application-code: 240ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775190797061,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-71","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":58818},"msg":"incoming request"}
+[api] {"level":30,"time":1775190797062,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-71","res":{"statusCode":200},"responseTime":0.6417999938130379,"msg":"request completed"}
+[web]  GET /landing 200 in 158ms (next.js: 6ms, proxy.ts: 14ms, application-code: 138ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775190853096,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-72","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":58818},"msg":"incoming request"}
+[api] {"level":30,"time":1775190853097,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-72","res":{"statusCode":200},"responseTime":0.7078999951481819,"msg":"request completed"}
+[web]  GET /landing 200 in 242ms (next.js: 8ms, proxy.ts: 7ms, application-code: 228ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775190918060,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-73","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":58818},"msg":"incoming request"}
+[api] {"level":30,"time":1775190918061,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-73","res":{"statusCode":200},"responseTime":0.6053000018000603,"msg":"request completed"}
+[web]  GET /landing 200 in 294ms (next.js: 10ms, proxy.ts: 11ms, application-code: 274ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775190971038,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-74","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":58818},"msg":"incoming request"}
+[api] {"level":30,"time":1775190971040,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-74","res":{"statusCode":200},"responseTime":1.0480000004172325,"msg":"request completed"}
+[web]  GET /landing 200 in 272ms (next.js: 12ms, proxy.ts: 15ms, application-code: 245ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775191034206,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-75","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":58818},"msg":"incoming request"}
+[api] {"level":30,"time":1775191034207,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-75","res":{"statusCode":200},"responseTime":0.8384000062942505,"msg":"request completed"}
+[web]  GET /landing 200 in 371ms (next.js: 10ms, proxy.ts: 16ms, application-code: 345ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775191083098,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-76","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":58818},"msg":"incoming request"}
+[api] {"level":30,"time":1775191083099,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-76","res":{"statusCode":200},"responseTime":0.9332000017166138,"msg":"request completed"}
+[web]  GET /landing 200 in 324ms (next.js: 10ms, proxy.ts: 14ms, application-code: 300ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775191167093,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-77","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":53732},"msg":"incoming request"}
+[api] {"level":30,"time":1775191167094,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-77","res":{"statusCode":200},"responseTime":0.6863000020384789,"msg":"request completed"}
+[web]  GET /landing 200 in 321ms (next.js: 10ms, proxy.ts: 12ms, application-code: 299ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775191245420,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-78","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":49415},"msg":"incoming request"}
+[api] {"level":30,"time":1775191245421,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-78","res":{"statusCode":200},"responseTime":0.6601999998092651,"msg":"request completed"}
+[web]  GET /landing 200 in 357ms (next.js: 12ms, proxy.ts: 11ms, application-code: 333ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775191320460,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-79","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":55318},"msg":"incoming request"}
+[api] {"level":30,"time":1775191320460,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-79","res":{"statusCode":200},"responseTime":0.5599999949336052,"msg":"request completed"}
+[web]  GET /landing 200 in 333ms (next.js: 15ms, proxy.ts: 15ms, application-code: 304ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775191387577,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7a","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":55318},"msg":"incoming request"}
+[api] {"level":30,"time":1775191387578,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7a","res":{"statusCode":200},"responseTime":0.7709000036120415,"msg":"request completed"}
+[web]  GET /landing 200 in 365ms (next.js: 10ms, proxy.ts: 10ms, application-code: 344ms)
+[api] {"level":30,"time":1775191431792,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7b","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":55318},"msg":"incoming request"}
+[api] {"level":30,"time":1775191431793,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7b","res":{"statusCode":200},"responseTime":0.9032000005245209,"msg":"request completed"}
+[web]  GET /landing 200 in 236ms (next.js: 10ms, proxy.ts: 10ms, application-code: 216ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775191503329,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7c","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64585},"msg":"incoming request"}
+[api] {"level":30,"time":1775191503330,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7c","res":{"statusCode":200},"responseTime":0.7383000031113625,"msg":"request completed"}
+[web]  GET /landing 200 in 312ms (next.js: 9ms, proxy.ts: 12ms, application-code: 292ms)
+[api] {"level":30,"time":1775191545083,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7d","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64585},"msg":"incoming request"}
+[api] {"level":30,"time":1775191545084,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7d","res":{"statusCode":200},"responseTime":0.5766000002622604,"msg":"request completed"}
+[web]  GET /landing 200 in 331ms (next.js: 11ms, proxy.ts: 11ms, application-code: 310ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775191620779,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7e","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":53871},"msg":"incoming request"}
+[api] {"level":30,"time":1775191620780,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7e","res":{"statusCode":200},"responseTime":0.5212000012397766,"msg":"request completed"}
+[web]  GET /landing 200 in 237ms (next.js: 10ms, proxy.ts: 11ms, application-code: 216ms)
+[api] {"level":30,"time":1775191662003,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7f","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":53871},"msg":"incoming request"}
+[api] {"level":30,"time":1775191662004,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7f","res":{"statusCode":200},"responseTime":0.5446000024676323,"msg":"request completed"}
+[web]  GET /landing 200 in 226ms (next.js: 9ms, proxy.ts: 13ms, application-code: 204ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775191738221,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7g","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59078},"msg":"incoming request"}
+[api] {"level":30,"time":1775191738222,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7g","res":{"statusCode":200},"responseTime":0.7207000032067299,"msg":"request completed"}
+[web]  GET /landing 200 in 256ms (next.js: 15ms, proxy.ts: 15ms, application-code: 226ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775191818694,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7h","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64476},"msg":"incoming request"}
+[api] {"level":30,"time":1775191818694,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7h","res":{"statusCode":200},"responseTime":0.6409000009298325,"msg":"request completed"}
+[web]  GET /landing 200 in 218ms (next.js: 10ms, proxy.ts: 10ms, application-code: 198ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775191897075,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7i","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":55767},"msg":"incoming request"}
+[api] {"level":30,"time":1775191897076,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7i","res":{"statusCode":200},"responseTime":0.7019999995827675,"msg":"request completed"}
+[web]  GET /landing 200 in 283ms (next.js: 9ms, proxy.ts: 12ms, application-code: 261ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775191971668,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7j","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":62676},"msg":"incoming request"}
+[api] {"level":30,"time":1775191971669,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7j","res":{"statusCode":200},"responseTime":0.5838999971747398,"msg":"request completed"}
+[web]  GET /landing 200 in 207ms (next.js: 9ms, proxy.ts: 11ms, application-code: 187ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775192053624,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7k","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":62552},"msg":"incoming request"}
+[api] {"level":30,"time":1775192053624,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7k","res":{"statusCode":200},"responseTime":0.5133000016212463,"msg":"request completed"}
+[web]  GET /landing 200 in 170ms (next.js: 7ms, proxy.ts: 10ms, application-code: 153ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775192118968,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7l","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":62552},"msg":"incoming request"}
+[api] {"level":30,"time":1775192118969,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7l","res":{"statusCode":200},"responseTime":0.5292999967932701,"msg":"request completed"}
+[web]  GET /landing 200 in 259ms (next.js: 12ms, proxy.ts: 12ms, application-code: 235ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775192164113,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7m","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":62552},"msg":"incoming request"}
+[api] {"level":30,"time":1775192164113,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7m","res":{"statusCode":200},"responseTime":0.5427000001072884,"msg":"request completed"}
+[web]  GET /landing 200 in 218ms (next.js: 6ms, proxy.ts: 9ms, application-code: 204ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775192237478,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7n","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59863},"msg":"incoming request"}
+[api] {"level":30,"time":1775192237479,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7n","res":{"statusCode":200},"responseTime":0.6200000047683716,"msg":"request completed"}
+[web]  GET /landing 200 in 215ms (next.js: 6ms, proxy.ts: 10ms, application-code: 199ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775192282117,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7o","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59863},"msg":"incoming request"}
+[api] {"level":30,"time":1775192282118,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7o","res":{"statusCode":200},"responseTime":0.5856999978423119,"msg":"request completed"}
+[web]  GET /landing 200 in 240ms (next.js: 6ms, proxy.ts: 13ms, application-code: 220ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775192357240,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7p","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64392},"msg":"incoming request"}
+[api] {"level":30,"time":1775192357241,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7p","res":{"statusCode":200},"responseTime":1.5232999995350838,"msg":"request completed"}
+[web]  GET /landing 200 in 228ms (next.js: 7ms, proxy.ts: 9ms, application-code: 211ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775192399352,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7q","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":64392},"msg":"incoming request"}
+[api] {"level":30,"time":1775192399353,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7q","res":{"statusCode":200},"responseTime":0.6115999966859818,"msg":"request completed"}
+[web]  GET /landing 200 in 223ms (next.js: 12ms, proxy.ts: 11ms, application-code: 199ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775192472353,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7r","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59966},"msg":"incoming request"}
+[api] {"level":30,"time":1775192472354,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7r","res":{"statusCode":200},"responseTime":0.8498999997973442,"msg":"request completed"}
+[web]  GET /landing 200 in 280ms (next.js: 12ms, proxy.ts: 10ms, application-code: 258ms)
+[api] {"level":30,"time":1775192513470,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7s","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":59966},"msg":"incoming request"}
+[api] {"level":30,"time":1775192513470,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7s","res":{"statusCode":200},"responseTime":0.5976999998092651,"msg":"request completed"}
+[web]  GET /landing 200 in 227ms (next.js: 10ms, proxy.ts: 12ms, application-code: 204ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775192587514,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7t","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":49658},"msg":"incoming request"}
+[api] {"level":30,"time":1775192587515,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7t","res":{"statusCode":200},"responseTime":1.1406000033020973,"msg":"request completed"}
+[web]  GET /landing 200 in 243ms (next.js: 11ms, proxy.ts: 10ms, application-code: 221ms)
+[api] {"level":30,"time":1775192632294,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7u","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":49658},"msg":"incoming request"}
+[api] {"level":30,"time":1775192632295,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7u","res":{"statusCode":200},"responseTime":0.5401000007987022,"msg":"request completed"}
+[web]  GET /landing 200 in 299ms (next.js: 9ms, proxy.ts: 12ms, application-code: 278ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775192698926,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7v","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":49658},"msg":"incoming request"}
+[api] {"level":30,"time":1775192698927,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7v","res":{"statusCode":200},"responseTime":0.6894000023603439,"msg":"request completed"}
+[web]  GET /landing 200 in 287ms (next.js: 11ms, proxy.ts: 14ms, application-code: 261ms)
+[api] {"level":30,"time":1775192751094,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7w","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":49658},"msg":"incoming request"}
+[api] {"level":30,"time":1775192751095,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7w","res":{"statusCode":200},"responseTime":0.2562999948859215,"msg":"request completed"}
+[web]  GET /landing 200 in 273ms (next.js: 11ms, proxy.ts: 10ms, application-code: 252ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775192819047,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7x","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":49658},"msg":"incoming request"}
+[api] {"level":30,"time":1775192819048,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7x","res":{"statusCode":200},"responseTime":0.6934999972581863,"msg":"request completed"}
+[web]  GET /landing 200 in 227ms (next.js: 8ms, proxy.ts: 8ms, application-code: 210ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775192900872,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7y","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":60931},"msg":"incoming request"}
+[api] {"level":30,"time":1775192900875,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7y","res":{"statusCode":200},"responseTime":2.9902999997138977,"msg":"request completed"}
+[web]  GET /landing 200 in 257ms (next.js: 8ms, proxy.ts: 5ms, application-code: 244ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775192991782,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7z","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":49386},"msg":"incoming request"}
+[api] {"level":30,"time":1775192991783,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-7z","res":{"statusCode":200},"responseTime":0.558799996972084,"msg":"request completed"}
+[web]  GET /landing 200 in 258ms (next.js: 11ms, proxy.ts: 14ms, application-code: 233ms)
+[worker] [worker] heartbeat
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775193066989,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-80","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":50139},"msg":"incoming request"}
+[api] {"level":30,"time":1775193066989,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-80","res":{"statusCode":200},"responseTime":0.5538000017404556,"msg":"request completed"}
+[web]  GET /landing 200 in 242ms (next.js: 7ms, proxy.ts: 10ms, application-code: 225ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775193148357,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-81","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":51009},"msg":"incoming request"}
+[api] {"level":30,"time":1775193148358,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-81","res":{"statusCode":200},"responseTime":0.5604999959468842,"msg":"request completed"}
+[web]  GET /landing 200 in 252ms (next.js: 16ms, proxy.ts: 9ms, application-code: 227ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775193214156,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-82","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":51009},"msg":"incoming request"}
+[api] {"level":30,"time":1775193214156,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-82","res":{"statusCode":200},"responseTime":0.5731000006198883,"msg":"request completed"}
+[web]  GET /landing 200 in 247ms (next.js: 3ms, proxy.ts: 3ms, application-code: 241ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775193264799,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-83","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":51009},"msg":"incoming request"}
+[api] {"level":30,"time":1775193264800,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-83","res":{"statusCode":200},"responseTime":0.2045000046491623,"msg":"request completed"}
+[web]  GET /landing 200 in 206ms (next.js: 11ms, proxy.ts: 7ms, application-code: 188ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775193333829,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-84","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":51009},"msg":"incoming request"}
+[api] {"level":30,"time":1775193333829,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-84","res":{"statusCode":200},"responseTime":0.5292999967932701,"msg":"request completed"}
+[web]  GET /landing 200 in 272ms (next.js: 11ms, proxy.ts: 9ms, application-code: 252ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775193379815,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-85","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":51009},"msg":"incoming request"}
+[api] {"level":30,"time":1775193379816,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-85","res":{"statusCode":200},"responseTime":0.6061000004410744,"msg":"request completed"}
+[web]  GET /landing 200 in 275ms (next.js: 9ms, proxy.ts: 9ms, application-code: 257ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775193452220,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-86","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":49391},"msg":"incoming request"}
+[api] {"level":30,"time":1775193452220,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-86","res":{"statusCode":200},"responseTime":0.6252999976277351,"msg":"request completed"}
+[web]  GET /landing 200 in 252ms (next.js: 6ms, proxy.ts: 8ms, application-code: 238ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775193496161,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-87","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":49391},"msg":"incoming request"}
+[api] {"level":30,"time":1775193496161,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-87","res":{"statusCode":200},"responseTime":0.5199000015854836,"msg":"request completed"}
+[web]  GET /landing 200 in 232ms (next.js: 3ms, proxy.ts: 5ms, application-code: 225ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775193569060,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-88","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":57098},"msg":"incoming request"}
+[api] {"level":30,"time":1775193569060,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-88","res":{"statusCode":200},"responseTime":0.4270000010728836,"msg":"request completed"}
+[web]  GET /landing 200 in 266ms (next.js: 8ms, proxy.ts: 7ms, application-code: 250ms)
+[worker] [worker] heartbeat
+[api] {"level":30,"time":1775193611259,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-89","req":{"method":"GET","url":"/api/v1/auth/session","host":"127.0.0.1:3001","remoteAddress":"127.0.0.1","remotePort":57098},"msg":"incoming request"}
+[api] {"level":30,"time":1775193611260,"pid":33376,"hostname":"DESKTOP-RM48ODG","reqId":"req-89","res":{"statusCode":200},"responseTime":0.5099000036716461,"msg":"request completed"}
+[web]  GET /landing 200 in 219ms (next.js: 8ms, proxy.ts: 5ms, application-code: 206ms)
+[worker] [worker] heartbeat
+[worker] 13:21:10 [tsx] unlink in ./src\dev.ts Restarting...
+[api] 13:21:10 [tsx] unlink in ./src\server.ts Restarting...
+[worker] c
+[api] c
+[worker] 
+[worker] node:internal/modules/run_main:107
+[worker]     triggerUncaughtException(
+[worker]     ^
+[worker] Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'X:\github-repos\anion\apps\worker\src\dev.ts' imported from X:\github-repos\anion\apps\worker\
+[worker]     at finalizeResolution (node:internal/modules/esm/resolve:275:11)
+[worker]     at moduleResolve (node:internal/modules/esm/resolve:866:10)
+[worker]     at defaultResolve (node:internal/modules/esm/resolve:992:11)
+[worker]     at nextResolve (node:internal/modules/esm/hooks:785:28)
+[worker]     at resolveBase (file:///X:/github-repos/anion/node_modules/.pnpm/tsx@4.21.0/node_modules/tsx/dist/esm/index.mjs?1775193670799:2:3744)
+[worker]     at async resolveDirectory (file:///X:/github-repos/anion/node_modules/.pnpm/tsx@4.21.0/node_modules/tsx/dist/esm/index.mjs?1775193670799:2:4237)
+[worker]     at async resolve (file:///X:/github-repos/anion/node_modules/.pnpm/tsx@4.21.0/node_modules/tsx/dist/esm/index.mjs?1775193670799:2:5355)
+[worker]     at async nextResolve (node:internal/modules/esm/hooks:785:22)
+[worker]     at async AsyncLoaderHooksOnLoaderHookWorker.resolve (node:internal/modules/esm/hooks:269:24)
+[worker]     at async handleMessage (node:internal/modules/esm/worker:251:18) {
+[worker]   code: 'ERR_MODULE_NOT_FOUND',
+[worker]   url: 'file:///X:/github-repos/anion/apps/worker/src/dev.ts'
+[worker] }
+[worker] 
+[worker] Node.js v24.13.1
+[api] 
+[api] node:internal/modules/run_main:107
+[api]     triggerUncaughtException(
+[api]     ^
+[api] Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'X:\github-repos\anion\apps\api\src\server.ts' imported from X:\github-repos\anion\apps\api\
+[api]     at finalizeResolution (node:internal/modules/esm/resolve:275:11)
+[api]     at moduleResolve (node:internal/modules/esm/resolve:866:10)
+[api]     at defaultResolve (node:internal/modules/esm/resolve:992:11)
+[api]     at nextResolve (node:internal/modules/esm/hooks:785:28)
+[api]     at resolveBase (file:///X:/github-repos/anion/node_modules/.pnpm/tsx@4.21.0/node_modules/tsx/dist/esm/index.mjs?1775193670807:2:3744)
+[api]     at async resolveDirectory (file:///X:/github-repos/anion/node_modules/.pnpm/tsx@4.21.0/node_modules/tsx/dist/esm/index.mjs?1775193670807:2:4237)
+[api]     at async resolve (file:///X:/github-repos/anion/node_modules/.pnpm/tsx@4.21.0/node_modules/tsx/dist/esm/index.mjs?1775193670807:2:5355)
+[api]     at async nextResolve (node:internal/modules/esm/hooks:785:22)
+[api]     at async AsyncLoaderHooksOnLoaderHookWorker.resolve (node:internal/modules/esm/hooks:269:24)
+[api]     at async handleMessage (node:internal/modules/esm/worker:251:18) {
+[api]   code: 'ERR_MODULE_NOT_FOUND',
+[api]   url: 'file:///X:/github-repos/anion/apps/api/src/server.ts'
+[api] }
+[api] 
+[api] Node.js v24.13.1
+[web] 
+[web] -----
+[web] [1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Abraham\AppData\Local\Temp\next-panic-7a172b2cef326c4f929226a372c3ce49.log.
+[web] 
+[web] To help make Turbopack better, report this error by clicking here: https://bugs.nextjs.org/search?category=turbopack-error-report&title=Turbopack%20Error%3A%20Input%20image%20not%20found&body=Turbopack%20version%3A%20%603e37bb42%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0AInput%20image%20not%20found%0A%0ADebug%20info%3A%0A-%20Execution%20of%20hmr_update_with_issues_operation%20failed%0A-%20Execution%20of%20PlainIssue%3A%3Afrom_issue%20failed%0A-%20Execution%20of%20PlainSource%3A%3Afrom_source%20failed%0A-%20Execution%20of%20%3CStructuredImageFileSource%20as%20Asset%3E%3A%3Acontent%20failed%0A-%20Execution%20of%20get_meta_data%20failed%0A-%20Input%20image%20not%20found%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+[web] -----
+[web] 
+[web] ⨯ ./middleware.ts:2:1
+[web] Module not found: Can't resolve '@supabase/ssr'
+[web]   [90m1 |[0m [36mimport[0m { [33mNextResponse[0m, [36mtype[0m [33mNextRequest[0m } [36mfrom[0m [32m"next/server"[0m;
+[web] [31m[1m>[0m [90m2 |[0m [36mimport[0m { createServerClient } [36mfrom[0m [32m"@supabase/ssr"[0m;
+[web]   [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web]   [90m3 |[0m
+[web]   [90m4 |[0m [36mimport[0m { hasSupabase, runtimeEnv } [36mfrom[0m [32m"@/lib/env"[0m;
+[web]   [90m5 |[0m
+[web] 
+[web] 
+[web] 
+[web] https://nextjs.org/docs/messages/module-not-found
+[web] 
+[web] 
+[web] ⨯ ./middleware.ts:2:1
+[web] Module not found: Can't resolve '@supabase/ssr'
+[web]   [90m1 |[0m [36mimport[0m { [33mNextResponse[0m, [36mtype[0m [33mNextRequest[0m } [36mfrom[0m [32m"next/server"[0m;
+[web] [31m[1m>[0m [90m2 |[0m [36mimport[0m { createServerClient } [36mfrom[0m [32m"@supabase/ssr"[0m;
+[web]   [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web]   [90m3 |[0m
+[web]   [90m4 |[0m [36mimport[0m { hasSupabase, runtimeEnv } [36mfrom[0m [32m"@/lib/env"[0m;
+[web]   [90m5 |[0m
+[web] 
+[web] 
+[web] 
+[web] https://nextjs.org/docs/messages/module-not-found
+[web] 
+[web] 
+[web] [Server HMR] Subscription error: Error [TurbopackInternalError]: Input image not found
+[web] 
+[web] Debug info:
+[web] - Execution of hmr_update_with_issues_operation failed
+[web] - Execution of PlainIssue::from_issue failed
+[web] - Execution of PlainSource::from_source failed
+[web] - Execution of <StructuredImageFileSource as Asset>::content failed
+[web] - Execution of get_meta_data failed
+[web] - Input image not found
+[web]     at <unknown> (TurbopackInternalError: Input image not found) {
+[web]   location: undefined
+[web] }
+[web] [Server HMR] Subscription error: Error [TurbopackInternalError]: Input image not found
+[web] 
+[web] Debug info:
+[web] - Execution of hmr_update_with_issues_operation failed
+[web] - Execution of PlainIssue::from_issue failed
+[web] - Execution of PlainSource::from_source failed
+[web] - Execution of <StructuredImageFileSource as Asset>::content failed
+[web] - Execution of get_meta_data failed
+[web] - Input image not found
+[web]     at <unknown> (TurbopackInternalError: Input image not found) {
+[web]   location: undefined
+[web] }
+[web] Error: ENOENT: no such file or directory, scandir 'X:\github-repos\anion\apps\web\app'
+[web]     at ignore-listed frames {
+[web]   errno: -4058,
+[web]   code: 'ENOENT',
+[web]   syscall: 'scandir',
+[web]   path: 'X:\\github-repos\\anion\\apps\\web\\app'
+[web] }
+[web] ⨯ unhandledRejection: Error: ENOENT: no such file or directory, scandir 'X:\github-repos\anion\apps\web\app'
+[web]     at ignore-listed frames {
+[web]   errno: -4058,
+[web]   code: 'ENOENT',
+[web]   syscall: 'scandir',
+[web]   path: 'X:\\github-repos\\anion\\apps\\web\\app'
+[web] }
+[web] ⨯ unhandledRejection:  Error: ENOENT: no such file or directory, scandir 'X:\github-repos\anion\apps\web\app'
+[web]     at ignore-listed frames {
+[web]   errno: -4058,
+[web]   code: 'ENOENT',
+[web]   syscall: 'scandir',
+[web]   path: 'X:\\github-repos\\anion\\apps\\web\\app'
+[web] }
+[web] ⨯ ./middleware.ts:2:1
+[web] Module not found: Can't resolve '@supabase/ssr'
+[web]   [90m1 |[0m [36mimport[0m { [33mNextResponse[0m, [36mtype[0m [33mNextRequest[0m } [36mfrom[0m [32m"next/server"[0m;
+[web] [31m[1m>[0m [90m2 |[0m [36mimport[0m { createServerClient } [36mfrom[0m [32m"@supabase/ssr"[0m;
+[web]   [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web]   [90m3 |[0m
+[web]   [90m4 |[0m [36mimport[0m { hasSupabase, runtimeEnv } [36mfrom[0m [32m"@/lib/env"[0m;
+[web]   [90m5 |[0m
+[web] 
+[web] 
+[web] 
+[web] https://nextjs.org/docs/messages/module-not-found
+[web] 
+[web] 
+[web] ⨯ ./middleware.ts:2:1
+[web] Module not found: Can't resolve '@supabase/ssr'
+[web]   [90m1 |[0m [36mimport[0m { [33mNextResponse[0m, [36mtype[0m [33mNextRequest[0m } [36mfrom[0m [32m"next/server"[0m;
+[web] [31m[1m>[0m [90m2 |[0m [36mimport[0m { createServerClient } [36mfrom[0m [32m"@supabase/ssr"[0m;
+[web]   [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[web]   [90m3 |[0m
+[web]   [90m4 |[0m [36mimport[0m { hasSupabase, runtimeEnv } [36mfrom[0m [32m"@/lib/env"[0m;
+[web]   [90m5 |[0m
+[web] 
+[web] 
+[web] 
+[web] https://nextjs.org/docs/messages/module-not-found
+[web] 
+[web] 
+[web] ✓ Compiled in 2.4s
+[web] Error [PageNotFoundError]: Cannot find module for page: /proxy
+[web]     at ignore-listed frames {
+[web]   code: 'ENOENT'
+[web] }
+[web] Error: ENOENT: no such file or directory, scandir 'X:\github-repos\anion\apps\web\app'
+[web]     at ignore-listed frames {
+[web]   errno: -4058,
+[web]   code: 'ENOENT',
+[web]   syscall: 'scandir',
+[web]   path: 'X:\\github-repos\\anion\\apps\\web\\app'
+[web] }
+[web] [?25h
+[web] X:\github-repos\anion\apps\web:
+[web]  ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @anion/web@ dev: `next dev`
+[web] Exit status 4294967295
+[web]  ELIFECYCLE  Command failed with exit code 4294967295.
+[web] pnpm dev:web exited with code 4294967295
+[worker] ^C
+[api] ^C
+[worker] ^C
+[api]  ELIFECYCLE  Command failed with exit code 3221225786.
+[worker]  ELIFECYCLE  Command failed with exit code 3221225786.
+[worker] pnpm dev:worker exited with code 3221225786
+[api] pnpm dev:api exited with code 3221225786
+ ELIFECYCLE  Command failed with exit code 3221225786.

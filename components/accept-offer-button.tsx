@@ -6,7 +6,7 @@ import { startTransition, useState } from "react";
 import { acceptOffer, activateHub } from "@/lib/client/api";
 import type { SessionStatus } from "@/lib/domain";
 
-type TransitionPhase = "idle" | "accepting" | "sequencing" | "activating";
+type TransitionPhase = "idle" | "locking" | "planning" | "activating";
 
 function sleep(ms: number) {
   return new Promise((resolve) => {
@@ -33,7 +33,7 @@ export function AcceptOfferButton({
 
     if (status === "hub_active") {
       startTransition(() => {
-        router.push(`/hub/copilot?session=${sessionId}`);
+        router.push("/hub");
       });
       return;
     }
@@ -42,39 +42,39 @@ export function AcceptOfferButton({
 
     try {
       if (status !== "accepted") {
-        setPhase("accepting");
+        setPhase("locking");
         await acceptOffer(sessionId);
         await sleep(220);
       }
 
-      setPhase("sequencing");
-      await sleep(680);
+      setPhase("planning");
+      await sleep(560);
       setPhase("activating");
       await activateHub(sessionId);
       await sleep(220);
 
       startTransition(() => {
-        router.push(`/hub/copilot?session=${sessionId}`);
+        router.push("/hub");
       });
     } catch (transitionError) {
       setShowOverlay(false);
       setPhase("idle");
       setError(
-        transitionError instanceof Error ? transitionError.message : "无法完成协议切换。",
+        transitionError instanceof Error ? transitionError.message : "无法生成行动计划。",
       );
     }
   };
 
   const label =
     status === "hub_active"
-      ? "进入指挥中心"
+      ? "进入行动计划"
       : isPending
-        ? phase === "accepting"
-          ? "正在接受录用..."
-          : phase === "sequencing"
-            ? "正在重写协议..."
-            : "正在激活指挥中心..."
-        : "接受录用";
+        ? phase === "locking"
+          ? "正在锁定本轮结果..."
+          : phase === "planning"
+            ? "正在整理行动重点..."
+            : "正在打开行动计划..."
+        : "生成行动计划";
 
   return (
     <div className="stack-sm">
@@ -100,28 +100,36 @@ export function AcceptOfferButton({
         >
           <div className="protocol-grid" aria-hidden />
           <div className="protocol-panel">
-            <span className="eyebrow">录用已确认</span>
-            <h3>协议切换中</h3>
+            <span className="eyebrow">行动计划生成中</span>
+            <h3>正在把复盘转成后续动作</h3>
             <p className="hero-copy">
-              冷启动考场正在退场，个人中枢正在接管。系统会把你的高压面试轨迹翻译成长期可复用的副驾上下文。
+              我们会把这轮复盘里的关键问题、高风险回答和下一周重点整理好，然后带你进入行动计划页继续推进。
             </p>
             <div className="protocol-steps">
-              <div className={`protocol-step ${phase === "accepting" ? "active" : "done"}`}>
-                1. 锁定录用
+              <div
+                className={`protocol-step ${
+                  phase === "locking"
+                    ? "active"
+                    : phase === "planning" || phase === "activating"
+                      ? "done"
+                      : ""
+                }`}
+              >
+                1. 锁定本轮复盘
               </div>
               <div
                 className={`protocol-step ${
-                  phase === "sequencing"
+                  phase === "planning"
                     ? "active"
                     : phase === "activating"
                       ? "done"
                       : ""
                 }`}
               >
-                2. 重写提示词
+                2. 整理重点动作
               </div>
               <div className={`protocol-step ${phase === "activating" ? "active" : ""}`}>
-                3. 激活指挥中心
+                3. 打开行动计划
               </div>
             </div>
           </div>

@@ -2,10 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AcceptOfferButton } from "@/components/accept-offer-button";
-import { AppFrame } from "@/components/app-frame";
 import { RadarChart } from "@/components/radar-chart";
 import { ReportStatusPanel } from "@/components/report-status-panel";
-import { formatFindingCategory, formatFindingSeverity } from "@/lib/domain";
+import { SessionShell } from "@/components/session-shell";
+import { formatFindingCategory, formatFindingSeverity, formatSessionStatus } from "@/lib/domain";
 import { requireViewer } from "@/lib/server/auth";
 import { getDataStore } from "@/lib/server/store/repository";
 import { getSessionDiagnostics } from "@/lib/server/services/analysis";
@@ -26,45 +26,112 @@ export default async function ReportPage({
     notFound();
   }
 
+  const strongestScore = report
+    ? [...report.scores].sort((left, right) => right.score - left.score)[0]
+    : null;
+  const weakestScore = report
+    ? [...report.scores].sort((left, right) => left.score - right.score)[0]
+    : null;
+
   return (
-    <AppFrame
+    <SessionShell
       viewer={viewer}
-      title="终局透视报告"
-      subtitle="雷达图、证据锚点、STAR 高光和可复用记忆，都从同一条面试轨迹里提纯出来。"
-      shellMode="interview"
+      activeHref="/"
+      stage="debrief"
+      eyebrow="复盘洞察"
+      title="把这一轮训练真正读懂"
+      description="这里不只是展示结果，而是把亮点证据、关键短板和下一周行动建议整理成可继续推进的闭环。"
+      supportingMeta={[
+        { label: "当前状态", value: formatSessionStatus(session.status) },
+        { label: "目标公司", value: session.config.targetCompany },
+        { label: "下一步", value: "生成行动计划" },
+      ]}
     >
       {!report ? (
         <ReportStatusPanel sessionId={sessionId} initialError={session.analysisError ?? null} />
       ) : (
-        <div className="stack-lg">
-          <RadarChart report={report} />
-
-          {report.evidenceAnchors.length > 0 ? (
-            <section className="panel">
+        <div className="workspace-grid">
+          <section className="workspace-summary-grid">
+            <article className="workspace-card">
               <div className="section-head">
                 <div>
-                  <p className="panel-label">证据锚点</p>
-                  <h3>带证据锚点的关键切片</h3>
+                  <p className="panel-label">本轮结论</p>
+                  <h3>{report.findings[0]?.title ?? "继续推进下一步"}</h3>
                 </div>
               </div>
-              <div className="card-grid">
-                {report.evidenceAnchors.map((anchor) => (
+              <p className="hero-copy">
+                {strongestScore && weakestScore
+                  ? `你在「${strongestScore.label}」上表现最好，目前最值得优先修正的是「${weakestScore.label}」。`
+                  : "这轮训练已经完成，下面的复盘会告诉你最该优先调整的地方。"}
+              </p>
+            </article>
+
+            <article className="workspace-card workspace-highlight-card">
+              <div className="section-head">
+                <div>
+                  <p className="panel-label">下一步</p>
+                  <h3>把复盘转成行动计划</h3>
+                </div>
+              </div>
+              <p className="hero-copy">
+                不要把这份复盘留在报告页。先把高风险回答、下周计划和关键场景练习接进后续行动。
+              </p>
+              <div className="action-row">
+                <AcceptOfferButton sessionId={session.id} status={session.status} />
+                <Link href="/hub" className="secondary-button">
+                  查看行动计划页
+                </Link>
+              </div>
+            </article>
+          </section>
+
+          <RadarChart report={report} />
+
+          <section className="workspace-summary-grid">
+            <article className="panel">
+              <div className="section-head">
+                <div>
+                  <p className="panel-label">亮点证据</p>
+                  <h3>这轮训练里最值得保留的内容</h3>
+                </div>
+              </div>
+              <div className="stack-md">
+                {report.evidenceAnchors.slice(0, 3).map((anchor) => (
                   <article key={anchor.id} className="report-block">
-                    <span className="eyebrow">{anchor.label}</span>
-                    <h4>{anchor.speakerLabel}</h4>
+                    <strong>{anchor.label}</strong>
                     <p>{anchor.excerpt}</p>
                     <p className="muted-copy">{anchor.note}</p>
                   </article>
                 ))}
+                {report.starStories.slice(0, 2).map((story) => (
+                  <article key={story.title} className="report-block">
+                    <strong>{story.title}</strong>
+                    <p>{story.result}</p>
+                  </article>
+                ))}
               </div>
-            </section>
-          ) : null}
+            </article>
+
+            <article className="panel">
+              <div className="section-head">
+                <div>
+                  <p className="panel-label">下一周行动建议</p>
+                  <h3>先做这些，再继续下一轮训练</h3>
+                </div>
+              </div>
+              <ul className="flat-list">
+                {report.trainingPlan.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </article>
+          </section>
 
           <section className="panel">
             <div className="section-head">
               <div>
-                <p className="panel-label">发现</p>
-                <h3>代码与逻辑发现</h3>
+                <p className="panel-label">关键短板</p>
+                <h3>这些问题会直接影响下一次真实对话</h3>
               </div>
             </div>
             <div className="stack-md">
@@ -80,114 +147,49 @@ export default async function ReportPage({
                   <p>{finding.detail}</p>
                   <p className="muted-copy">{finding.impact}</p>
                   <p className="muted-copy">{finding.recommendation}</p>
-                  {report.evidenceAnchors
-                    .filter((anchor) => finding.evidenceTurnIds.includes(anchor.sourceTurnId))
-                    .map((anchor) => (
-                      <blockquote key={anchor.id} className="evidence-quote">
-                        <strong>{anchor.label}</strong>
-                        <p>{anchor.excerpt}</p>
-                      </blockquote>
-                    ))}
                 </article>
               ))}
             </div>
           </section>
 
-          <section className="card-grid">
-            <div className="panel">
-              <p className="panel-label">STAR</p>
-              <h3>逆向工程高光</h3>
-              {report.starStories.map((story) => (
-                <article key={story.title} className="report-block">
-                  <h4>{story.title}</h4>
-                  <p>情境：{story.situation}</p>
-                  <p>任务：{story.task}</p>
-                  <p>行动：{story.action}</p>
-                  <p>结果：{story.result}</p>
-                </article>
-              ))}
-            </div>
-            <div className="panel">
-              <p className="panel-label">训练计划</p>
-              <h3>下一轮训练</h3>
-              <ul className="flat-list">
-                {report.trainingPlan.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </section>
-
-          <section className="panel">
-            <div className="section-head">
-              <div>
-                <p className="panel-label">B1 / 记忆重构</p>
-                <h3>提取出的记忆图谱</h3>
-              </div>
-            </div>
-            {memoryProfile ? (
-              <div className="stack-md">
-                <div className="card-grid">
-                  <div className="metric-card wide">
-                    <strong>技能</strong>
-                    {memoryProfile.skills.map((item) => (
-                      <p key={item.label}>{item.label}</p>
-                    ))}
-                  </div>
-                  <div className="metric-card wide">
-                    <strong>差距</strong>
-                    {memoryProfile.gaps.map((item) => (
-                      <p key={item.label}>{item.label}</p>
-                    ))}
-                  </div>
-                  <div className="metric-card wide">
-                    <strong>特质</strong>
-                    {memoryProfile.behaviorTraits.map((item) => (
-                      <p key={item.label}>{item.label}</p>
-                    ))}
-                  </div>
-                  <div className="metric-card wide">
-                    <strong>成就</strong>
-                    {memoryProfile.wins.map((item) => (
-                      <p key={item.label}>{item.label}</p>
-                    ))}
-                  </div>
+          {memoryProfile ? (
+            <section className="panel">
+              <div className="section-head">
+                <div>
+                  <p className="panel-label">可复用信号</p>
+                  <h3>这轮训练沉淀下来的长期信息</h3>
                 </div>
-                {memoryProfile.replayMoments.length > 0 ? (
-                  <div className="memory-reel">
-                    {memoryProfile.replayMoments.map((moment) => (
-                      <article key={moment.id} className="memory-card">
-                        <span className="eyebrow">{moment.title}</span>
-                        <p>{moment.summary}</p>
-                      </article>
-                    ))}
-                  </div>
-                ) : null}
               </div>
-            ) : (
-              <p className="muted-copy">记忆图谱尚未生成。</p>
-            )}
-          </section>
-
-          <section className="panel transition-panel">
-            <div className="section-head">
-              <div>
-                <p className="panel-label">B2 / 状态切换</p>
-                <h3>接受录用</h3>
+              <div className="card-grid">
+                <div className="metric-card wide">
+                  <strong>优势</strong>
+                  {memoryProfile.skills.map((item) => (
+                    <p key={item.label}>{item.label}</p>
+                  ))}
+                </div>
+                <div className="metric-card wide">
+                  <strong>短板</strong>
+                  {memoryProfile.gaps.map((item) => (
+                    <p key={item.label}>{item.label}</p>
+                  ))}
+                </div>
+                <div className="metric-card wide">
+                  <strong>行为特征</strong>
+                  {memoryProfile.behaviorTraits.map((item) => (
+                    <p key={item.label}>{item.label}</p>
+                  ))}
+                </div>
+                <div className="metric-card wide">
+                  <strong>高光时刻</strong>
+                  {memoryProfile.wins.map((item) => (
+                    <p key={item.label}>{item.label}</p>
+                  ))}
+                </div>
               </div>
-            </div>
-            <p className="hero-copy">
-              这一步会把系统从敌对诊断协议切换为忠诚副驾协议，并在转场后激活你的记忆图谱。
-            </p>
-            <div className="action-row">
-              <AcceptOfferButton sessionId={session.id} status={session.status} />
-              <Link href="/hub/strategy" className="secondary-button inline-button">
-                查看指挥中心
-              </Link>
-            </div>
-          </section>
+            </section>
+          ) : null}
         </div>
       )}
-    </AppFrame>
+    </SessionShell>
   );
 }
