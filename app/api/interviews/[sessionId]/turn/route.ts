@@ -38,6 +38,8 @@ export async function POST(
       session,
       turns,
       answer: payload.answer,
+      elapsedSeconds: payload.elapsedSeconds,
+      timerExpired: payload.timerExpired,
     });
 
     const encoder = new TextEncoder();

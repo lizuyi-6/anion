@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="980" viewBox="0 0 1600 980" role="img" aria-label="Anion 技术架构图">
+  <defs>
+    <linearGradient id="bg2" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#fefce8" />
+    </linearGradient>
+    <filter id="shadow2" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="14" flood-color="#64748b" flood-opacity="0.16" />
+    </filter>
+    <marker id="arrow2" markerWidth="14" markerHeight="14" refX="10" refY="7" orient="auto">
+      <path d="M0,0 L14,7 L0,14 z" fill="#334155" />
+    </marker>
+  </defs>
+
+  <rect width="1600" height="980" fill="url(#bg2)" rx="32" />
+  <text x="80" y="78" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="36" font-weight="700" fill="#0f172a">Anion 智能求职模拟与复盘系统技术架构图</text>
+  <text x="80" y="116" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#475569">前端交互层、服务编排层、AI 分析层与数据存储层协同工作</text>
+
+  <g filter="url(#shadow2)">
+    <rect x="80" y="180" width="1440" height="140" rx="24" fill="#ffffff" stroke="#cbd5e1" />
+    <text x="110" y="232" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="24" font-weight="700" fill="#1d4ed8">前端交互层</text>
+    <text x="110" y="276" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#334155">Next.js 16 App Router · React 19 · 分阶段旅程界面 · 材料上传与报告展示</text>
+
+    <rect x="80" y="380" width="1440" height="180" rx="24" fill="#ffffff" stroke="#cbd5e1" />
+    <text x="110" y="432" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="24" font-weight="700" fill="#0f766e">服务编排层</text>
+    <rect x="110" y="462" width="260" height="66" rx="16" fill="#eff6ff" stroke="#bfdbfe" />
+    <text x="145" y="502" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#1e3a8a">会话与目标设定服务</text>
+    <rect x="410" y="462" width="260" height="66" rx="16" fill="#ecfeff" stroke="#99f6e4" />
+    <text x="447" y="502" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#115e59">面试导演与状态机</text>
+    <rect x="710" y="462" width="260" height="66" rx="16" fill="#f5f3ff" stroke="#ddd6fe" />
+    <text x="757" y="502" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#5b21b6">诊断与记忆服务</text>
+    <rect x="1010" y="462" width="220" height="66" rx="16" fill="#fff7ed" stroke="#fdba74" />
+    <text x="1040" y="502" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#9a3412">命令中心服务</text>
+    <rect x="1260" y="462" width="220" height="66" rx="16" fill="#fef2f2" stroke="#fecaca" />
+    <text x="1300" y="502" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#991b1b">文件上传服务</text>
+
+    <rect x="80" y="620" width="690" height="200" rx="24" fill="#ffffff" stroke="#cbd5e1" />
+    <text x="110" y="674" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="24" font-weight="700" fill="#7c3aed">AI 与规则层</text>
+    <text x="110" y="718" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#334155">- Anthropic / OpenAI / mock fallback</text>
+    <text x="110" y="754" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#334155">- Zod 校验结构化输出</text>
+    <text x="110" y="790" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#334155">- 角色包、事件类型、报告结构、记忆画像统一领域模型</text>
+
+    <rect x="830" y="620" width="690" height="200" rx="24" fill="#ffffff" stroke="#cbd5e1" />
+    <text x="860" y="674" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="24" font-weight="700" fill="#b45309">数据与运行层</text>
+    <text x="860" y="718" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#334155">- demo 模式：内存存储 + mock AI</text>
+    <text x="860" y="754" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#334155">- supabase 模式：认证、会话、报告、文件、记忆持久化</text>
+    <text x="860" y="790" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#334155">- Trigger.dev 可选异步分析</text>
+  </g>
+
+  <line x1="800" y1="320" x2="800" y2="380" stroke="#334155" stroke-width="6" marker-end="url(#arrow2)" />
+  <line x1="520" y1="560" x2="520" y2="620" stroke="#334155" stroke-width="6" marker-end="url(#arrow2)" />
+  <line x1="1080" y1="560" x2="1080" y2="620" stroke="#334155" stroke-width="6" marker-end="url(#arrow2)" />
+</svg>

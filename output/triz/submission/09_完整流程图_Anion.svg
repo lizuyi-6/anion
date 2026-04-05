@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="980" viewBox="0 0 1600 980" role="img" aria-label="Anion 完整流程图">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#eef6ff" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="14" flood-color="#94a3b8" flood-opacity="0.18" />
+    </filter>
+    <marker id="arrow" markerWidth="14" markerHeight="14" refX="10" refY="7" orient="auto">
+      <path d="M0,0 L14,7 L0,14 z" fill="#2563eb" />
+    </marker>
+  </defs>
+
+  <rect width="1600" height="980" fill="url(#bg)" rx="32" />
+  <text x="80" y="78" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="36" font-weight="700" fill="#0f172a">Anion 智能求职模拟与复盘系统完整流程图</text>
+  <text x="80" y="116" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#475569">围绕“目标设定 - 高压模拟 - 复盘洞察 - 行动计划”构建可持续训练闭环</text>
+
+  <g filter="url(#shadow)">
+    <rect x="70" y="170" width="280" height="210" rx="24" fill="#ffffff" stroke="#cbd5e1" />
+    <text x="100" y="220" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="24" font-weight="700" fill="#1d4ed8">阶段 1 目标设定</text>
+    <text x="100" y="262" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#334155">- 目标公司与岗位级别</text>
+    <text x="100" y="300" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#334155">- 岗位描述与行业上下文</text>
+    <text x="100" y="338" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#334155">- 简历、JD、作品与补充材料</text>
+
+    <rect x="420" y="170" width="340" height="250" rx="24" fill="#ffffff" stroke="#cbd5e1" />
+    <text x="450" y="220" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="24" font-weight="700" fill="#0f766e">阶段 2 高压模拟</text>
+    <text x="450" y="262" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#334155">- 多角色面试官动态切换</text>
+    <text x="450" y="300" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#334155">- 压力分数与冲突预算</text>
+    <text x="450" y="338" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#334155">- question / follow_up / interrupt / conflict</text>
+    <text x="450" y="376" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#334155">- SSE 流式事件输出</text>
+
+    <rect x="840" y="170" width="330" height="250" rx="24" fill="#ffffff" stroke="#cbd5e1" />
+    <text x="870" y="220" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="24" font-weight="700" fill="#7c3aed">阶段 3 复盘洞察</text>
+    <text x="870" y="262" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#334155">- 结构化诊断报告</text>
+    <text x="870" y="300" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#334155">- 证据锚点与 STAR 重建</text>
+    <text x="870" y="338" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#334155">- 记忆画像：优势 / 短板 / 行为 / 高光</text>
+    <text x="870" y="376" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#334155">- 下一周训练计划</text>
+
+    <rect x="1240" y="170" width="290" height="290" rx="24" fill="#ffffff" stroke="#cbd5e1" />
+    <text x="1270" y="220" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="24" font-weight="700" fill="#b45309">阶段 4 行动工作台</text>
+    <rect x="1270" y="250" width="230" height="50" rx="14" fill="#eff6ff" stroke="#bfdbfe" />
+    <text x="1296" y="282" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#1e3a8a">Copilot 工程副驾</text>
+    <rect x="1270" y="320" width="230" height="50" rx="14" fill="#ecfeff" stroke="#99f6e4" />
+    <text x="1298" y="352" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#115e59">Strategy 策略研究</text>
+    <rect x="1270" y="390" width="230" height="50" rx="14" fill="#fff7ed" stroke="#fdba74" />
+    <text x="1298" y="422" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#9a3412">Sandbox 博弈预演</text>
+
+    <rect x="420" y="560" width="750" height="220" rx="28" fill="#ffffff" stroke="#cbd5e1" />
+    <text x="450" y="610" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="24" font-weight="700" fill="#111827">统一记忆上下文与持续闭环</text>
+    <text x="450" y="652" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#334155">- 训练结果沉淀为跨会话可复用的 Active Memory Context</text>
+    <text x="450" y="690" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#334155">- 同一份记忆既用于报告，也用于行动工作台</text>
+    <text x="450" y="728" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#334155">- 新一轮训练继续读取历史短板、优势和高风险场景，形成反馈增强闭环</text>
+
+    <rect x="1240" y="610" width="290" height="130" rx="24" fill="#ffffff" stroke="#cbd5e1" />
+    <text x="1270" y="656" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="24" font-weight="700" fill="#0f172a">附件证据</text>
+    <text x="1270" y="696" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#334155">- 系统截图</text>
+    <text x="1270" y="726" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#334155">- 流程图与架构图</text>
+  </g>
+
+  <line x1="350" y1="275" x2="420" y2="275" stroke="#2563eb" stroke-width="6" marker-end="url(#arrow)" />
+  <line x1="760" y1="295" x2="840" y2="295" stroke="#2563eb" stroke-width="6" marker-end="url(#arrow)" />
+  <line x1="1170" y1="315" x2="1240" y2="315" stroke="#2563eb" stroke-width="6" marker-end="url(#arrow)" />
+  <line x1="1005" y1="420" x2="1005" y2="560" stroke="#2563eb" stroke-width="6" marker-end="url(#arrow)" />
+  <path d="M1370 460 C1370 540 1370 540 1170 670" fill="none" stroke="#2563eb" stroke-width="6" marker-end="url(#arrow)" />
+  <path d="M560 780 C380 880 250 860 210 380" fill="none" stroke="#0f766e" stroke-width="6" stroke-dasharray="16 10" marker-end="url(#arrow)" />
+  <text x="160" y="880" font-family="Microsoft YaHei, SimSun, sans-serif" font-size="18" fill="#0f766e">反馈增强：上一轮复盘结果进入下一轮训练</text>
+</svg>

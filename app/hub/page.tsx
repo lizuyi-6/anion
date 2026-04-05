@@ -1,6 +1,11 @@
 import Link from "next/link";
 
-import { formatAudienceSessionStatus, getNextRecommendedAction, getPrimarySession } from "@/lib/journey";
+import {
+  buildSimulatorPrefillHref,
+  formatAudienceSessionStatus,
+  getNextRecommendedAction,
+  getPrimarySession,
+} from "@/lib/journey";
 import { requireViewer } from "@/lib/server/auth";
 import { getDataStore } from "@/lib/server/store/repository";
 import { formatDate } from "@/lib/utils";
@@ -16,31 +21,30 @@ export default async function HubPage() {
   const memoryContext = await store.getActiveMemoryContext(viewer.id);
 
   const latestSession = getPrimarySession(sessions);
+  const actionSession =
+    sessions.find(
+      (session) => session.status === "hub_active" || session.status === "accepted",
+    ) ?? latestSession;
+  const actionReport = actionSession
+    ? await store.getReportBySession(actionSession.id)
+    : null;
   const nextAction = getNextRecommendedAction(viewer, sessions);
   const topGap = memoryContext?.profile.gaps[0];
   const topWin = memoryContext?.profile.wins[0];
   const recentMoments = memoryContext?.timeline.slice(0, 3) ?? [];
+  const basePrefill = actionSession
+    ? {
+        rolePack: actionSession.config.rolePack,
+        targetCompany: actionSession.config.targetCompany,
+        industry: actionSession.config.industry,
+        level: actionSession.config.level,
+        jobDescription: actionSession.config.jobDescription,
+        interviewers: actionSession.config.interviewers,
+        candidateName: actionSession.config.candidateName,
+      }
+    : null;
 
-  const tasks = [
-    {
-      href: "/hub/copilot",
-      label: "修复一个高风险回答",
-      description:
-        topGap?.summary ?? "把最近一次训练里最危险的一条回答拆开，找到真正需要改的地方。",
-    },
-    {
-      href: "/hub/strategy",
-      label: "生成下一周准备计划",
-      description:
-        "把复盘结果压成一份下周行动清单，明确先做什么、做到什么算有效。",
-    },
-    {
-      href: "/hub/sandbox",
-      label: "练一次高风险沟通场景",
-      description:
-        "围绕最容易失分的表达或协作场景，先做一次低风险预演。",
-    },
-  ];
+  const drills = actionReport?.pressureDrills ?? [];
 
   return (
     <div className="workspace-grid">
@@ -62,18 +66,32 @@ export default async function HubPage() {
           <div className="section-head">
             <div>
               <p className="panel-label">本周重点</p>
-              <h3>{topGap ? topGap.label : "先完成第一轮模拟"}</h3>
+              <h3>
+                {drills[0]?.title ?? topGap?.label ?? "先完成第一轮模拟"}
+              </h3>
             </div>
           </div>
           <p className="hero-copy">
-            {topGap
-              ? topGap.summary
-              : "你还没有形成可持续的行动计划。先完成一轮模拟和复盘，再回来继续推进。"}
+            {drills[0]?.goal ??
+              topGap?.summary ??
+              "你还没有形成可持续的行动计划。先完成一轮模拟和复盘，再回来继续推进。"}
           </p>
           <div className="action-row">
-            <Link href={nextAction.href} className="primary-button">
-              {nextAction.label}
-            </Link>
+            {basePrefill ? (
+              <Link
+                href={buildSimulatorPrefillHref({
+                  ...basePrefill,
+                  focusGoal: drills[0]?.focusGoal || actionSession?.config.focusGoal,
+                })}
+                className="primary-button"
+              >
+                直接开始下一轮压测
+              </Link>
+            ) : (
+              <Link href={nextAction.href} className="primary-button">
+                {nextAction.label}
+              </Link>
+            )}
             {latestSession ? (
               <Link href={`/report/${latestSession.id}`} className="secondary-button">
                 回看最近复盘
@@ -108,13 +126,54 @@ export default async function HubPage() {
       </section>
 
       <section className="journey-task-grid">
-        {tasks.map((task) => (
-          <Link key={task.href} href={task.href} className="journey-task-card">
-            <span className="panel-label">推荐任务</span>
-            <h3>{task.label}</h3>
-            <p>{task.description}</p>
-          </Link>
-        ))}
+        {drills.length > 0
+          ? drills.map((drill) => (
+              <Link
+                key={drill.id}
+                href={
+                  basePrefill
+                    ? buildSimulatorPrefillHref({
+                        ...basePrefill,
+                        focusGoal: drill.focusGoal || actionSession?.config.focusGoal,
+                      })
+                    : "/simulator/new"
+                }
+                className="journey-task-card"
+              >
+                <span className="panel-label">复练 drill</span>
+                <h3>{drill.title}</h3>
+                <p>{drill.goal}</p>
+                <p className="muted-copy">
+                  {drill.recommendedDurationMinutes} 分钟 · {drill.successCriteria}
+                </p>
+              </Link>
+            ))
+          : [
+              {
+                href: "/hub/copilot",
+                label: "修复一个高风险回答",
+                description:
+                  topGap?.summary ?? "把最近一次训练里最危险的一条回答拆开，找到真正需要改的地方。",
+              },
+              {
+                href: "/hub/strategy",
+                label: "生成下一周准备计划",
+                description:
+                  "把复盘结果压成一份下周行动清单，明确先做什么、做到什么算有效。",
+              },
+              {
+                href: "/hub/sandbox",
+                label: "练一次高风险沟通场景",
+                description:
+                  "围绕最容易失分的表达或协作场景，先做一次低风险预演。",
+              },
+            ].map((task) => (
+              <Link key={task.href} href={task.href} className="journey-task-card">
+                <span className="panel-label">推荐任务</span>
+                <h3>{task.label}</h3>
+                <p>{task.description}</p>
+              </Link>
+            ))}
       </section>
 
       <section className="workspace-card">

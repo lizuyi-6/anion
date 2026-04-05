@@ -1,10 +1,37 @@
 import { InterviewSetupForm } from "@/components/interview-setup-form";
 import { SessionShell } from "@/components/session-shell";
 import { formatRolePackLabel } from "@/lib/domain";
+import { parseRolePackPrefill, type SessionPrefill } from "@/lib/journey";
 import { requireViewer } from "@/lib/server/auth";
 
-export default async function NewSimulatorPage() {
+function firstValue(value: string | string[] | undefined) {
+  if (Array.isArray(value)) {
+    return value[0];
+  }
+
+  return value;
+}
+
+export default async function NewSimulatorPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   const viewer = await requireViewer();
+  const params = await searchParams;
+  const prefill: SessionPrefill = {
+    rolePack: parseRolePackPrefill(firstValue(params.rolePack)),
+    targetCompany: firstValue(params.targetCompany),
+    industry: firstValue(params.industry),
+    level: firstValue(params.level),
+    focusGoal: firstValue(params.focusGoal),
+    jobDescription: firstValue(params.jobDescription),
+    candidateName: firstValue(params.candidateName),
+    interviewers: firstValue(params.interviewers)
+      ?.split(",")
+      .map((item) => item.trim())
+      .filter(Boolean),
+  };
 
   return (
     <SessionShell
@@ -20,7 +47,10 @@ export default async function NewSimulatorPage() {
         { label: "完成后", value: "直接进入模拟训练" },
       ]}
     >
-      <InterviewSetupForm defaultRolePack={viewer.preferredRolePack} />
+      <InterviewSetupForm
+        defaultRolePack={viewer.preferredRolePack}
+        prefill={prefill}
+      />
     </SessionShell>
   );
 }

@@ -31,6 +31,29 @@ import {
 } from "@/lib/domain";
 import { sentenceSplit, summarizeText, toId } from "@/lib/utils";
 
+const pressurePhases = ["calibrate", "surround", "crossfire"] as const;
+type PressurePhase = (typeof pressurePhases)[number];
+
+function isPressurePhase(value: unknown): value is PressurePhase {
+  return typeof value === "string" && pressurePhases.includes(value as PressurePhase);
+}
+
+function readPressureMeta(turn: InterviewTurn) {
+  const meta = turn.meta ?? {};
+  return {
+    phase: isPressurePhase(meta.phase) ? meta.phase : "calibrate",
+    deadlineSeconds:
+      typeof meta.deadlineSeconds === "number" ? meta.deadlineSeconds : 120,
+    elapsedSeconds:
+      typeof meta.elapsedSeconds === "number" ? meta.elapsedSeconds : 0,
+    timerExpired: meta.timerExpired === true,
+    targetAxis: typeof meta.targetAxis === "string" ? meta.targetAxis : "",
+    seamLabel: typeof meta.seamLabel === "string" ? meta.seamLabel : "",
+    pressureReason:
+      typeof meta.pressureReason === "string" ? meta.pressureReason : "",
+  };
+}
+
 type InterviewGenerationInput = {
   session: InterviewSession;
   turns: InterviewTurn[];
@@ -66,6 +89,14 @@ type SandboxTurnInput = {
   userRedLine: string;
   memoryContext: ActiveMemoryContext | null;
 };
+
+function requireParsedOutput<T>(value: T | null | undefined, label: string): T {
+  if (!value) {
+    throw new Error(`${label} returned no structured output.`);
+  }
+
+  return value;
+}
 
 function formatMemoryContextForPrompt(memoryContext: ActiveMemoryContext | null) {
   if (!memoryContext) {
@@ -123,6 +154,137 @@ function buildReplayMoments(session: InterviewSession, turns: InterviewTurn[]) {
       sourceTurnIds: [turn.id],
       createdAt: turn.createdAt,
     }));
+}
+
+function buildPressureSnapshot(turns: InterviewTurn[]) {
+  return turns
+    .map((turn) => ({
+      id: turn.id,
+      role: turn.role,
+      kind: turn.kind,
+      speakerLabel: turn.speakerLabel,
+      excerpt: summarizeText(turn.content, 120),
+      ...readPressureMeta(turn),
+    }))
+    .filter(
+      (turn) =>
+        turn.timerExpired ||
+        turn.kind === "interrupt" ||
+        turn.kind === "conflict" ||
+        Boolean(turn.seamLabel) ||
+        Boolean(turn.pressureReason),
+    )
+    .slice(-8);
+}
+
+function buildPressureMoments(turns: InterviewTurn[]) {
+  const moments = turns
+    .filter((turn) => turn.role === "candidate" || turn.role === "interviewer")
+    .map((turn) => ({ turn, meta: readPressureMeta(turn) }))
+    .filter(
+      ({ turn, meta }) =>
+        meta.timerExpired || turn.kind === "interrupt" || turn.kind === "conflict",
+    )
+    .map(({ turn, meta }, index) => ({
+      id: `pressure_${index + 1}`,
+      title: meta.timerExpired
+        ? "超时后被继续追压"
+        : turn.kind === "conflict"
+          ? "多面试官交叉质疑"
+          : "主线被打断并重压",
+      summary: summarizeText(turn.content, 120),
+      phase: meta.phase,
+      trigger:
+        meta.pressureReason ||
+        (meta.timerExpired ? "回答超时" : turn.kind === "conflict" ? "证据薄弱或取舍未闭环" : "回答主线偏移"),
+      severity: meta.timerExpired || turn.kind === "conflict" ? "high" : "medium",
+      evidenceTurnIds: [turn.id],
+      recommendation:
+        meta.seamLabel || meta.targetAxis
+          ? `下一轮优先围绕“${meta.seamLabel || meta.targetAxis}”做 60-90 秒压测复练。`
+          : "下一轮先缩短开头背景，再把证据和边界提前。",
+    }));
+
+  return moments.slice(0, 3);
+}
+
+function buildRecoveryMoments(turns: InterviewTurn[]) {
+  const candidateTurns = turns
+    .filter((turn) => turn.role === "candidate")
+    .map((turn) => ({ turn, meta: readPressureMeta(turn) }))
+    .filter(
+      ({ turn, meta }) =>
+        !meta.timerExpired &&
+        turn.content.trim().length >= 48 &&
+        (Boolean(meta.seamLabel) || Boolean(meta.targetAxis)),
+    );
+
+  return candidateTurns.slice(0, 2).map(({ turn, meta }, index) => ({
+    id: `recovery_${index + 1}`,
+    title: index === 0 ? "被打断后仍能拉回主线" : "在高压里补上了关键证据",
+    summary: summarizeText(turn.content, 120),
+    phase: meta.phase,
+    evidenceTurnIds: [turn.id],
+    whyItWorked:
+      meta.seamLabel || meta.targetAxis
+        ? `这段回答重新对准了“${meta.seamLabel || meta.targetAxis}”，没有继续发散。`
+        : "这段回答直接补了结论、证据和边界，所以恢复有效。",
+  }));
+}
+
+function buildPressureDrills(
+  session: InterviewSession,
+  pressureMoments: Array<{
+    phase: PressurePhase;
+    title: string;
+    trigger: string;
+    evidenceTurnIds: string[];
+  }>,
+  findings: Array<{
+    title: string;
+    recommendation: string;
+    evidenceTurnIds: string[];
+  }>,
+) {
+  const fallbackFocus = session.config.focusGoal.trim();
+  const drills = [
+    ...pressureMoments.map((moment, index) => ({
+      id: `drill_${index + 1}`,
+      title: moment.title,
+      goal: `${moment.trigger}，把回答重新拉回主决策链路。`,
+      focusGoal: fallbackFocus || moment.trigger,
+      recommendedDurationMinutes:
+        moment.phase === "calibrate" ? 20 : moment.phase === "surround" ? 25 : 30,
+      successCriteria:
+        moment.phase === "crossfire"
+          ? "在 60 秒内先给判断，再补一条证据和一条代价，不被第二位面试官击穿。"
+          : "在时限内给出结论、证据和边界，不被打断后仍能守住主线。",
+      sourceTurnIds: moment.evidenceTurnIds,
+    })),
+    ...findings.map((finding, index) => ({
+      id: `finding_drill_${index + 1}`,
+      title: `围绕「${finding.title}」复练`,
+      goal: finding.recommendation,
+      focusGoal: fallbackFocus || finding.title,
+      recommendedDurationMinutes: 25,
+      successCriteria: "连续 3 轮回答都能保持结构完整，并给出可核验的证明点。",
+      sourceTurnIds: finding.evidenceTurnIds,
+    })),
+  ];
+
+  return drills.slice(0, 3);
+}
+
+function buildTrainingPlanFromDrills(drills: Array<{ goal: string; successCriteria: string }>) {
+  const plan = drills.map(
+    (drill) => `${drill.goal} 通过标准：${drill.successCriteria}`,
+  );
+
+  while (plan.length < 3) {
+    plan.push("围绕最容易失守的一条回答链路做 20 分钟限时复练。");
+  }
+
+  return plan.slice(0, 3);
 }
 
 export interface AiProviderAdapter {
@@ -237,6 +399,8 @@ class MockAiProvider implements AiProviderAdapter {
     const axes = [...rolePack.sharedAxes, ...rolePack.specialtyAxes];
     const candidateTurns = input.turns.filter((turn) => turn.role === "candidate");
     const evidenceAnchors = buildEvidenceAnchors(input.turns);
+    const pressureMoments = buildPressureMoments(input.turns);
+    const recoveryMoments = buildRecoveryMoments(input.turns);
     const evidence = candidateTurns
       .slice(0, 4)
       .map((turn) => summarizeText(turn.content, 140));
@@ -244,6 +408,32 @@ class MockAiProvider implements AiProviderAdapter {
     while (evidence.length < 3) {
       evidence.push("候选人给出了一个可用但对压力较敏感的回答框架。");
     }
+
+    const findings = [
+      {
+        title: "结论出现得太晚",
+        severity: "major" as const,
+        category: "communication",
+        detail: "被追问后，你会先重建背景，再落实际判断，导致主线被打散。",
+        recommendation: "先给结论，再给一条证据和一个边界条件，别倒着讲。",
+        evidenceTurnIds: candidateTurns.slice(0, 2).map((turn) => turn.id),
+        impact: "面试官会在你真正回答之前找到新的打断切口。",
+      },
+      {
+        title: "取舍证明仍然偏薄",
+        severity: "medium" as const,
+        category: "engineering",
+        detail: "你已经能说出约束，但为什么选这个方案、代价是什么，证据还不够硬。",
+        recommendation: "用更紧的顺序回答：约束 -> 选项 -> 取舍 -> 代价。",
+        evidenceTurnIds: candidateTurns.slice(1, 3).map((turn) => turn.id),
+        impact: "架构判断听起来合理，但仍然很容易被继续深挖击穿。",
+      },
+    ];
+    const pressureDrills = buildPressureDrills(
+      input.session,
+      pressureMoments,
+      findings,
+    );
 
     return DiagnosticReportSchema.parse({
       id: toId("report"),
@@ -259,26 +449,7 @@ class MockAiProvider implements AiProviderAdapter {
       })),
       evidence,
       evidenceAnchors,
-      findings: [
-        {
-          title: "结论出现得太晚",
-          severity: "major",
-          category: "communication",
-          detail: "被追问后，你会先重建背景，再落实际判断，导致主线被打散。",
-          recommendation: "先给结论，再给一条证据和一个边界条件，别倒着讲。",
-          evidenceTurnIds: candidateTurns.slice(0, 2).map((turn) => turn.id),
-          impact: "面试官会在你真正回答之前找到新的打断切口。",
-        },
-        {
-          title: "取舍证明仍然偏薄",
-          severity: "medium",
-          category: "engineering",
-          detail: "你已经能说出约束，但为什么选这个方案、代价是什么，证据还不够硬。",
-          recommendation: "用更紧的顺序回答：约束 -> 选项 -> 取舍 -> 代价。",
-          evidenceTurnIds: candidateTurns.slice(1, 3).map((turn) => turn.id),
-          impact: "架构判断听起来合理，但仍然很容易被继续深挖击穿。",
-        },
-      ],
+      findings,
       starStories: [
         {
           title: "高压下重建决策主线",
@@ -288,11 +459,10 @@ class MockAiProvider implements AiProviderAdapter {
           result: "把一段发散防守，重新收束成了可执行的判断框架。",
         },
       ],
-      trainingPlan: [
-        "练习 90 秒回答模板：先判断，再证据，再边界。",
-        "每个取舍结论都绑定一个可核验的证明点。",
-        "围绕最低的两个雷达维度做高打断密度复盘。",
-      ],
+      pressureMoments,
+      recoveryMoments,
+      pressureDrills,
+      trainingPlan: buildTrainingPlanFromDrills(pressureDrills),
       generatedAt: new Date().toISOString(),
     });
   }
@@ -571,15 +741,17 @@ class OpenAiProvider implements AiProviderAdapter {
         verbosity: "medium",
       },
     });
+    const parsed = requireParsedOutput(response.output_parsed, "OpenAI live turn");
 
     return LiveTurnEventSchema.parse({
-      ...response.output_parsed,
+      ...parsed,
       sessionId: input.session.id,
       timestamp: new Date().toISOString(),
     });
   }
 
   async generateDiagnosticReport(input: ReportInput) {
+    const pressureSnapshot = buildPressureSnapshot(input.turns);
     const response = await this.client.responses.parse({
       model: runtimeEnv.openAiModel,
       input: [
@@ -587,8 +759,10 @@ class OpenAiProvider implements AiProviderAdapter {
         `角色包：${input.session.config.rolePack}`,
         `会话配置：${JSON.stringify(input.session.config)}`,
         `面试轮次：${JSON.stringify(input.turns)}`,
+        `压力元数据快照：${JSON.stringify(pressureSnapshot)}`,
         "只输出中文。保持直接、怀疑、可执行。",
         "每条 finding 都必须指向 evidenceTurnIds；evidenceAnchors 必须包含 `excerpt`、`speakerLabel` 和 `note`。",
+        "你必须显式产出 pressureMoments、recoveryMoments、pressureDrills，并优先依据 turn meta 中的 phase、timerExpired、pressureReason、seamLabel 来判断，不要凭空猜测压力过程。",
       ].join("\n"),
       text: {
         format: zodTextFormat(
@@ -603,11 +777,31 @@ class OpenAiProvider implements AiProviderAdapter {
       },
     });
 
+    const parsed = requireParsedOutput(
+      response.output_parsed,
+      "OpenAI diagnostic report",
+    );
+    const pressureMoments =
+      parsed.pressureMoments.length > 0
+        ? parsed.pressureMoments
+        : buildPressureMoments(input.turns);
+    const pressureDrills =
+      parsed.pressureDrills.length > 0
+        ? parsed.pressureDrills
+        : buildPressureDrills(input.session, pressureMoments, parsed.findings);
+
     return DiagnosticReportSchema.parse({
       id: toId("report"),
       sessionId: input.session.id,
       generatedAt: new Date().toISOString(),
-      ...response.output_parsed,
+      ...parsed,
+      pressureMoments,
+      recoveryMoments:
+        parsed.recoveryMoments.length > 0
+          ? parsed.recoveryMoments
+          : buildRecoveryMoments(input.turns),
+      pressureDrills,
+      trainingPlan: buildTrainingPlanFromDrills(pressureDrills),
     });
   }
 
@@ -637,12 +831,13 @@ class OpenAiProvider implements AiProviderAdapter {
         verbosity: "medium",
       },
     });
+    const parsed = requireParsedOutput(response.output_parsed, "OpenAI memory profile");
 
     return MemoryProfileSchema.parse({
       id: toId("memory"),
       sessionId: input.session.id,
       generatedAt: new Date().toISOString(),
-      ...response.output_parsed,
+      ...parsed,
     });
   }
 
@@ -678,11 +873,12 @@ class OpenAiProvider implements AiProviderAdapter {
           verbosity: "medium",
         },
       });
+      const parsed = requireParsedOutput(response.output_parsed, "OpenAI copilot");
 
       return CopilotResponseSchema.parse({
         id: toId("copilot"),
         mode: "copilot",
-        ...response.output_parsed,
+        ...parsed,
       });
     }
 
@@ -708,11 +904,12 @@ class OpenAiProvider implements AiProviderAdapter {
           verbosity: "medium",
         },
       });
+      const parsed = requireParsedOutput(response.output_parsed, "OpenAI strategy");
 
       return StrategyReportSchema.parse({
         id: toId("strategy"),
         mode: "strategy",
-        ...response.output_parsed,
+        ...parsed,
       });
     }
 
@@ -733,11 +930,12 @@ class OpenAiProvider implements AiProviderAdapter {
         verbosity: "medium",
       },
     });
+    const parsed = requireParsedOutput(response.output_parsed, "OpenAI sandbox");
 
     return SandboxOutcomeSchema.parse({
       id: toId("sandbox"),
       mode: "sandbox",
-      ...response.output_parsed,
+      ...parsed,
     });
   }
 
@@ -773,11 +971,12 @@ class OpenAiProvider implements AiProviderAdapter {
         verbosity: "medium",
       },
     });
+    const parsed = requireParsedOutput(response.output_parsed, "OpenAI sandbox turn");
 
     return SandboxTurnEventSchema.parse({
       id: toId("sandbox-turn"),
       threadId: input.threadId,
-      ...response.output_parsed,
+      ...parsed,
       timestamp: new Date().toISOString(),
     });
   }
@@ -1008,13 +1207,16 @@ class AnthropicProvider implements AiProviderAdapter {
   }
 
   async generateDiagnosticReport(input: ReportInput) {
+    const pressureSnapshot = buildPressureSnapshot(input.turns);
     const prompt = [
       "你是莫比乌斯计划的诊断报告引擎。",
       `角色包：${input.session.config.rolePack}`,
       `会话配置：${JSON.stringify(input.session.config)}`,
       `面试轮次：${JSON.stringify(input.turns)}`,
+      `压力元数据快照：${JSON.stringify(pressureSnapshot)}`,
       "只输出中文。保持直接、怀疑、可执行。",
       "每条 finding 都必须指向 evidenceTurnIds；evidenceAnchors 必须包含 excerpt、speakerLabel 和 note。",
+      "必须显式输出 pressureMoments、recoveryMoments、pressureDrills，并优先使用 turn meta 中的 phase、timerExpired、pressureReason、seamLabel，不要凭空猜测压力轨迹。",
       "以JSON格式输出诊断报告。",
     ].join("\n");
 
@@ -1032,11 +1234,27 @@ class AnthropicProvider implements AiProviderAdapter {
       schema,
     });
 
+    const pressureMoments =
+      result.pressureMoments.length > 0
+        ? result.pressureMoments
+        : buildPressureMoments(input.turns);
+    const pressureDrills =
+      result.pressureDrills.length > 0
+        ? result.pressureDrills
+        : buildPressureDrills(input.session, pressureMoments, result.findings);
+
     return DiagnosticReportSchema.parse({
       id: toId("report"),
       sessionId: input.session.id,
       generatedAt: new Date().toISOString(),
       ...result,
+      pressureMoments,
+      recoveryMoments:
+        result.recoveryMoments.length > 0
+          ? result.recoveryMoments
+          : buildRecoveryMoments(input.turns),
+      pressureDrills,
+      trainingPlan: buildTrainingPlanFromDrills(pressureDrills),
     });
   }
 

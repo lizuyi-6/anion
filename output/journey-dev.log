@@ -35,3 +35,6 @@ Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allow
  GET /simulator/new 200 in 181ms (next.js: 9ms, proxy.ts: 10ms, application-code: 161ms)
  GET /hub 200 in 199ms (next.js: 8ms, proxy.ts: 7ms, application-code: 185ms)
  GET / 200 in 167ms (next.js: 7ms, proxy.ts: 5ms, application-code: 154ms)
+ GET / 200 in 820ms (next.js: 262ms, proxy.ts: 8ms, application-code: 550ms)
+ GET / 200 in 177ms (next.js: 10ms, proxy.ts: 6ms, application-code: 161ms)
+^C ELIFECYCLE  Command failed with exit code 3221225786.

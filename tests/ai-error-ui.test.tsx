@@ -41,6 +41,7 @@ const session = {
     targetCompany: "Anthropic",
     industry: "AI",
     level: "Senior",
+    focusGoal: "被打断后仍能在 60 秒内补齐证据和代价",
     jobDescription: "Build reliable systems and explain trade-offs clearly under pressure.",
     interviewers: ["hacker"],
     materials: [],
@@ -55,6 +56,12 @@ const session = {
     needsConflict: false,
     round: 0,
     latestAssessment: "",
+    phase: "calibrate" as const,
+    activeSeam: "被打断后仍能在 60 秒内补齐证据和代价",
+    phaseRound: 1,
+    lastTimerOutcome: "within_window" as const,
+    timeoutCount: 0,
+    lastPressureReasons: [],
   },
   currentPressure: 42,
   createdAt: "2026-03-27T00:00:00.000Z",
@@ -143,7 +150,7 @@ describe("AI error UI", () => {
 
     render(<ReportStatusPanel sessionId="session_1" />);
 
-    const button = screen.getByRole("button", { name: "Retry analysis" });
+    const button = screen.getByRole("button", { name: "重新生成复盘" });
     fireEvent.click(button);
 
     await waitFor(() => {

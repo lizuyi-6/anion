@@ -7,6 +7,10 @@ describe("assessInterruptNeed", () => {
     const result = assessInterruptNeed("long ".repeat(400), {
       lastQuestion: "How would you preserve consistency on a weak network?",
       pressureScore: 50,
+      phase: "calibrate",
+      deadlineSeconds: 120,
+      elapsedSeconds: 40,
+      timerExpired: false,
     });
 
     expect(result.shouldInterrupt).toBe(true);
@@ -19,6 +23,10 @@ describe("assessInterruptNeed", () => {
       {
         lastQuestion: "Why is that trade-off justified?",
         pressureScore: 65,
+        phase: "surround",
+        deadlineSeconds: 90,
+        elapsedSeconds: 30,
+        timerExpired: false,
       },
     );
 
@@ -31,6 +39,10 @@ describe("assessInterruptNeed", () => {
       {
         lastQuestion: "How do you preserve consistency on a weak network?",
         pressureScore: 60,
+        phase: "calibrate",
+        deadlineSeconds: 120,
+        elapsedSeconds: 45,
+        timerExpired: false,
       },
     );
 

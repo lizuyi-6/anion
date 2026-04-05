@@ -5,6 +5,7 @@ import { AcceptOfferButton } from "@/components/accept-offer-button";
 import { RadarChart } from "@/components/radar-chart";
 import { ReportStatusPanel } from "@/components/report-status-panel";
 import { SessionShell } from "@/components/session-shell";
+import { buildSimulatorPrefillHref } from "@/lib/journey";
 import { formatFindingCategory, formatFindingSeverity, formatSessionStatus } from "@/lib/domain";
 import { requireViewer } from "@/lib/server/auth";
 import { getDataStore } from "@/lib/server/store/repository";
@@ -32,6 +33,15 @@ export default async function ReportPage({
   const weakestScore = report
     ? [...report.scores].sort((left, right) => left.score - right.score)[0]
     : null;
+  const basePrefill = {
+    rolePack: session.config.rolePack,
+    targetCompany: session.config.targetCompany,
+    industry: session.config.industry,
+    level: session.config.level,
+    jobDescription: session.config.jobDescription,
+    interviewers: session.config.interviewers,
+    candidateName: session.config.candidateName,
+  };
 
   return (
     <SessionShell
@@ -78,6 +88,17 @@ export default async function ReportPage({
               </p>
               <div className="action-row">
                 <AcceptOfferButton sessionId={session.id} status={session.status} />
+                <Link
+                  href={buildSimulatorPrefillHref({
+                    ...basePrefill,
+                    focusGoal:
+                      report.pressureDrills[0]?.focusGoal ||
+                      session.config.focusGoal,
+                  })}
+                  className="secondary-button"
+                >
+                  直接进入下一轮压测
+                </Link>
                 <Link href="/hub" className="secondary-button">
                   查看行动计划页
                 </Link>
@@ -86,6 +107,60 @@ export default async function ReportPage({
           </section>
 
           <RadarChart report={report} />
+
+          <section className="workspace-summary-grid">
+            <article className="panel">
+              <div className="section-head">
+                <div>
+                  <p className="panel-label">压力复盘</p>
+                  <h3>这一轮最容易失守的压力断点</h3>
+                </div>
+              </div>
+              <div className="stack-md">
+                {report.pressureMoments.length > 0 ? (
+                  report.pressureMoments.map((moment) => (
+                    <article key={moment.id} className="report-block">
+                      <div className="chip-row">
+                        <span className="status-pill warning">{moment.phase}</span>
+                        <span className="status-pill subtle">{moment.severity}</span>
+                      </div>
+                      <h4>{moment.title}</h4>
+                      <p>{moment.summary}</p>
+                      <p className="muted-copy">{moment.trigger}</p>
+                      <p className="muted-copy">{moment.recommendation}</p>
+                    </article>
+                  ))
+                ) : (
+                  <p className="muted-copy">这一轮还没有提取出明确的压力断点。</p>
+                )}
+              </div>
+            </article>
+
+            <article className="panel">
+              <div className="section-head">
+                <div>
+                  <p className="panel-label">恢复能力</p>
+                  <h3>被打断后你还能拉回来的片段</h3>
+                </div>
+              </div>
+              <div className="stack-md">
+                {report.recoveryMoments.length > 0 ? (
+                  report.recoveryMoments.map((moment) => (
+                    <article key={moment.id} className="report-block">
+                      <div className="chip-row">
+                        <span className="status-pill">{moment.phase}</span>
+                      </div>
+                      <h4>{moment.title}</h4>
+                      <p>{moment.summary}</p>
+                      <p className="muted-copy">{moment.whyItWorked}</p>
+                    </article>
+                  ))
+                ) : (
+                  <p className="muted-copy">这一轮没有稳定的恢复片段，建议先从 drill 开始补。</p>
+                )}
+              </div>
+            </article>
+          </section>
 
           <section className="workspace-summary-grid">
             <article className="panel">
@@ -115,15 +190,38 @@ export default async function ReportPage({
             <article className="panel">
               <div className="section-head">
                 <div>
-                  <p className="panel-label">下一周行动建议</p>
-                  <h3>先做这些，再继续下一轮训练</h3>
+                  <p className="panel-label">下一次复练</p>
+                  <h3>直接把复盘转成下一轮压测任务</h3>
                 </div>
               </div>
-              <ul className="flat-list">
-                {report.trainingPlan.map((item) => (
-                  <li key={item}>{item}</li>
+              <div className="stack-md">
+                {report.pressureDrills.map((drill) => (
+                  <article key={drill.id} className="report-block">
+                    <h4>{drill.title}</h4>
+                    <p>{drill.goal}</p>
+                    <p className="muted-copy">
+                      建议时长：{drill.recommendedDurationMinutes} 分钟
+                    </p>
+                    <p className="muted-copy">通过标准：{drill.successCriteria}</p>
+                    <Link
+                      href={buildSimulatorPrefillHref({
+                        ...basePrefill,
+                        focusGoal: drill.focusGoal || session.config.focusGoal,
+                      })}
+                      className="secondary-button"
+                    >
+                      用这条 drill 开新一轮训练
+                    </Link>
+                  </article>
                 ))}
-              </ul>
+                {report.pressureDrills.length === 0 ? (
+                  <ul className="flat-list">
+                    {report.trainingPlan.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
             </article>
           </section>
 

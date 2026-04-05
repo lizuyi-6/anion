@@ -79,6 +79,7 @@ export async function streamInterviewTurn(params: {
   sessionId: string;
   answer: string;
   elapsedSeconds: number;
+  timerExpired: boolean;
   onEvent: (event: LiveTurnEvent) => void;
   onThinking?: (status: string) => void;
 }) {
@@ -90,6 +91,7 @@ export async function streamInterviewTurn(params: {
     body: JSON.stringify({
       answer: params.answer,
       elapsedSeconds: params.elapsedSeconds,
+      timerExpired: params.timerExpired,
     }),
   });
 

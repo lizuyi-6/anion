@@ -9,6 +9,7 @@ describe("session state bootstrapping", () => {
       targetCompany: "OpenAI",
       industry: "AI",
       level: "Staff",
+      focusGoal: "在高压下先给结论，再补证据和边界",
       jobDescription:
         "Responsible for high-concurrency systems and cross-functional execution.",
       interviewers: ["hacker", "architect", "founder"],

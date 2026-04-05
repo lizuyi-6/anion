@@ -1,9 +1,15 @@
 import type {
+  InterviewPressurePhase,
   InterviewSession,
   LiveTurnEvent,
   RolePackDefinition,
 } from "@/lib/domain";
-import { getRolePack } from "@/lib/domain";
+import {
+  getPressureDeadlineSeconds,
+  getPressurePhaseForRound,
+  getPressurePhaseRound,
+  getRolePack,
+} from "@/lib/domain";
 import { keywordOverlap, sentenceSplit, summarizeText } from "@/lib/utils";
 
 const signalKeywords = {
@@ -264,17 +270,24 @@ export type AnswerSignalProfile = {
 };
 
 export type DirectorMovePlan = {
+  phase: InterviewPressurePhase;
+  phaseRound: number;
+  deadlineSeconds: number;
   primarySpeakerId: string;
   primarySpeakerLabel: string;
   primaryKind: LiveTurnEvent["kind"];
   primaryDirective: string;
+  secondarySpeakerId?: string;
+  secondarySpeakerLabel?: string;
+  secondaryDirective?: string;
+  secondaryKind?: LiveTurnEvent["kind"];
+  secondaryReason?: string;
   shouldCreateConflict: boolean;
-  conflictSpeakerId?: string;
-  conflictSpeakerLabel?: string;
-  conflictDirective?: string;
-  conflictReason?: string;
   openLoops: string[];
   brief: string;
+  activeSeam: string;
+  targetAxis: string;
+  pressureReasons: string[];
 };
 
 function countKeywordHits(answer: string, keywords: readonly string[]) {
@@ -291,6 +304,22 @@ function countPatternHits(answer: string, patterns: RegExp[]) {
 
 function unique(values: string[]) {
   return [...new Set(values)];
+}
+
+function inferActiveSeam(session: InterviewSession, signals: AnswerSignalProfile) {
+  if (session.config.focusGoal.trim()) {
+    return session.config.focusGoal.trim();
+  }
+
+  if (signals.weaknesses[0]) {
+    return signals.weaknesses[0];
+  }
+
+  if (signals.tags[0]) {
+    return `继续压测 ${signals.tags[0]}`;
+  }
+
+  return "继续验证主决策链路";
 }
 
 function scoreInterviewer(
@@ -381,6 +410,7 @@ export function analyzeAnswerSignals(
 function choosePrimaryInterviewer(
   session: InterviewSession,
   signals: AnswerSignalProfile,
+  phase: InterviewPressurePhase,
 ) {
   const rolePack = getRolePack(session.config.rolePack);
 
@@ -396,20 +426,23 @@ function choosePrimaryInterviewer(
           interviewer,
           signals,
           session.directorState.nextSpeakerId,
-        ),
+        ) +
+          (phase === "calibrate" && interviewer.id === session.config.interviewers[0] ? 1 : 0),
       };
     })
     .sort((a, b) => b.score - a.score)[0]?.interviewer;
 }
 
-function chooseConflictInterviewer(
+function chooseSecondaryInterviewer(
   session: InterviewSession,
   signals: AnswerSignalProfile,
   primarySpeakerId: string,
+  phase: InterviewPressurePhase,
 ) {
   const rolePack = getRolePack(session.config.rolePack);
 
   if (
+    phase === "crossfire" &&
     primarySpeakerId !== "founder" &&
     session.config.interviewers.includes("founder") &&
     (signals.mentionsTradeoff ||
@@ -430,6 +463,7 @@ function chooseConflictInterviewer(
         interviewer,
         score:
           scoreInterviewer(interviewer, signals, session.directorState.nextSpeakerId) +
+          (phase === "surround" ? 2 : 0) +
           (signals.mentionsTradeoff ? 1 : 0) +
           (signals.contradictionRisk ? 1 : 0),
       };
@@ -475,48 +509,83 @@ export function buildDirectorMovePlan(params: {
   answer: string;
   lastQuestion?: string;
   forcedKind: LiveTurnEvent["kind"];
+  elapsedSeconds: number;
+  timerExpired: boolean;
 }): DirectorMovePlan {
+  const answerRound = params.session.directorState.round + 1;
+  const phase = getPressurePhaseForRound(answerRound);
+  const phaseRound = getPressurePhaseRound(answerRound);
+  const deadlineSeconds = getPressureDeadlineSeconds(phase);
   const signals = analyzeAnswerSignals(params.answer, {
     lastQuestion: params.lastQuestion,
     pressureScore: params.session.currentPressure,
   });
+  const timerExpired = params.timerExpired || params.elapsedSeconds >= deadlineSeconds;
   const primary =
-    choosePrimaryInterviewer(params.session, signals) ??
+    choosePrimaryInterviewer(params.session, signals, phase) ??
     getRolePack(params.session.config.rolePack).interviewers[0];
-  const shouldCreateConflict =
-    params.session.config.interviewers.length > 1 &&
-    params.session.directorState.conflictBudget > 0 &&
-    (signals.mentionsTradeoff ||
-      signals.contradictionRisk ||
-      (signals.tags.includes("architecture") && signals.evidenceHits === 0) ||
-      ((signals.tags.includes("business") || signals.tags.includes("ownership")) &&
-        signals.evidenceHits === 0));
-  const challenger = shouldCreateConflict
-    ? chooseConflictInterviewer(params.session, signals, primary.id)
-    : undefined;
+  const evidenceThin = signals.evidenceHits === 0;
+  const tradeoffOpen =
+    !signals.mentionsTradeoff &&
+    (signals.tags.includes("architecture") ||
+      signals.tags.includes("business") ||
+      signals.tags.includes("ownership"));
+  const activeSeam = inferActiveSeam(params.session, signals);
+  const pressureReasons = unique([
+    timerExpired ? "回答超时，系统切换到追压态" : "",
+    evidenceThin ? "证据不足，答案缺少可核验支点" : "",
+    tradeoffOpen ? "取舍没有闭环，回答缺少明确代价" : "",
+    signals.relevance < 0.16 ? "主线偏离问题，回答需要被拉回决策链路" : "",
+    signals.contradictionRisk ? "边界含糊但语气过满，适合继续挑战" : "",
+  ].filter(Boolean));
   const openLoops = buildOpenLoops(signals, primary, params.answer);
+  const shouldCreateSecondary =
+    params.session.config.interviewers.length > 1 &&
+    (phase === "surround" ||
+      (phase === "crossfire" && (timerExpired || evidenceThin || tradeoffOpen)));
+  const secondary = shouldCreateSecondary
+    ? chooseSecondaryInterviewer(params.session, signals, primary.id, phase)
+    : undefined;
+  const primaryKind =
+    timerExpired && phase !== "surround" ? "interrupt" : params.forcedKind;
 
   return {
+    phase,
+    phaseRound,
+    deadlineSeconds,
     primarySpeakerId: primary.id,
     primarySpeakerLabel: primary.label,
-    primaryKind: params.forcedKind,
+    primaryKind,
     primaryDirective: `${primary.pressureDirective} ${primary.evidenceDirective}`,
-    shouldCreateConflict: Boolean(shouldCreateConflict && challenger),
-    conflictSpeakerId: challenger?.id,
-    conflictSpeakerLabel: challenger?.label,
-    conflictDirective: challenger
-      ? `${challenger.conflictDirective} ${challenger.evidenceDirective}`
+    secondarySpeakerId: secondary?.id,
+    secondarySpeakerLabel: secondary?.label,
+    secondaryDirective: secondary
+      ? `${
+          phase === "surround" ? secondary.pressureDirective : secondary.conflictDirective
+        } ${secondary.evidenceDirective}`
       : undefined,
-    conflictReason: challenger
-      ? `${challenger.label} 应该挑战当前回答，因为${signals.weaknesses[0] ?? "这笔取舍还没有真正闭环"}。`
+    secondaryKind: secondary
+      ? phase === "crossfire"
+        ? "conflict"
+        : "follow_up"
       : undefined,
+    secondaryReason: secondary
+      ? phase === "crossfire"
+        ? `${secondary.label} 直接质疑这条回答，因为${signals.weaknesses[0] ?? "关键取舍仍未闭环"}。`
+        : `${secondary.label} 沿同一条 seam 接力追问，逼近证据与 owner。`
+      : undefined,
+    shouldCreateConflict: Boolean(secondary && phase === "crossfire"),
     openLoops,
     brief: [
-      `主缝隙：${signals.weaknesses[0] ?? "继续往下一层。"} `,
+      `压力阶段：${phase} 第 ${phaseRound} 轮。`,
+      `主缝隙：${activeSeam}`,
       `主讲面试官：${primary.label}。`,
       signals.strengths[0] ? `需要保留的候选人优势：${signals.strengths[0]}` : "",
     ]
       .filter(Boolean)
       .join(" "),
+    activeSeam,
+    targetAxis: primary.challengeAxis,
+    pressureReasons,
   };
 }

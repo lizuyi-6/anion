@@ -15,6 +15,15 @@ export const sessionStatuses = [
   "accepted",
   "hub_active",
 ] as const;
+export const interviewPressurePhases = [
+  "calibrate",
+  "surround",
+  "crossfire",
+] as const;
+export const interviewTimerOutcomes = [
+  "within_window",
+  "expired",
+] as const;
 export const commandModes = ["copilot", "strategy", "sandbox"] as const;
 export const eventKinds = [
   "question",
@@ -42,6 +51,8 @@ export const memoryEvidenceKinds = [
 export type RuntimeMode = (typeof runtimeModes)[number];
 export type RolePackId = (typeof rolePackIds)[number];
 export type SessionStatus = (typeof sessionStatuses)[number];
+export type InterviewPressurePhase = (typeof interviewPressurePhases)[number];
+export type InterviewTimerOutcome = (typeof interviewTimerOutcomes)[number];
 export type CommandMode = (typeof commandModes)[number];
 export type LiveTurnKind = (typeof eventKinds)[number];
 
@@ -67,6 +78,7 @@ export const SessionConfigSchema = z.object({
   targetCompany: z.string().min(2).max(120),
   industry: z.string().min(0).max(120).default(""),
   level: z.string().min(2).max(60),
+  focusGoal: z.string().max(240).default(""),
   jobDescription: z.string().min(20).max(8000),
   interviewers: z.array(z.string()).min(1).max(4),
   materials: z.array(SessionArtifactRefSchema).default([]),
@@ -84,6 +96,12 @@ export const DirectorStateSchema = z.object({
   needsConflict: z.boolean().default(false),
   round: z.number().int().min(0).default(0),
   latestAssessment: z.string().default(""),
+  phase: z.enum(interviewPressurePhases).default("calibrate"),
+  activeSeam: z.string().default(""),
+  phaseRound: z.number().int().min(1).default(1),
+  lastTimerOutcome: z.enum(interviewTimerOutcomes).default("within_window"),
+  timeoutCount: z.number().int().min(0).default(0),
+  lastPressureReasons: z.array(z.string()).default([]),
 });
 
 export type DirectorState = z.infer<typeof DirectorStateSchema>;
@@ -132,6 +150,13 @@ export const LiveTurnEventSchema = z.object({
   pressureDelta: z.number().min(-20).max(30),
   message: z.string(),
   rationale: z.string(),
+  phase: z.enum(interviewPressurePhases).default("calibrate"),
+  deadlineSeconds: z.number().int().min(30).max(300).default(120),
+  elapsedSeconds: z.number().int().min(0).max(3600).default(0),
+  timerExpired: z.boolean().default(false),
+  targetAxis: z.string().default(""),
+  seamLabel: z.string().default(""),
+  pressureReason: z.string().default(""),
   timestamp: z.string(),
 });
 
@@ -171,6 +196,36 @@ export const StarStorySchema = z.object({
   result: z.string(),
 });
 
+export const PressureMomentSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  summary: z.string(),
+  phase: z.enum(interviewPressurePhases),
+  trigger: z.string(),
+  severity: z.enum(["high", "medium", "low"]).default("medium"),
+  evidenceTurnIds: z.array(z.string()).default([]),
+  recommendation: z.string(),
+});
+
+export const RecoveryMomentSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  summary: z.string(),
+  phase: z.enum(interviewPressurePhases),
+  evidenceTurnIds: z.array(z.string()).default([]),
+  whyItWorked: z.string(),
+});
+
+export const PressureDrillSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  goal: z.string(),
+  focusGoal: z.string().default(""),
+  recommendedDurationMinutes: z.number().int().min(5).max(180),
+  successCriteria: z.string(),
+  sourceTurnIds: z.array(z.string()).default([]),
+});
+
 export const DiagnosticReportSchema = z.object({
   id: z.string(),
   sessionId: z.string(),
@@ -179,6 +234,9 @@ export const DiagnosticReportSchema = z.object({
   evidenceAnchors: z.array(DiagnosticEvidenceAnchorSchema).default([]),
   findings: z.array(DiagnosticFindingSchema).min(1),
   starStories: z.array(StarStorySchema).min(1),
+  pressureMoments: z.array(PressureMomentSchema).default([]),
+  recoveryMoments: z.array(RecoveryMomentSchema).default([]),
+  pressureDrills: z.array(PressureDrillSchema).default([]),
   trainingPlan: z.array(z.string()).min(3),
   generatedAt: z.string(),
 });
@@ -406,6 +464,7 @@ export const CreateSessionInputSchema = SessionConfigSchema;
 export const TurnRequestSchema = z.object({
   answer: z.string().min(1).max(8000),
   elapsedSeconds: z.number().int().min(0).max(3600).optional().default(0),
+  timerExpired: z.boolean().optional().default(false),
 });
 
 export const CompleteSessionInputSchema = z.object({
@@ -689,6 +748,18 @@ const commandModeLabels: Record<CommandMode, string> = {
   sandbox: "沙盒",
 };
 
+const pressurePhaseLabels: Record<InterviewPressurePhase, string> = {
+  calibrate: "校准压测",
+  surround: "围压追问",
+  crossfire: "交叉火力",
+};
+
+const pressurePhaseDeadlines: Record<InterviewPressurePhase, number> = {
+  calibrate: 120,
+  surround: 90,
+  crossfire: 60,
+};
+
 export function formatRolePackLabel(rolePackId: RolePackId) {
   return rolePacks[rolePackId].label;
 }
@@ -718,6 +789,40 @@ export function formatFindingCategory(category: string) {
 
 export function formatCommandModeLabel(mode: CommandMode) {
   return commandModeLabels[mode];
+}
+
+export function getPressurePhaseForRound(round: number): InterviewPressurePhase {
+  if (round <= 2) {
+    return "calibrate";
+  }
+
+  if (round <= 4) {
+    return "surround";
+  }
+
+  return "crossfire";
+}
+
+export function getPressurePhaseRound(round: number) {
+  const phase = getPressurePhaseForRound(round);
+
+  if (phase === "calibrate") {
+    return round;
+  }
+
+  if (phase === "surround") {
+    return round - 2;
+  }
+
+  return round - 4;
+}
+
+export function getPressureDeadlineSeconds(phase: InterviewPressurePhase) {
+  return pressurePhaseDeadlines[phase];
+}
+
+export function formatPressurePhaseLabel(phase: InterviewPressurePhase) {
+  return pressurePhaseLabels[phase];
 }
 
 export function getRolePack(rolePackId: RolePackId) {

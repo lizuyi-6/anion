@@ -1,4 +1,11 @@
-import { formatRolePackLabel, type InterviewSession, type SessionStatus, type Viewer } from "@/lib/domain";
+import {
+  formatRolePackLabel,
+  type InterviewSession,
+  type RolePackId,
+  type SessionConfig,
+  type SessionStatus,
+  type Viewer,
+} from "@/lib/domain";
 
 export type JourneyStage = "goal" | "practice" | "debrief" | "action";
 
@@ -14,6 +21,20 @@ export type RecommendedAction = {
   label: string;
   description: string;
 };
+
+export type SessionPrefill = Partial<
+  Pick<
+    SessionConfig,
+    | "rolePack"
+    | "targetCompany"
+    | "industry"
+    | "level"
+    | "focusGoal"
+    | "jobDescription"
+    | "interviewers"
+    | "candidateName"
+  >
+>;
 
 const journeySteps: JourneyStep[] = [
   {
@@ -137,4 +158,40 @@ export function getNextRecommendedAction(
         description: `继续完成 ${latestSession.config.targetCompany} 的准备设置，进入正式模拟。`,
       };
   }
+}
+
+export function buildSimulatorPrefillHref(prefill: SessionPrefill) {
+  const params = new URLSearchParams();
+
+  const appendValue = (key: string, value?: string) => {
+    if (!value?.trim()) {
+      return;
+    }
+    params.set(key, value.trim());
+  };
+
+  appendValue("rolePack", prefill.rolePack);
+  appendValue("targetCompany", prefill.targetCompany);
+  appendValue("industry", prefill.industry);
+  appendValue("level", prefill.level);
+  appendValue("focusGoal", prefill.focusGoal);
+  appendValue("jobDescription", prefill.jobDescription);
+  appendValue("candidateName", prefill.candidateName);
+
+  if (prefill.interviewers?.length) {
+    params.set("interviewers", prefill.interviewers.join(","));
+  }
+
+  const query = params.toString();
+  return query ? `/simulator/new?${query}` : "/simulator/new";
+}
+
+export function parseRolePackPrefill(value?: string): RolePackId | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  return ["engineering", "product", "operations", "management"].includes(value)
+    ? (value as RolePackId)
+    : undefined;
 }

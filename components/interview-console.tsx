@@ -1,11 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { completeSession, streamInterviewTurn } from "@/lib/client/api";
-import { formatRolePackLabel, getInterviewerDefinition } from "@/lib/domain";
+import {
+  formatPressurePhaseLabel,
+  formatRolePackLabel,
+  getInterviewerDefinition,
+  getPressureDeadlineSeconds,
+  getPressurePhaseForRound,
+  type InterviewPressurePhase,
+} from "@/lib/domain";
 import type { InterviewSession, InterviewTurn, LiveTurnEvent } from "@/lib/domain";
 
 type TurnView = {
@@ -29,6 +36,12 @@ const thinkingStatusLabels: Record<string, string> = {
   director_analyzing: "正在分析你的上一段回答",
   selecting_speaker: "正在决定下一位追问者",
   generating_turn: "正在组织下一轮追问",
+};
+
+const phaseDescriptions: Record<InterviewPressurePhase, string> = {
+  calibrate: "先校准主论点，抓跑题、冗长和空泛。",
+  surround: "第二位面试官接力围压，逼近证据、取舍和 owner。",
+  crossfire: "进入交叉火力，任何漏洞都会被双人追杀。",
 };
 
 function formatTurnKind(kind: string) {
@@ -77,16 +90,65 @@ export function InterviewConsole({
   const [isCompleting, setIsCompleting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [answerStartTime, setAnswerStartTime] = useState<number | null>(null);
+  const [currentRound, setCurrentRound] = useState(
+    Math.max(1, session.directorState.round + 1),
+  );
+  const [phase, setPhase] = useState(session.directorState.phase);
+  const [deadlineSeconds, setDeadlineSeconds] = useState(
+    getPressureDeadlineSeconds(session.directorState.phase),
+  );
+  const [timeLeftSeconds, setTimeLeftSeconds] = useState(
+    getPressureDeadlineSeconds(session.directorState.phase),
+  );
+  const [draftLocked, setDraftLocked] = useState(false);
+  const [activeSeam, setActiveSeam] = useState(
+    session.directorState.activeSeam || session.config.focusGoal || "把回答钉在主决策链路上",
+  );
+  const [pressureReasons, setPressureReasons] = useState(
+    session.directorState.lastPressureReasons,
+  );
+  const [timeoutCount, setTimeoutCount] = useState(session.directorState.timeoutCount);
+  const [activePressureSpeakers, setActivePressureSpeakers] = useState<string[]>([]);
 
   const sessionLocked = session.status !== "live";
-  const currentRound = Math.max(1, session.directorState.round + 1);
   const interviewerLabels = session.config.interviewers.map(
     (interviewerId) =>
       getInterviewerDefinition(session.config.rolePack, interviewerId)?.label ?? interviewerId,
   );
 
+  useEffect(() => {
+    if (!answerStartTime || sessionLocked || draftLocked || isStreaming) {
+      setTimeLeftSeconds(deadlineSeconds);
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      const elapsed = Math.floor((Date.now() - answerStartTime) / 1000);
+      const remaining = Math.max(0, deadlineSeconds - elapsed);
+      setTimeLeftSeconds(remaining);
+
+      if (remaining <= 0) {
+        window.clearInterval(timer);
+        setDraftLocked(true);
+        setErrorMessage("本轮作答时间已到，输入已锁定。提交当前草稿后，系统会继续追压。");
+      }
+    }, 250);
+
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [answerStartTime, deadlineSeconds, draftLocked, isStreaming, sessionLocked]);
+
   const handleAnswerChange = (value: string) => {
+    if (draftLocked) {
+      return;
+    }
+
     setAnswer(value);
+    if (value.length === 0) {
+      setAnswerStartTime(null);
+      setTimeLeftSeconds(deadlineSeconds);
+    }
     if (!answerStartTime && value.length > 0) {
       setAnswerStartTime(Date.now());
     }
@@ -98,7 +160,12 @@ export function InterviewConsole({
     }
 
     const answerText = answer.trim();
-    const elapsed = answerStartTime ? Math.round((Date.now() - answerStartTime) / 1000) : 0;
+    const elapsed = draftLocked
+      ? deadlineSeconds
+      : answerStartTime
+        ? Math.round((Date.now() - answerStartTime) / 1000)
+        : 0;
+    const timerExpired = draftLocked || elapsed >= deadlineSeconds;
     setErrorMessage(null);
     setTranscript((current) => [
       ...current,
@@ -112,22 +179,43 @@ export function InterviewConsole({
     ]);
     setAnswer("");
     setAnswerStartTime(null);
+    setDraftLocked(false);
     setIsStreaming(true);
 
     try {
+      const streamedEvents: LiveTurnEvent[] = [];
       await streamInterviewTurn({
         sessionId: session.id,
         answer: answerText,
         elapsedSeconds: elapsed,
+        timerExpired,
         onEvent: (event) => {
+          streamedEvents.push(event);
           setThinkingStatus(null);
           setTranscript((current) => [...current, mapEvent(event)]);
           setPressure((current) => Math.min(100, Math.max(0, current + event.pressureDelta)));
+          setActiveSeam((current) => event.seamLabel || current);
+          setPressureReasons((current) =>
+            event.pressureReason
+              ? [event.pressureReason, ...current].slice(0, 3)
+              : current,
+          );
         },
         onThinking: (status) => {
           setThinkingStatus(status);
         },
       });
+
+      const nextRound = currentRound + 1;
+      const nextPhase = getPressurePhaseForRound(nextRound);
+      setCurrentRound(nextRound);
+      setPhase(nextPhase);
+      setDeadlineSeconds(getPressureDeadlineSeconds(nextPhase));
+      setTimeLeftSeconds(getPressureDeadlineSeconds(nextPhase));
+      setTimeoutCount((current) => current + (timerExpired ? 1 : 0));
+      setActivePressureSpeakers(
+        [...new Set(streamedEvents.map((event) => event.speakerLabel))],
+      );
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "模拟请求失败");
     } finally {
@@ -170,6 +258,9 @@ export function InterviewConsole({
               <span className={`status-pill ${pressure >= 70 ? "warning" : ""}`}>
                 当前压力 {pressure}
               </span>
+              <span className={`status-pill ${timeLeftSeconds <= 15 ? "warning" : "subtle"}`}>
+                本轮倒计时 {timeLeftSeconds}s
+              </span>
               <span className="status-pill subtle">
                 {formatRolePackLabel(session.config.rolePack)}岗位
               </span>
@@ -178,6 +269,22 @@ export function InterviewConsole({
           <p className="hero-copy">
             这一页只做一件事: 在压力里把答案说清楚。结束后会自动进入复盘，不需要你再切到别的工具页。
           </p>
+          <div className="pressure-phase-track" data-testid="pressure-phase-track">
+            {(["calibrate", "surround", "crossfire"] as InterviewPressurePhase[]).map((item) => {
+              const itemDeadline = getPressureDeadlineSeconds(item);
+              const itemIndex = ["calibrate", "surround", "crossfire"].indexOf(item);
+              const currentIndex = ["calibrate", "surround", "crossfire"].indexOf(phase);
+              const state =
+                itemIndex < currentIndex ? "done" : item === phase ? "active" : "upcoming";
+
+              return (
+                <div key={item} className={`pressure-phase-step ${state}`}>
+                  <strong>{formatPressurePhaseLabel(item)}</strong>
+                  <span>{itemDeadline}s</span>
+                </div>
+              );
+            })}
+          </div>
           <div className="chip-row">
             {interviewerLabels.map((label) => (
               <span key={label} className="workspace-pill">
@@ -200,14 +307,23 @@ export function InterviewConsole({
               <span>第 {currentRound} 轮</span>
             </div>
             <div className="journey-summary-item">
-              <strong>回答结构</strong>
-              <span>先结论，再证据，再权衡</span>
+              <strong>压力阶段</strong>
+              <span>{formatPressurePhaseLabel(phase)}</span>
+            </div>
+            <div className="journey-summary-item">
+              <strong>本轮缝隙</strong>
+              <span>{activeSeam}</span>
+            </div>
+            <div className="journey-summary-item">
+              <strong>超时记录</strong>
+              <span>{timeoutCount} 次</span>
             </div>
             <div className="journey-summary-item">
               <strong>完成后</strong>
               <span>自动生成本轮复盘</span>
             </div>
           </div>
+          <p className="muted-copy">{phaseDescriptions[phase]}</p>
         </article>
       </section>
 
@@ -279,9 +395,33 @@ export function InterviewConsole({
               onChange={(event) => handleAnswerChange(event.target.value)}
               data-testid="interview-answer-input"
               placeholder="先用一句话给出结论，再补上关键证据、取舍和结果。"
-              disabled={sessionLocked}
+              disabled={sessionLocked || draftLocked}
             />
           </label>
+
+          <div className="pressure-status-card">
+            <div className="chip-row">
+              <span className="workspace-pill primary">
+                {formatPressurePhaseLabel(phase)}
+              </span>
+              <span className={`workspace-pill ${draftLocked ? "warning" : ""}`}>
+                当前时限 {deadlineSeconds}s
+              </span>
+            </div>
+            <p>{activeSeam}</p>
+            {activePressureSpeakers.length > 0 ? (
+              <p className="muted-copy">
+                围压中: {activePressureSpeakers.join(" / ")}
+              </p>
+            ) : null}
+            {pressureReasons.length > 0 ? (
+              <ul className="flat-list">
+                {pressureReasons.map((reason) => (
+                  <li key={reason}>{reason}</li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
 
           <div className="console-guidance-list">
             <div className="console-guidance-item">
@@ -308,7 +448,11 @@ export function InterviewConsole({
                 void sendAnswer();
               }}
             >
-              {isStreaming ? "面试官正在追问..." : "发送回答"}
+              {isStreaming
+                ? "面试官正在追问..."
+                : draftLocked
+                  ? "超时后继续追压"
+                  : "发送回答"}
             </button>
             <button
               type="button"
@@ -329,6 +473,11 @@ export function InterviewConsole({
           {sessionLocked ? (
             <p className="muted-copy">
               当前会话已经结束，输入区进入只读状态。你现在可以直接查看本轮复盘。
+            </p>
+          ) : null}
+          {draftLocked ? (
+            <p className="muted-copy" data-testid="interview-timeout-lock">
+              当前草稿已因超时锁定。提交后，系统会按超时状态继续围压。
             </p>
           ) : null}
           {errorMessage ? (

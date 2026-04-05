@@ -11,6 +11,20 @@ type FormState = Omit<SessionConfig, "materials"> & {
   materials: UploadReference[];
 };
 
+type SessionPrefill = Partial<
+  Pick<
+    SessionConfig,
+    | "rolePack"
+    | "targetCompany"
+    | "industry"
+    | "level"
+    | "focusGoal"
+    | "jobDescription"
+    | "interviewers"
+    | "candidateName"
+  >
+>;
+
 const wizardSteps = [
   {
     id: "target",
@@ -58,24 +72,35 @@ function validateStep(step: number, form: FormState) {
     return "请至少选择一位面试官。";
   }
 
+  if (step === 2 && form.focusGoal.trim().length < 6) {
+    return "请写清这轮最想压测的一条回答链路或能力短板。";
+  }
+
   return "";
 }
 
 export function InterviewSetupForm({
   defaultRolePack,
+  prefill,
 }: {
   defaultRolePack: RolePackId;
+  prefill?: SessionPrefill;
 }) {
   const router = useRouter();
+  const initialRolePack = prefill?.rolePack ?? defaultRolePack;
   const [form, setForm] = useState<FormState>({
-    rolePack: defaultRolePack,
-    targetCompany: "",
-    industry: "",
-    level: "资深",
-    jobDescription: "",
-    interviewers: rolePacks[defaultRolePack].interviewers.map((item) => item.id),
+    rolePack: initialRolePack,
+    targetCompany: prefill?.targetCompany ?? "",
+    industry: prefill?.industry ?? "",
+    level: prefill?.level ?? "资深",
+    focusGoal: prefill?.focusGoal ?? "",
+    jobDescription: prefill?.jobDescription ?? "",
+    interviewers:
+      prefill?.interviewers?.length
+        ? prefill.interviewers
+        : rolePacks[initialRolePack].interviewers.map((item) => item.id),
     materials: [],
-    candidateName: "",
+    candidateName: prefill?.candidateName ?? "",
   });
   const [step, setStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -402,6 +427,22 @@ export function InterviewSetupForm({
                   </div>
                 </div>
 
+                <label className="field">
+                  <span>本轮重点压测目标</span>
+                  <textarea
+                    data-testid="focus-goal-input"
+                    rows={4}
+                    value={form.focusGoal}
+                    onChange={(event) =>
+                      setForm((current) => ({
+                        ...current,
+                        focusGoal: event.target.value,
+                      }))
+                    }
+                    placeholder="例如：被打断后仍能在 60 秒内给出结论、证据和代价；或把技术取舍讲到 owner / 风险 / business impact。"
+                  />
+                </label>
+
                 <div>
                   <p className="panel-label">面试官组合</p>
                   <div className="card-grid" aria-label="面试官选择">
@@ -486,6 +527,10 @@ export function InterviewSetupForm({
               <div className="journey-summary-item">
                 <strong>材料数量</strong>
                 <span>{form.materials.length} 份</span>
+              </div>
+              <div className="journey-summary-item">
+                <strong>压测目标</strong>
+                <span>{form.focusGoal.trim() || "还未填写"}</span>
               </div>
               <div className="journey-summary-item">
                 <strong>面试官</strong>

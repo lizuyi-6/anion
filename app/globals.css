@@ -1,4 +1,5 @@
 :root {
+  /* === 颜色系统 === */
   --bg: #f5f5f7;
   --bg-elevated: #ffffff;
   --bg-soft: #eaeaef;
@@ -10,13 +11,35 @@
   --accent-soft: rgba(99, 102, 241, 0.07);
   --accent-contrast: #ffffff;
   --warning: #d97706;
+
+  /* === 布局系统 === */
   --max-width: 1380px;
-  --font-display:
-    "Space Grotesk", "Avenir Next", "Segoe UI", "PingFang SC", "Noto Sans SC",
-    sans-serif;
+  --content-width: 1240px;
+  --sidebar-width: 260px;
+  --sidebar-width-collapsed: 72px;
+
+  /* === 响应式断点 (用于 JS 读取) === */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+
+  /* === 字体系统 === */
+  /* --font-body 和 --font-display 由 layout.tsx 通过 next/font 注入 */
   --font-mono:
     "IBM Plex Mono", "SFMono-Regular", "JetBrains Mono", Consolas, "Liberation Mono",
     monospace;
+
+  /* === 圆角系统 === */
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+
+  /* === 阴影系统 === */
+  --shadow-soft: 0 12px 32px rgba(25, 28, 30, 0.06);
+  --shadow-float: 0 20px 56px rgba(25, 28, 30, 0.08);
+
   color-scheme: light;
 }
 
@@ -38,20 +61,6 @@
 [data-theme="dark"] body {
   background-image:
     radial-gradient(circle 1px at 1px 1px, rgba(129, 140, 248, 0.06) 1px, transparent 0);
-}
-
-[data-theme="dark"] .app-shell.shell-command {
-  --bg: #0c0c0e;
-  --bg-elevated: #18181c;
-  --bg-soft: #222228;
-  --line: rgba(255, 255, 255, 0.1);
-  --line-strong: rgba(255, 255, 255, 0.2);
-  --text: #e4e4e8;
-  --muted: rgba(228, 228, 232, 0.48);
-  --accent: #6366f1;
-  --accent-soft: rgba(99, 102, 241, 0.12);
-  --accent-contrast: #0a0a0c;
-  --warning: #d97706;
 }
 
 html,
@@ -97,7 +106,7 @@ textarea {
   border: 1px solid var(--line);
   border-radius: 18px;
   padding: 1rem 1.1rem;
-  background: rgba(0, 0, 0, 0.02);
+  background: var(--bg-soft);
   color: var(--text);
   resize: vertical;
 }
@@ -106,7 +115,7 @@ input:focus,
 textarea:focus {
   outline: none;
   border-color: var(--line-strong);
-  background: rgba(0, 0, 0, 0.03);
+  background: var(--bg-elevated);
 }
 
 .app-shell {
@@ -115,20 +124,6 @@ textarea:focus {
   margin: 0 auto;
   padding: 2rem 1.1rem 3rem;
   min-height: 100vh;
-}
-
-.app-shell.shell-command {
-  --bg: #f0f0f2;
-  --bg-elevated: #fafafe;
-  --bg-soft: #e6e6eb;
-  --line: rgba(0, 0, 0, 0.1);
-  --line-strong: rgba(0, 0, 0, 0.2);
-  --text: #1a1a2e;
-  --muted: rgba(26, 26, 46, 0.48);
-  --accent: #4f46e5;
-  --accent-soft: rgba(79, 70, 229, 0.08);
-  --accent-contrast: #ffffff;
-  --warning: #b45309;
 }
 
 .topbar {
@@ -171,8 +166,16 @@ textarea:focus {
 
 .layout-grid {
   display: grid;
-  grid-template-columns: 260px minmax(0, 1fr);
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
   gap: 1.1rem;
+  transition: grid-template-columns 0.2s ease-out;
+}
+
+/* 中间过渡态：窄侧边栏 (1024px - 1280px) */
+@media (max-width: 1280px) and (min-width: 1024px) {
+  .layout-grid {
+    grid-template-columns: var(--sidebar-width-collapsed) minmax(0, 1fr);
+  }
 }
 
 .sidebar,
@@ -292,7 +295,7 @@ textarea:focus {
   padding: 0.45rem 0.75rem;
   border-radius: 999px;
   border: 1px solid var(--line);
-  background: rgba(0, 0, 0, 0.03);
+  background: var(--bg-soft);
   font-family: var(--font-mono), monospace;
   font-size: 0.72rem;
 }
@@ -326,15 +329,6 @@ textarea:focus {
 }
 
 .metric-card,
-.select-card,
-.report-block,
-.list-row {
-  border: 1px solid var(--line);
-  border-radius: 22px;
-  background: rgba(0, 0, 0, 0.015);
-}
-
-.metric-card,
 .report-block {
   padding: 1rem;
 }
@@ -360,6 +354,9 @@ textarea:focus {
   color: inherit;
   cursor: pointer;
   overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--bg-soft);
   box-shadow: 0 0 0 rgba(0, 0, 0, 0);
   transition:
     border-color 160ms ease,
@@ -383,7 +380,7 @@ textarea:focus {
 
 .select-card:hover {
   border-color: color-mix(in srgb, var(--line-strong) 90%, var(--accent) 10%);
-  background: rgba(0, 0, 0, 0.03);
+  background: var(--bg-elevated);
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
@@ -489,7 +486,7 @@ textarea:focus {
 }
 
 .secondary-button {
-  background: rgba(0, 0, 0, 0.03);
+  background: var(--bg-soft);
   color: var(--text);
 }
 
@@ -538,7 +535,7 @@ textarea:focus {
   padding: 1rem 1.1rem;
   border-radius: 22px;
   border: 1px solid var(--line);
-  background: rgba(0, 0, 0, 0.015);
+  background: var(--bg-soft);
 }
 
 .transcript-row.candidate {
@@ -672,7 +669,7 @@ textarea:focus {
 .citation-link {
   display: block;
   padding: 0.7rem 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid var(--line);
 }
 
 .transition-panel {
@@ -719,13 +716,17 @@ textarea:focus {
   z-index: 60;
   display: grid;
   place-items: center;
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--bg-elevated);
   animation: overlay-darken 1.4s ease-in-out forwards;
 }
 
 @keyframes overlay-darken {
-  0% { background: rgba(255, 255, 255, 0.85); }
-  100% { background: rgba(10, 10, 12, 0.96); }
+  0% {
+    background: var(--bg-elevated);
+  }
+  100% {
+    background: color-mix(in srgb, var(--bg) 96%, transparent);
+  }
 }
 
 .protocol-grid {
@@ -806,7 +807,7 @@ textarea:focus {
   color: #dc2626;
 }
 
-@media (max-width: 1040px) {
+@media (max-width: 1024px) {
   .layout-grid {
     grid-template-columns: 1fr;
   }
@@ -820,7 +821,7 @@ textarea:focus {
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 768px) {
   .app-shell {
     padding: 1rem 0.8rem 2rem;
   }
@@ -898,7 +899,7 @@ textarea:focus {
 }
 
 .sandbox-chat-msg.user {
-  background: rgba(0, 0, 0, 0.015);
+  background: var(--bg-soft);
   align-self: flex-end;
   max-width: 78%;
 }
@@ -946,7 +947,7 @@ textarea:focus {
   align-self: flex-end;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 768px) {
   .sandbox-chat-input {
     flex-direction: column;
   }
@@ -975,18 +976,11 @@ textarea:focus {
 
 /* ---- Stitched Frontend ---- */
 
+/* 保留 workspace 特有的变量，但继承全局设计系统 */
 .workspace-grid,
 .marketing-page,
 .overview-page {
-  --surface: #f7f9fb;
-  --surface-low: #f2f4f6;
-  --surface-card: #ffffff;
-  --surface-high: #e6e8ea;
-  --line: rgba(111, 121, 122, 0.18);
-  --line-strong: rgba(111, 121, 122, 0.32);
-  --text: #191c1e;
-  --muted: #3f484a;
-  --muted-soft: #6f797a;
+  /* 继承全局变量，仅定义页面特有的语义变量 */
   --primary: #004349;
   --primary-strong: #0d5c63;
   --primary-soft: #abeef6;
@@ -994,33 +988,12 @@ textarea:focus {
   --tertiary: #5c310d;
   --danger: #ba1a1a;
   --success: #0b6e4f;
-  --shadow-soft: 0 12px 32px rgba(25, 28, 30, 0.06);
-  --shadow-float: 0 20px 56px rgba(25, 28, 30, 0.08);
-  --radius-xl: 28px;
-  --radius-lg: 20px;
-  --radius-md: 16px;
-  --radius-sm: 12px;
-  --content-width: 1240px;
-  --bg-soft: var(--surface-low);
-  --bg-elevated: var(--surface-card);
-  --accent: var(--primary);
-  --accent-soft: color-mix(in srgb, var(--primary) 10%, var(--surface-card));
   color: var(--text);
-  font-family: var(--font-body), "Segoe UI", sans-serif;
 }
 
 [data-theme="dark"] .workspace-grid,
 [data-theme="dark"] .marketing-page,
 [data-theme="dark"] .overview-page {
-  --surface: #12191b;
-  --surface-low: #182124;
-  --surface-card: #20292d;
-  --surface-high: #273136;
-  --line: rgba(191, 200, 201, 0.16);
-  --line-strong: rgba(191, 200, 201, 0.28);
-  --text: #eff1f3;
-  --muted: #bfc8c9;
-  --muted-soft: #a4afb0;
   --primary: #8fd1d9;
   --primary-strong: #70b8c1;
   --primary-soft: rgba(143, 209, 217, 0.14);
@@ -1028,10 +1001,6 @@ textarea:focus {
   --tertiary: #fcb889;
   --danger: #ffb4ab;
   --success: #88d8b7;
-  --bg-soft: var(--surface-low);
-  --bg-elevated: var(--surface-card);
-  --accent: var(--primary);
-  --accent-soft: color-mix(in srgb, var(--primary) 10%, var(--surface-card));
 }
 
 .marketing-page,
@@ -1815,7 +1784,7 @@ textarea:focus {
   }
 }
 
-@media (max-width: 1160px) {
+@media (max-width: 1280px) {
   .workspace-module-grid,
   .workspace-analytics,
   .workspace-summary-grid,
@@ -1830,7 +1799,7 @@ textarea:focus {
   }
 }
 
-@media (max-width: 840px) {
+@media (max-width: 768px) {
   .marketing-topbar,
   .marketing-main {
     padding-left: 1rem;
@@ -1876,14 +1845,14 @@ select {
   border: 1px solid var(--line);
   border-radius: 18px;
   padding: 1rem 1.1rem;
-  background: rgba(0, 0, 0, 0.02);
+  background: var(--bg-soft);
   color: var(--text);
 }
 
 select:focus {
   outline: none;
   border-color: var(--line-strong);
-  background: rgba(0, 0, 0, 0.03);
+  background: var(--bg-elevated);
 }
 
 .public-shell,
@@ -1963,7 +1932,7 @@ select:focus {
   gap: 0.45rem;
   padding: 0.35rem;
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.03);
+  background: var(--bg-soft);
 }
 
 .journey-nav a {
@@ -2435,7 +2404,46 @@ select:focus {
   border-style: dashed;
 }
 
-@media (max-width: 1100px) {
+.pressure-phase-track {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.pressure-phase-step {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.85rem 1rem;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.pressure-phase-step strong {
+  font-size: 0.95rem;
+}
+
+.pressure-phase-step span {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.pressure-phase-step.active,
+.pressure-phase-step.done {
+  border-color: color-mix(in srgb, var(--accent) 22%, var(--line));
+  background: color-mix(in srgb, var(--accent) 8%, var(--bg-elevated));
+}
+
+.pressure-status-card {
+  display: grid;
+  gap: 0.65rem;
+  padding: 1rem;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.025);
+}
+
+@media (max-width: 1024px) {
   .landing-hero,
   .journey-hero-card,
   .session-hero,
@@ -2451,12 +2459,13 @@ select:focus {
 
   .landing-journey-grid,
   .journey-stage-grid,
-  .journey-task-grid {
+  .journey-task-grid,
+  .pressure-phase-track {
     grid-template-columns: 1fr 1fr;
   }
 }
 
-@media (max-width: 820px) {
+@media (max-width: 768px) {
   .public-topbar,
   .journey-topbar {
     flex-direction: column;
@@ -2478,7 +2487,8 @@ select:focus {
   .landing-journey-grid,
   .journey-stage-grid,
   .journey-task-grid,
-  .journey-wizard-track {
+  .journey-wizard-track,
+  .pressure-phase-track {
     grid-template-columns: 1fr;
   }
 

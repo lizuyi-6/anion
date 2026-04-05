@@ -30,6 +30,7 @@ describe("interview to command center flow", () => {
       targetCompany: "OpenAI",
       industry: "AI",
       level: "Senior",
+      focusGoal: "被打断后仍能在 60 秒内给出结论、证据和代价",
       jobDescription: "Build reliable systems and defend architecture trade-offs under pressure.",
       interviewers: ["hacker", "architect", "founder"],
       materials: [],
