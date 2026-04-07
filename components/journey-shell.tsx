@@ -5,8 +5,8 @@ import type { Viewer } from "@/lib/domain";
 
 const navItems = [
   { href: "/", label: "我的旅程" },
-  { href: "/simulator/new", label: "模拟训练" },
-  { href: "/hub", label: "行动计划" },
+  { href: "/simulator/new", label: "实战演练" },
+  { href: "/hub", label: "工作台" },
 ];
 
 export function JourneyShell({

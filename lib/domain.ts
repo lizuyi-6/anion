@@ -26,6 +26,8 @@ export const interviewTimerOutcomes = [
   "expired",
 ] as const;
 export const commandModes = ["copilot", "strategy", "sandbox"] as const;
+export const chatAutoMode = "auto" as const;
+export type ChatMode = CommandMode | "auto";
 export const eventKinds = [
   "question",
   "follow_up",
@@ -250,6 +252,7 @@ export const MemoryNodeSchema = z.object({
   confidence: z.number().min(0).max(1),
   sourceTurnIds: z.array(z.string()).default([]),
 });
+export type MemoryNode = z.infer<typeof MemoryNodeSchema>;
 
 export const EvidenceSpanSchema = z.object({
   label: z.string(),
@@ -303,6 +306,51 @@ export const ActiveMemoryContextSchema = z.object({
 });
 
 export type ActiveMemoryContext = z.infer<typeof ActiveMemoryContextSchema>;
+
+// Career summary types for aggregated user data
+export const SkillTrendSchema = z.object({
+  label: z.string(),
+  confidenceHistory: z.array(z.object({
+    confidence: z.number(),
+    recordedAt: z.string(),
+    sessionId: z.string(),
+  })),
+  trend: z.enum(["improving", "declining", "stable"]),
+});
+
+export type SkillTrend = z.infer<typeof SkillTrendSchema>;
+
+export const MilestoneSchema = z.object({
+  id: z.string(),
+  kind: z.enum([
+    "first_session",
+    "sessions_3",
+    "sessions_5",
+    "sessions_10",
+    "skill_improved_10",
+    "gap_addressed",
+    "streak_7_days",
+  ]),
+  title: z.string(),
+  description: z.string().optional(),
+  achievedAt: z.string(),
+});
+
+export type Milestone = z.infer<typeof MilestoneSchema>;
+
+export const CareerSummarySchema = z.object({
+  totalSessions: z.number(),
+  skillsTrend: z.array(SkillTrendSchema),
+  recurringGaps: z.array(MemoryNodeSchema),
+  topWins: z.array(MemoryNodeSchema),
+  lastActiveAt: z.string().nullable(),
+  nextSuggestedAction: z.string(),
+  milestones: z.array(MilestoneSchema),
+  daysSinceLastSession: z.number().nullable(),
+  streakDays: z.number(),
+});
+
+export type CareerSummary = z.infer<typeof CareerSummarySchema>;
 
 export const DiagramNodeSchema = z.object({
   id: z.string(),
@@ -448,6 +496,27 @@ export const CommandThreadSchema = z.object({
 });
 
 export type CommandThread = z.infer<typeof CommandThreadSchema>;
+
+export const ChatMessageSchema = z.object({
+  id: z.string(),
+  threadId: z.string(),
+  mode: z.enum([...commandModes, "auto" as const]),
+  role: z.enum(["user", "assistant", "system"]),
+  content: z.string(),
+  detectedMode: z.enum(commandModes).optional(),
+  attachments: z.array(SessionArtifactRefSchema).default([]),
+  artifact: CommandArtifactSchema.optional(),
+  createdAt: z.string(),
+});
+
+export type ChatMessage = z.infer<typeof ChatMessageSchema>;
+
+export const ChatRequestSchema = z.object({
+  threadId: z.string().optional(),
+  message: z.string().min(1).max(12000),
+  mode: z.enum([...commandModes, "auto" as const]).default("auto"),
+  attachments: z.array(SessionArtifactRefSchema).default([]),
+});
 
 export const ViewerSchema = z.object({
   id: z.string(),

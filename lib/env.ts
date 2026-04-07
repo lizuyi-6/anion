@@ -17,6 +17,10 @@ const env = {
   supabaseBucket: process.env.SUPABASE_STORAGE_BUCKET ?? "session-artifacts",
   triggerSecretKey: process.env.TRIGGER_SECRET_KEY,
   triggerProjectId: process.env.TRIGGER_PROJECT_ID,
+  openclawGatewayUrl: process.env.OPENCLAW_GATEWAY_URL,
+  openclawWebhookUrl: process.env.OPENCLAW_WEBHOOK_URL,
+  openclawSharedSecret: process.env.OPENCLAW_SHARED_SECRET,
+  openclawEnabled: process.env.OPENCLAW_ENABLED === "true",
 };
 
 export const runtimeEnv = Object.freeze(env);
@@ -60,6 +64,14 @@ export function resolveRuntimeModeFromEnv(envLike: {
   supabaseAnonKey?: string;
 }): RuntimeMode {
   return envLike.supabaseUrl && envLike.supabaseAnonKey ? "supabase" : "demo";
+}
+
+export function hasOpenClaw(): boolean {
+  return Boolean(runtimeEnv.openclawEnabled && runtimeEnv.openclawGatewayUrl);
+}
+
+export function getOpenClawGatewayUrl(): string {
+  return runtimeEnv.openclawGatewayUrl ?? "";
 }
 
 export function resolveRuntimeMode(): RuntimeMode {

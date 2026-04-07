@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { hasOpenAi, resolveRuntimeMode, runtimeEnv } from "@/lib/env";
+import type { UserNotification } from "@/lib/server/services/notifications";
 import type {
   ActiveMemoryContext,
   CommandArtifact,
@@ -87,6 +88,9 @@ export interface DataStore {
   ): Promise<void>;
   setWorkspaceMode(userId: string, mode: Viewer["workspaceMode"]): Promise<void>;
   setPreferredRolePack(userId: string, rolePack: RolePackId): Promise<void>;
+  createNotification(notification: UserNotification): Promise<void>;
+  listNotifications(userId: string, options?: { unreadOnly?: boolean }): Promise<UserNotification[]>;
+  markNotificationRead(id: string): Promise<void>;
 }
 
 function toTextContent(fileName: string, mimeType: string, buffer: Buffer) {
@@ -178,6 +182,7 @@ class MemoryDataStore implements DataStore {
   private activeMemoryProfileByUser = new Map<string, string>();
   private threads = new Map<string, CommandThread>();
   private commandMessages = new Map<string, CommandMessage[]>();
+  private notifications = new Map<string, UserNotification>();
 
   getDemoViewer(preferredRolePack: RolePackId = "engineering") {
     this.viewer = {
@@ -405,6 +410,21 @@ class MemoryDataStore implements DataStore {
       ...this.viewer,
       preferredRolePack: rolePack,
     };
+  }
+
+  async createNotification(notification: UserNotification): Promise<void> {
+    this.notifications.set(notification.id, notification);
+  }
+
+  async listNotifications(userId: string, options?: { unreadOnly?: boolean }): Promise<UserNotification[]> {
+    const all = [...this.notifications.values()].filter((n) => n.userId === userId);
+    if (options?.unreadOnly) return all.filter((n) => !n.read);
+    return all;
+  }
+
+  async markNotificationRead(id: string): Promise<void> {
+    const n = this.notifications.get(id);
+    if (n) n.read = true;
   }
 }
 
@@ -1109,6 +1129,62 @@ class SupabaseDataStore implements DataStore {
       throw error;
     }
   }
+
+  async createNotification(notification: UserNotification): Promise<void> {
+    const { error } = await this.supabase.from("notifications").insert({
+      id: notification.id,
+      user_id: this.getUserIdForQuery(notification.userId),
+      type: notification.type,
+      title: notification.title,
+      body: notification.body,
+      action_href: notification.actionHref ?? null,
+      read: notification.read,
+      created_at: notification.createdAt,
+    });
+
+    if (error) {
+      throw error;
+    }
+  }
+
+  async listNotifications(userId: string, options?: { unreadOnly?: boolean }): Promise<UserNotification[]> {
+    let query = this.supabase
+      .from("notifications")
+      .select("*")
+      .eq("user_id", this.getUserIdForQuery(userId))
+      .order("created_at", { ascending: false });
+
+    if (options?.unreadOnly) {
+      query = query.eq("read", false);
+    }
+
+    const { data, error } = await query;
+    if (error) {
+      throw error;
+    }
+
+    return (data ?? []).map((row) => ({
+      id: row.id,
+      userId: row.user_id,
+      type: row.type,
+      title: row.title,
+      body: row.body,
+      actionHref: row.action_href ?? undefined,
+      read: row.read,
+      createdAt: row.created_at,
+    }));
+  }
+
+  async markNotificationRead(id: string): Promise<void> {
+    const { error } = await this.supabase
+      .from("notifications")
+      .update({ read: true })
+      .eq("id", id);
+
+    if (error) {
+      throw error;
+    }
+  }
 }
 
 declare global {
@@ -1126,12 +1202,16 @@ export async function getDataStore(options?: {
     if (globalThis.__mobiusStore) {
       return globalThis.__mobiusStore;
     }
-    // Use SQLite for persistence in demo mode
-    const { getSqliteStore } = await import("./sqlite");
-    const userId = options?.viewer?.id ?? "demo-user";
-    const displayName = options?.viewer?.displayName ?? "演示候选人";
-    const preferredRolePack = options?.viewer?.preferredRolePack ?? "engineering";
-    return getSqliteStore({ userId, displayName, preferredRolePack });
+    // Use SQLite for persistence in demo mode, fall back to in-memory store
+    try {
+      const { getSqliteStore } = await import("./sqlite");
+      const userId = options?.viewer?.id ?? "demo-user";
+      const displayName = options?.viewer?.displayName ?? "演示候选人";
+      const preferredRolePack = options?.viewer?.preferredRolePack ?? "engineering";
+      return getSqliteStore({ userId, displayName, preferredRolePack });
+    } catch {
+      return new MemoryDataStore();
+    }
   }
 
   if (options?.admin) {

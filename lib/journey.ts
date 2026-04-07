@@ -44,29 +44,29 @@ const journeySteps: JourneyStep[] = [
   },
   {
     id: "practice",
-    label: "模拟训练",
+    label: "实战演练",
     description: "在高压提问里验证表达、判断和证据质量。",
   },
   {
     id: "debrief",
-    label: "复盘洞察",
+    label: "分析洞察",
     description: "把亮点和短板整理成下一步真正可执行的方向。",
   },
   {
     id: "action",
-    label: "行动计划",
+    label: "工作台",
     description: "围绕高风险问题、下周任务和关键场景持续推进。",
   },
 ];
 
 const audienceStatusLabels: Record<SessionStatus, string> = {
   draft: "待开始",
-  live: "模拟中",
+  live: "进行中",
   analyzing: "复盘生成中",
   analysis_failed: "分析失败",
-  report_ready: "待复盘",
-  accepted: "行动计划已生成",
-  hub_active: "行动进行中",
+  report_ready: "报告就绪",
+  accepted: "工作台已激活",
+  hub_active: "陪跑进行中",
 };
 
 export function getJourneySteps() {
@@ -150,8 +150,8 @@ export function getNextRecommendedAction(
       return {
         stage: "action",
         href: "/hub",
-        label: "继续行动计划",
-        description: "把最近一次复盘转成任务、计划和高风险场景练习，保持连续推进。",
+        label: "进入工作台",
+        description: "进入工作台，围绕高风险问题和关键场景持续推进。",
       };
     case "draft":
       return {

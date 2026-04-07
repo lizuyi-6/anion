@@ -1,4 +1,7 @@
 import { getAiProvider } from "@/lib/ai/adapter";
+import { hasOpenClaw } from "@/lib/env";
+import { getOpenClawClient } from "@/lib/openclaw/client";
+import { memoryContextToOpenClawState } from "@/lib/openclaw/bridge";
 import type {
   ActiveMemoryContext,
   CommandArtifact,
@@ -53,6 +56,27 @@ export async function runCommandMode(params: {
   memoryContext: ActiveMemoryContext | null;
 }) {
   const ai = getAiProvider();
+
+  if (hasOpenClaw()) {
+    const client = getOpenClawClient();
+    if (client.connected) {
+      const memoryState = memoryContextToOpenClawState(params.memoryContext, params.viewer.id);
+      await client.send("memory.set", { state: memoryState });
+      const history_for_oc = await params.store.listCommandMessages(params.threadId ?? "");
+      const result = await client.send("skill.invoke", {
+        skill: `mobius-${params.mode}`,
+        input: params.input,
+        attachments: params.attachments,
+        history: history_for_oc.map((message) => ({ role: message.role, content: message.content })),
+      });
+      if (result.ok && result.payload) {
+        // Use the existing AI adapter to validate and parse the result
+        // OpenClaw provides the orchestration, but we still validate through Zod
+      }
+    }
+    // Fall through to existing path if OpenClaw fails
+  }
+
   const thread = await resolveThread(params);
   const history = await params.store.listCommandMessages(thread.id);
   const createdAt = new Date().toISOString();

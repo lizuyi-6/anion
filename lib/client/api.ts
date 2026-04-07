@@ -1,4 +1,5 @@
 import type {
+  ChatMessage,
   CommandArtifact,
   CommandMessage,
   CommandMode,
@@ -306,4 +307,36 @@ export async function streamSandboxTurn(params: {
   } finally {
     reader.cancel().catch(() => {});
   }
+}
+
+export interface ChatResponse {
+  threadId: string;
+  mode: CommandMode;
+  detectedMode?: CommandMode;
+  artifact: CommandArtifact;
+  history: CommandMessage[];
+}
+
+export async function sendChatMessage(params: {
+  threadId?: string;
+  message: string;
+  mode?: "auto" | CommandMode;
+  attachments?: UploadReference[];
+}): Promise<ChatResponse> {
+  const response = await fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      threadId: params.threadId,
+      message: params.message,
+      mode: params.mode ?? "auto",
+      attachments: params.attachments ?? [],
+    }),
+  });
+
+  if (!response.ok) {
+    await throwApiError(response, "Chat request failed");
+  }
+
+  return (await response.json()) as ChatResponse;
 }

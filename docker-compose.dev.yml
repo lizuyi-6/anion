@@ -1,0 +1,8 @@
+services:
+  mobius:
+    command: pnpm dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - OPENCLAW_ENABLED=false
