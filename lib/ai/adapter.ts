@@ -709,7 +709,16 @@ class OpenAiProvider implements AiProviderAdapter {
     apiKey: runtimeEnv.openAiApiKey,
   });
 
+  private async safeCall<T>(fn: () => Promise<T>): Promise<T> {
+    try {
+      return await fn();
+    } catch (error) {
+      throw toAiProviderFailure(error, this.provider);
+    }
+  }
+
   async generateInterviewEvent(input: InterviewGenerationInput) {
+    return this.safeCall(async () => {
     const prompt = [
       "你是莫比乌斯计划的面试指挥官。",
       `目标公司：${input.session.config.targetCompany}`,
@@ -748,9 +757,11 @@ class OpenAiProvider implements AiProviderAdapter {
       sessionId: input.session.id,
       timestamp: new Date().toISOString(),
     });
+    });
   }
 
   async generateDiagnosticReport(input: ReportInput) {
+    return this.safeCall(async () => {
     const pressureSnapshot = buildPressureSnapshot(input.turns);
     const response = await this.client.responses.parse({
       model: runtimeEnv.openAiModel,
@@ -803,6 +814,7 @@ class OpenAiProvider implements AiProviderAdapter {
       pressureDrills,
       trainingPlan: buildTrainingPlanFromDrills(pressureDrills),
     });
+    });
   }
 
   async generateMemoryProfile(input: {
@@ -810,6 +822,7 @@ class OpenAiProvider implements AiProviderAdapter {
     session: InterviewSession;
     turns: InterviewTurn[];
   }) {
+    return this.safeCall(async () => {
     const response = await this.client.responses.parse({
       model: runtimeEnv.openAiModel,
       input: [
@@ -839,9 +852,11 @@ class OpenAiProvider implements AiProviderAdapter {
       generatedAt: new Date().toISOString(),
       ...parsed,
     });
+    });
   }
 
   async generateCommandArtifact(input: CommandInput) {
+    return this.safeCall(async () => {
     const attachmentContext = input.attachments
       .map((attachment) => {
         const preview = attachment.textContent
@@ -937,9 +952,11 @@ class OpenAiProvider implements AiProviderAdapter {
       mode: "sandbox",
       ...parsed,
     });
+    });
   }
 
   async generateSandboxTurn(input: SandboxTurnInput): Promise<SandboxTurnEvent> {
+    return this.safeCall(async () => {
     const memoryContext = formatMemoryContextForPrompt(input.memoryContext);
     const historyContext = input.history.length > 0
       ? `对话历史：\n${input.history.map((h) => `[${h.role === "user" ? "你" : "对手"}] ${h.content}`).join("\n")}`
@@ -979,9 +996,11 @@ class OpenAiProvider implements AiProviderAdapter {
       ...parsed,
       timestamp: new Date().toISOString(),
     });
+    });
   }
 
   async generateEmbeddings(input: string[]) {
+    return this.safeCall(async () => {
     if (input.length === 0) {
       return [];
     }
@@ -992,6 +1011,7 @@ class OpenAiProvider implements AiProviderAdapter {
     });
 
     return response.data.map((item) => item.embedding);
+    });
   }
 }
 

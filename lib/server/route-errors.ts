@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
+import { ZodError } from "zod";
 
-import { getAiErrorPayload, toAiProviderFailure } from "@/lib/ai/errors";
+import { AiProviderFailure, getAiErrorPayload, toAiProviderFailure } from "@/lib/ai/errors";
 import type { AiProvider } from "@/lib/env";
 
 export function createAiErrorResponse(error: unknown, provider: AiProvider) {
@@ -21,4 +22,24 @@ export function createUnexpectedErrorResponse(error: unknown) {
     },
     { status: 500 },
   );
+}
+
+export function handleError(error: unknown, provider?: AiProvider) {
+  if (error instanceof AiProviderFailure) {
+    return createAiErrorResponse(error, error.provider);
+  }
+  if (error instanceof ZodError) {
+    const issues = (error as ZodError<unknown>).issues;
+    return NextResponse.json(
+      {
+        error: "validation_error",
+        message: issues.map((e) => e.message).join("; "),
+      },
+      { status: 400 },
+    );
+  }
+  if (error instanceof Error && error.name === "AiProviderFailure") {
+    return createAiErrorResponse(error, provider ?? "mock");
+  }
+  return createUnexpectedErrorResponse(error);
 }

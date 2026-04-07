@@ -3,10 +3,7 @@ import { NextResponse } from "next/server";
 import { CompleteSessionInputSchema } from "@/lib/domain";
 import { resolveAiProvider } from "@/lib/env";
 import { getViewer } from "@/lib/server/auth";
-import {
-  createAiErrorResponse,
-  createUnexpectedErrorResponse,
-} from "@/lib/server/route-errors";
+import { handleError } from "@/lib/server/route-errors";
 import { getDataStore } from "@/lib/server/store/repository";
 import { queueInterviewAnalysis } from "@/lib/server/services/analysis";
 
@@ -42,9 +39,6 @@ export async function POST(
       memoryProfileId: analysis.memoryProfile?.id ?? null,
     });
   } catch (error) {
-    if (error instanceof Error && error.name === "AiProviderFailure") {
-      return createAiErrorResponse(error, resolveAiProvider());
-    }
-    return createUnexpectedErrorResponse(error);
+    return handleError(error, resolveAiProvider());
   }
 }

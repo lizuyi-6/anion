@@ -63,6 +63,7 @@ const audienceStatusLabels: Record<SessionStatus, string> = {
   draft: "待开始",
   live: "模拟中",
   analyzing: "复盘生成中",
+  analysis_failed: "分析失败",
   report_ready: "待复盘",
   accepted: "行动计划已生成",
   hub_active: "行动进行中",
@@ -78,6 +79,7 @@ export function getJourneyStageFromStatus(status: SessionStatus): JourneyStage {
       return "goal";
     case "live":
     case "analyzing":
+    case "analysis_failed":
       return "practice";
     case "report_ready":
       return "debrief";
@@ -123,6 +125,7 @@ export function getNextRecommendedAction(
   switch (latestSession.status) {
     case "live":
     case "analyzing":
+    case "analysis_failed":
       return {
         stage: "practice",
         href:

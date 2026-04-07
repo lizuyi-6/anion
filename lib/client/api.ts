@@ -107,6 +107,7 @@ export async function streamInterviewTurn(params: {
   const decoder = new TextDecoder();
   let buffer = "";
 
+  try {
   while (true) {
     const { done, value } = await reader.read();
     if (done) {
@@ -125,15 +126,25 @@ export async function streamInterviewTurn(params: {
 
       const eventLine = chunk.split("\n").find((line) => line.startsWith("event: "));
       const eventType = eventLine ? eventLine.slice(7) : "turn";
-      const data = JSON.parse(dataLine.slice(6));
+
+      let data: Record<string, unknown>;
+      try {
+        data = JSON.parse(dataLine.slice(6));
+      } catch {
+        console.error("Failed to parse SSE data:", dataLine);
+        continue;
+      }
 
       if (eventType === "thinking") {
-        params.onThinking?.(data.status);
+        params.onThinking?.(data.status as string);
         continue;
       }
 
       params.onEvent(data as LiveTurnEvent);
     }
+  }
+  } finally {
+    reader.cancel().catch(() => {});
   }
 }
 
@@ -267,6 +278,7 @@ export async function streamSandboxTurn(params: {
   const decoder = new TextDecoder();
   let buffer = "";
 
+  try {
   while (true) {
     const { done, value } = await reader.read();
     if (done) {
@@ -283,8 +295,15 @@ export async function streamSandboxTurn(params: {
         continue;
       }
 
-      const event = JSON.parse(dataLine.slice(6)) as SandboxTurnEvent;
-      params.onEvent(event);
+      try {
+        const event = JSON.parse(dataLine.slice(6)) as SandboxTurnEvent;
+        params.onEvent(event);
+      } catch {
+        console.error("Failed to parse sandbox SSE data:", dataLine);
+      }
     }
+  }
+  } finally {
+    reader.cancel().catch(() => {});
   }
 }

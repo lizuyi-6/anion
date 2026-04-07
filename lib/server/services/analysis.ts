@@ -139,7 +139,7 @@ export async function executeInterviewAnalysis(params: {
     const message =
       error instanceof Error ? error.message : "面试分析失败";
     await store.updateSession(session.id, {
-      status: "analyzing",
+      status: "analysis_failed",
       analysisError: message,
       analysisCompletedAt: undefined,
     });
