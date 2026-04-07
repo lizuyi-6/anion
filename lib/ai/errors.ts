@@ -53,6 +53,35 @@ function normalizeMessage(error: unknown, provider: AiProvider) {
   return `${prefix}: ${detail}`;
 }
 
+function extractErrorContext(error: unknown): Record<string, unknown> {
+  if (!(error instanceof Error)) {
+    return { rawError: String(error) };
+  }
+
+  const context: Record<string, unknown> = {
+    name: error.name,
+    message: error.message,
+    stack: error.stack?.split("\n").slice(0, 3).join("\n"),
+  };
+
+  // Extract ZodError details
+  if (error.name === "ZodError" && "issues" in error) {
+    context.issues = (error as { issues: unknown[] }).issues;
+  }
+
+  // Extract API error details
+  if (typeof error === "object" && error !== null) {
+    const err = error as unknown as Record<string, unknown>;
+    if (err.status) context.status = err.status;
+    if (err.statusCode) context.statusCode = err.statusCode;
+    if (err.code) context.code = err.code;
+    if (err.type) context.type = err.type;
+    if (err.error) context.apiError = err.error;
+  }
+
+  return context;
+}
+
 export class AiProviderFailure extends Error {
   readonly provider: AiProvider;
   readonly retryable: boolean;
@@ -80,6 +109,13 @@ export function toAiProviderFailure(error: unknown, provider: AiProvider) {
   }
 
   const statusCode = getStatusCode(error);
+
+  // Log detailed error context for debugging
+  console.error("[AI_ERROR]", JSON.stringify({
+    provider,
+    statusCode,
+    ...extractErrorContext(error),
+  }));
 
   return new AiProviderFailure({
     provider,

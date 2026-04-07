@@ -1122,11 +1122,16 @@ export async function getDataStore(options?: {
   admin?: boolean;
 }): Promise<DataStore> {
   if (resolveRuntimeMode() === "demo") {
-    if (!globalThis.__mobiusStore) {
-      globalThis.__mobiusStore = new MemoryDataStore();
+    // Allow tests to inject a MemoryDataStore via globalThis.__mobiusStore
+    if (globalThis.__mobiusStore) {
+      return globalThis.__mobiusStore;
     }
-
-    return globalThis.__mobiusStore;
+    // Use SQLite for persistence in demo mode
+    const { getSqliteStore } = await import("./sqlite");
+    const userId = options?.viewer?.id ?? "demo-user";
+    const displayName = options?.viewer?.displayName ?? "演示候选人";
+    const preferredRolePack = options?.viewer?.preferredRolePack ?? "engineering";
+    return getSqliteStore({ userId, displayName, preferredRolePack });
   }
 
   if (options?.admin) {

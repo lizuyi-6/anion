@@ -24,10 +24,16 @@ ENV HOSTNAME="0.0.0.0"
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
+# Create data directory for SQLite persistence
+RUN mkdir -p /app/data && chown nextjs:nodejs /app/data
+
 # Copy built assets from builder
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+
+# Copy node_modules for native modules like better-sqlite3
+COPY --from=deps /app/node_modules ./node_modules
 
 USER nextjs
 EXPOSE 3000
