@@ -1,6 +1,7 @@
 import type { Viewer } from "@/lib/domain";
 import type { CareerSummary } from "@/lib/domain";
-import type { OpenClawClient, OpenClawCronJob } from "./types";
+import type { OpenClawCronJob } from "./types";
+import type { OpenClawClient } from "./client";
 
 const CRON_PREFIX = "mobius";
 

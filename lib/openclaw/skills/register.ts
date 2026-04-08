@@ -1,6 +1,7 @@
 import { readFileSync } from "fs";
 import { join } from "path";
-import type { OpenClawClient, OpenClawSkillManifest } from "../types";
+import type { OpenClawSkillManifest } from "../types";
+import type { OpenClawClient } from "../client";
 
 function loadSkill(name: string): OpenClawSkillManifest {
   const skillDir = join(process.cwd(), "lib", "openclaw", "skills", name);

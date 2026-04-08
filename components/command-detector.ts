@@ -8,7 +8,6 @@ const slashCommandPrefixes: Record<string, CommandMode> = {
   "/strategy": "strategy",
   "/s": "strategy",
   "/sandbox": "sandbox",
-  "/sandbox": "sandbox",
   "/battle": "sandbox",
   "/b": "sandbox",
 };

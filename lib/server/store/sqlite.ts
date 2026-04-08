@@ -17,6 +17,7 @@ import type {
   UploadReference,
   Viewer,
 } from "@/lib/domain";
+import type { UserNotification } from "@/lib/server/services/notifications";
 import {
   CommandMessageSchema,
   CommandThreadSchema,
@@ -189,6 +190,19 @@ function initTables(db: Database.Database) {
       workspace_mode TEXT NOT NULL DEFAULT 'interview',
       preferred_role_pack TEXT NOT NULL DEFAULT 'engineering'
     );
+
+    CREATE TABLE IF NOT EXISTS notifications (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      type TEXT NOT NULL,
+      title TEXT NOT NULL,
+      body TEXT NOT NULL,
+      action_href TEXT,
+      read INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id);
   `);
 }
 
@@ -666,6 +680,49 @@ export class SqliteDataStore implements DataStore {
     `).run(userId, userId, rolePack);
 
     this.viewer = { ...this.viewer, preferredRolePack: rolePack };
+  }
+
+  async createNotification(notification: UserNotification): Promise<void> {
+    const db = getDb();
+    db.prepare(`
+      INSERT INTO notifications (id, user_id, type, title, body, action_href, read, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      notification.id,
+      notification.userId,
+      notification.type,
+      notification.title,
+      notification.body,
+      notification.actionHref ?? null,
+      notification.read ? 1 : 0,
+      notification.createdAt,
+    );
+  }
+
+  async listNotifications(userId: string, options?: { unreadOnly?: boolean }): Promise<UserNotification[]> {
+    const db = getDb();
+    const rows = options?.unreadOnly
+      ? db.prepare("SELECT * FROM notifications WHERE user_id = ? AND read = 0 ORDER BY created_at DESC").all(userId)
+      : db.prepare("SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC").all(userId);
+
+    return (rows as Array<{
+      id: string; user_id: string; type: string; title: string; body: string;
+      action_href: string | null; read: number; created_at: string;
+    }>).map((row) => ({
+      id: row.id,
+      userId: row.user_id,
+      type: row.type as UserNotification["type"],
+      title: row.title,
+      body: row.body,
+      actionHref: row.action_href ?? undefined,
+      read: row.read === 1,
+      createdAt: row.created_at,
+    }));
+  }
+
+  async markNotificationRead(id: string): Promise<void> {
+    const db = getDb();
+    db.prepare("UPDATE notifications SET read = 1 WHERE id = ?").run(id);
   }
 }
 
