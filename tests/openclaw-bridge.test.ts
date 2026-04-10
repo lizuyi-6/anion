@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { memoryContextToOpenClawState, careerSummaryToOpenClawContext } from "@/lib/openclaw/bridge";
+import { memoryContextToOpenClawState } from "@/lib/openclaw/bridge";
 import { toOpenClawSessionId, fromOpenClawSessionId, buildOpenClawSessionToken } from "@/lib/openclaw/auth";
 import { detectCommandMode, inferModeFromContent } from "@/components/command-detector";
 

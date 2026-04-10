@@ -1,11 +1,12 @@
 import type { RuntimeMode } from "@/lib/domain";
 
-export type AiProvider = "openai" | "anthropic" | "mock";
+export type AiProvider = "openai" | "anthropic";
 
 const env = {
   appUrl: process.env.APP_URL ?? "http://localhost:3000",
   openAiApiKey: process.env.OPENAI_API_KEY,
   openAiModel: process.env.OPENAI_MODEL ?? "gpt-5.2",
+  openAiBaseUrl: process.env.OPENAI_BASE_URL,
   openAiEmbeddingModel:
     process.env.OPENAI_EMBEDDING_MODEL ?? "text-embedding-3-small",
   anthropicApiKey: process.env.ANTHROPIC_API_KEY,
@@ -40,7 +41,7 @@ export function resolveAiProvider(): AiProvider {
   if (hasOpenAi()) {
     return "openai";
   }
-  return "mock";
+  throw new Error("未配置 AI 提供者。请设置 OPENAI_API_KEY 或 ANTHROPIC_API_KEY。");
 }
 
 export function hasSupabase() {

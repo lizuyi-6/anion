@@ -1,5 +1,6 @@
+import fs from "fs";
+import path from "path";
 import Database from "better-sqlite3";
-import { z } from "zod";
 
 import type {
   ActiveMemoryContext,
@@ -13,7 +14,6 @@ import type {
   MemoryEvidence,
   MemoryProfile,
   RolePackId,
-  RuntimeMode,
   UploadReference,
   Viewer,
 } from "@/lib/domain";
@@ -76,8 +76,6 @@ let _db: Database.Database | null = null;
 function getDb(): Database.Database {
   if (!_db) {
     // Ensure data directory exists
-    const fs = require("fs");
-    const path = require("path");
     const dbDir = path.dirname(DB_PATH);
     if (!fs.existsSync(dbDir)) {
       fs.mkdirSync(dbDir, { recursive: true });
@@ -318,13 +316,13 @@ export class SqliteDataStore implements DataStore {
       currentPressure: row.current_pressure,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
-      acceptedAt: row.accepted_at,
-      reportId: row.report_id,
-      memoryProfileId: row.memory_profile_id,
-      analysisJobId: row.analysis_job_id,
-      analysisError: row.analysis_error,
-      analysisStartedAt: row.analysis_started_at,
-      analysisCompletedAt: row.analysis_completed_at,
+      acceptedAt: row.accepted_at ?? undefined,
+      reportId: row.report_id ?? undefined,
+      memoryProfileId: row.memory_profile_id ?? undefined,
+      analysisJobId: row.analysis_job_id ?? undefined,
+      analysisError: row.analysis_error ?? undefined,
+      analysisStartedAt: row.analysis_started_at ?? undefined,
+      analysisCompletedAt: row.analysis_completed_at ?? undefined,
     });
   }
 
@@ -402,13 +400,13 @@ export class SqliteDataStore implements DataStore {
       currentPressure: row.current_pressure,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
-      acceptedAt: row.accepted_at,
-      reportId: row.report_id,
-      memoryProfileId: row.memory_profile_id,
-      analysisJobId: row.analysis_job_id,
-      analysisError: row.analysis_error,
-      analysisStartedAt: row.analysis_started_at,
-      analysisCompletedAt: row.analysis_completed_at,
+      acceptedAt: row.accepted_at ?? undefined,
+      reportId: row.report_id ?? undefined,
+      memoryProfileId: row.memory_profile_id ?? undefined,
+      analysisJobId: row.analysis_job_id ?? undefined,
+      analysisError: row.analysis_error ?? undefined,
+      analysisStartedAt: row.analysis_started_at ?? undefined,
+      analysisCompletedAt: row.analysis_completed_at ?? undefined,
     }));
   }
 
@@ -456,7 +454,7 @@ export class SqliteDataStore implements DataStore {
       speakerId: row.speaker_id,
       speakerLabel: row.speaker_label,
       content: row.content,
-      meta: row.meta ? JSON.parse(row.meta) : undefined,
+      meta: row.meta ? JSON.parse(row.meta) : {},
       createdAt: row.created_at,
     }));
   }
@@ -576,14 +574,25 @@ export class SqliteDataStore implements DataStore {
     const profile = await this.getActiveMemoryProfile(userId);
     if (!profile) return null;
 
-    const evidence = await this.listMemoryEvidence(profile.id);
+    const allProfiles = await this.listMemoryProfiles(userId);
+    const orderedProfiles = [...allProfiles].sort((a, b) =>
+      b.generatedAt.localeCompare(a.generatedAt),
+    );
+    const evidence = (
+      await Promise.all(
+        orderedProfiles.map((p) => this.listMemoryEvidence(p.id)),
+      )
+    ).flat().sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    const timeline = orderedProfiles
+      .flatMap((p) => p.replayMoments)
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 
     return {
       profile,
       evidence,
-      relatedProfiles: [],
-      timeline: profile.replayMoments,
-    };
+      relatedProfiles: orderedProfiles.filter((p) => p.id !== profile.id),
+      timeline,
+    } satisfies ActiveMemoryContext;
   }
 
   async activateMemoryProfile(sessionId: string, userId: string) {

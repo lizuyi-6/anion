@@ -1189,6 +1189,7 @@ class SupabaseDataStore implements DataStore {
 
 declare global {
   var __mobiusStore: MemoryDataStore | undefined;
+  var __mobiusFallbackStore: MemoryDataStore | undefined;
 }
 
 export { MemoryDataStore, SupabaseDataStore };
@@ -1202,7 +1203,7 @@ export async function getDataStore(options?: {
     if (globalThis.__mobiusStore) {
       return globalThis.__mobiusStore;
     }
-    // Use SQLite for persistence in demo mode, fall back to in-memory store
+    // Use SQLite for persistence in demo mode, fall back to in-memory store (singleton)
     try {
       const { getSqliteStore } = await import("./sqlite");
       const userId = options?.viewer?.id ?? "demo-user";
@@ -1210,7 +1211,10 @@ export async function getDataStore(options?: {
       const preferredRolePack = options?.viewer?.preferredRolePack ?? "engineering";
       return getSqliteStore({ userId, displayName, preferredRolePack });
     } catch {
-      return new MemoryDataStore();
+      if (!globalThis.__mobiusFallbackStore) {
+        globalThis.__mobiusFallbackStore = new MemoryDataStore();
+      }
+      return globalThis.__mobiusFallbackStore;
     }
   }
 

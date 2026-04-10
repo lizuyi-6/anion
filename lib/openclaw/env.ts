@@ -1,5 +1,3 @@
-import type { RuntimeMode } from "@/lib/domain";
-
 const openclawEnv = {
   gatewayUrl: process.env.OPENCLAW_GATEWAY_URL ?? "",
   webhookUrl: process.env.OPENCLAW_WEBHOOK_URL ?? "",

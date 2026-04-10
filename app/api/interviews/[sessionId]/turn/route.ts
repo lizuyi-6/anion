@@ -26,6 +26,10 @@ export async function POST(
       return NextResponse.json({ error: "未找到会话" }, { status: 404 });
     }
 
+    if (session.status !== "live") {
+      return NextResponse.json({ error: "会话已结束，无法继续回答" }, { status: 409 });
+    }
+
     const json = await request.json();
     const payload = TurnRequestSchema.parse(json);
     const turns = await store.listTurns(sessionId);

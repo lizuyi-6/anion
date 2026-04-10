@@ -96,7 +96,7 @@ class GatewayClient implements OpenClawClient {
         this.scheduleReconnect();
       });
 
-      ws.addEventListener("error", (error) => {
+      ws.addEventListener("error", () => {
         this._connected = false;
         reject(new Error("WebSocket connection failed"));
       });

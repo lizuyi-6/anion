@@ -39,7 +39,7 @@ export function handleError(error: unknown, provider?: AiProvider) {
     );
   }
   if (error instanceof Error && error.name === "AiProviderFailure") {
-    return createAiErrorResponse(error, provider ?? "mock");
+    return createAiErrorResponse(error, provider ?? "openai");
   }
   return createUnexpectedErrorResponse(error);
 }

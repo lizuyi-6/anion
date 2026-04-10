@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 
 import { ChatRequestSchema } from "@/lib/domain";
+import { resolveAiProvider } from "@/lib/env";
 import { getViewer } from "@/lib/server/auth";
 import { handleError } from "@/lib/server/route-errors";
 import { getDataStore } from "@/lib/server/store/repository";
 import { runCommandMode } from "@/lib/server/services/command-center";
-import { detectCommandMode, inferModeFromContent } from "@/components/command-detector";
+import { inferModeFromContent } from "@/components/command-detector";
 
 export async function POST(request: Request) {
   try {
@@ -53,6 +54,6 @@ export async function POST(request: Request) {
       history: result.history,
     });
   } catch (error) {
-    return handleError(error);
+    return handleError(error, resolveAiProvider());
   }
 }

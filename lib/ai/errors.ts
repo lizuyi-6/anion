@@ -13,8 +13,6 @@ function providerLabel(provider: AiProvider) {
       return "Anthropic";
     case "openai":
       return "OpenAI";
-    case "mock":
-      return "Mock AI";
   }
 }
 

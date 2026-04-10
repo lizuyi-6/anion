@@ -1,0 +1,29 @@
+# Playwright 全流程测试专用 overlay
+# 用法: docker compose -f docker-compose.yml -f docker-compose.test.yml up --build
+#
+# - 跳过 OpenClaw（替换为空容器）
+# - mobius 端口映射到 3001 避免与 dev server 冲突
+# - ark-proxy 不暴露端口（Docker 内部网络通信即可）
+# - 禁用 OpenClaw 功能
+
+services:
+  mobius:
+    ports: !override
+      - "3001:3000"
+    depends_on:
+      ark-proxy:
+        condition: service_started
+    environment:
+      - OPENCLAW_ENABLED=false
+      - OPENAI_BASE_URL=http://ark-proxy:18792/v1
+
+  ark-proxy:
+    ports: !override []
+
+  openclaw:
+    image: alpine:latest
+    command: ["sleep", "infinity"]
+    healthcheck:
+      test: ["CMD", "true"]
+      interval: 1s
+      retries: 1

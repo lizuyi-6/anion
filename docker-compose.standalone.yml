@@ -3,18 +3,18 @@ services:
     build: .
     ports:
       - "3000:3000"
+    env_file:
+      - .env.local
     environment:
+      - OPENCLAW_ENABLED=true
       - OPENCLAW_GATEWAY_URL=ws://openclaw:18789
       - OPENCLAW_WEBHOOK_URL=http://openclaw:18789/hooks/wake
-      - OPENCLAW_ENABLED=${OPENCLAW_ENABLED:-true}
       - OPENAI_BASE_URL=http://ark-proxy:18792
     depends_on:
       ark-proxy:
         condition: service_started
       openclaw:
         condition: service_healthy
-    env_file:
-      - .env.local
 
   ark-proxy:
     build:
@@ -29,21 +29,36 @@ services:
       - PROXY_PORT=18792
 
   openclaw:
-    image: openclaw/gateway:latest
+    image: openclaw:local
+    user: root
     ports:
       - "18789:18789"
     environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-https://ark.cn-beijing.volces.com/api/coding/v1}
-      - OPENAI_MODEL=${OPENAI_MODEL:-ark-code-latest}
+      HOME: /home/node
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://ark.cn-beijing.volces.com/api/coding/v1}
+      OPENAI_MODEL: ${OPENAI_MODEL:-ark-code-latest}
     volumes:
+      - openclaw-config:/home/node/.openclaw
       - ./lib/openclaw/skills:/app/skills:ro
-      - openclaw-data:/app/data
+    command:
+      [
+        "sh",
+        "-c",
+        "chown -R node:node /home/node/.openclaw && exec node dist/index.js gateway --bind lan --port 18789 --allow-unconfigured",
+      ]
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:18789/health"]
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:18789/healthz').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
       interval: 10s
+      timeout: 5s
       retries: 5
-      start_period: 30s
+      start_period: 20s
 
 volumes:
-  openclaw-data:
+  openclaw-config:

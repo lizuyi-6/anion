@@ -1,0 +1,17 @@
+{
+  "name": "@mobius/ark-proxy",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node --import tsx index.ts",
+    "dev": "tsx watch index.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.0",
+    "tsx": "^4.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.0"
+  }
+}

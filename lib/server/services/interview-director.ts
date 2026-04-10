@@ -474,7 +474,7 @@ function chooseSecondaryInterviewer(
 function buildOpenLoops(
   signals: AnswerSignalProfile,
   primary: InterviewerDefinition,
-  answer: string
+  _answer: string
 ) {
   const hasEvidence = signals.evidenceHits > 0 || signals.causalHits > 0;
   const loops: string[] = [];

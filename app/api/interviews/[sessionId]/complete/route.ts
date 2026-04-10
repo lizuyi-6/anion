@@ -28,6 +28,10 @@ export async function POST(
       return NextResponse.json({ error: "未找到会话" }, { status: 404 });
     }
 
+    if (session.status !== "live") {
+      return NextResponse.json({ error: "会话状态不允许完成" }, { status: 409 });
+    }
+
     const analysis = await queueInterviewAnalysis({
       sessionId,
       store,
