@@ -13,6 +13,8 @@ const env = {
   anthropicModel: process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-20250514",
   anthropicBaseUrl: process.env.ANTHROPIC_BASE_URL,
   supabaseUrl: process.env.SUPABASE_URL,
+  supabaseBrowserUrl:
+    process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.SUPABASE_URL,
   supabaseAnonKey: process.env.SUPABASE_ANON_KEY,
   supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
   supabaseBucket: process.env.SUPABASE_STORAGE_BUCKET ?? "session-artifacts",
@@ -73,6 +75,26 @@ export function hasOpenClaw(): boolean {
 
 export function getOpenClawGatewayUrl(): string {
   return runtimeEnv.openclawGatewayUrl ?? "";
+}
+
+/** Validate environment configuration and return warnings. */
+export function validateEnv(): string[] {
+  const warnings: string[] = [];
+
+  if (hasSupabase() && !runtimeEnv.supabaseServiceRoleKey) {
+    warnings.push("SUPABASE_SERVICE_ROLE_KEY 未设置 — 管理员操作将失败");
+  }
+  if (hasSupabase() && !runtimeEnv.supabaseUrl!.startsWith("https://")) {
+    warnings.push(`SUPABASE_URL 不是 HTTPS — 生产环境应使用安全连接: ${runtimeEnv.supabaseUrl}`);
+  }
+  if (!hasOpenAi() && !hasAnthropic()) {
+    warnings.push("未设置 OPENAI_API_KEY 或 ANTHROPIC_API_KEY — AI 功能不可用");
+  }
+  if (runtimeEnv.openclawEnabled && !runtimeEnv.openclawSharedSecret) {
+    warnings.push("OpenClaw 已启用但 OPENCLAW_SHARED_SECRET 未设置 — webhook 不安全");
+  }
+
+  return warnings;
 }
 
 export function resolveRuntimeMode(): RuntimeMode {

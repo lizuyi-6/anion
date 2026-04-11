@@ -40,17 +40,35 @@ export function AuthPanel({
     setIsPending(true);
     setMessage("");
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-      window.location.href = "/";
-    } catch (error) {
-      if (error instanceof Error && error.message.includes("Invalid login credentials")) {
-        showError(new Error("邮箱或密码不正确"));
-      } else if (error instanceof Error && error.message.includes("Email not confirmed")) {
-        showError(new Error("请先验证邮箱，检查收件箱中的确认邮件"));
-      } else {
-        showError(error);
+      // Server returns redirect with Set-Cookie — browser follows and stores cookies.
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      if (res.redirected) {
+        const finalUrl = new URL(res.url);
+        const errParam = finalUrl.searchParams.get("error");
+        if (errParam) {
+          if (errParam.includes("Invalid login credentials")) {
+            throw new Error("邮箱或密码不正确");
+          }
+          if (errParam.includes("Email not confirmed")) {
+            throw new Error("请先验证邮箱，检查收件箱中的确认邮件");
+          }
+          throw new Error(decodeURIComponent(errParam) || "登录失败");
+        }
+        // Success — cookies are already set, navigate to dashboard
+        window.location.href = "/journey";
+        return;
       }
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? "登录失败");
+      }
+      window.location.href = "/journey";
+    } catch (error) {
+      showError(error);
     } finally {
       setIsPending(false);
     }
@@ -65,24 +83,24 @@ export function AuthPanel({
       return;
     }
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { full_name: displayName || undefined },
-          emailRedirectTo: callbackUrl,
-        },
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, displayName }),
       });
-      if (error) throw error;
+      if (!res.ok) {
+        const data = await res.json();
+        const msg = data.error ?? "注册失败";
+        if (msg.includes("already registered")) {
+          throw new Error("该邮箱已注册，请直接登录或使用忘记密码");
+        }
+        throw new Error(msg);
+      }
       showSuccess("注册成功！请检查邮箱完成验证，然后登录。");
       setTab("login");
       setPassword("");
     } catch (error) {
-      if (error instanceof Error && error.message.includes("already registered")) {
-        showError(new Error("该邮箱已注册，请直接登录或使用忘记密码"));
-      } else {
-        showError(error);
-      }
+      showError(error);
     } finally {
       setIsPending(false);
     }

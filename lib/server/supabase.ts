@@ -14,16 +14,22 @@ export async function createSupabaseServerClient() {
   return createServerClient(runtimeEnv.supabaseUrl!, runtimeEnv.supabaseAnonKey!, {
     cookies: {
       getAll() {
-        return cookieStore.getAll();
-      },
-      setAll(cookiesToSet) {
-        try {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options);
-          });
-        } catch {
-          // Server components may be unable to write cookies. Middleware handles refresh.
+        const all = cookieStore.getAll();
+        if (process.env.NODE_ENV !== "production") {
+          const auth = all.filter(c => c.name.includes("auth-token"));
+          if (auth.length) {
+            console.log("[SUPA] getAll:", auth.map(c => `${c.name}(${c.value.length})`).join(" "));
+          } else {
+            console.log("[SUPA] getAll: no auth-token cookies. All:", all.map(c => c.name).join(", ") || "(none)");
+          }
         }
+        return all;
+      },
+      setAll() {
+        // No-op: session cookies are managed exclusively by API routes and
+        // the /auth/callback handler.  Server components must not overwrite
+        // or clear the session cookie, as a failed refresh would log the
+        // user out on every subsequent request.
       },
     },
   });

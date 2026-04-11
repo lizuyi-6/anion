@@ -211,7 +211,7 @@ class MemoryDataStore implements DataStore {
       return upload;
     } catch (error) {
       console.error("MemoryDataStore 文件上传失败:", error);
-      throw new Error(`文件上传失败: ${error instanceof Error ? error.message : "未知错误"}`);
+      throw new Error("文件上传失败");
     }
   }
 
@@ -487,7 +487,7 @@ class SupabaseDataStore implements DataStore {
 
       if (error) {
         console.error("Supabase 存储上传失败:", error);
-        throw new Error(`文件上传到存储服务失败: ${error.message}`);
+        throw new Error("文件上传到存储服务失败");
       }
 
       console.log(`文件上传成功: ${file.name} -> ${path}`);
@@ -501,7 +501,7 @@ class SupabaseDataStore implements DataStore {
       });
     } catch (error) {
       console.error("SupabaseDataStore 文件上传失败:", error);
-      throw new Error(`文件上传失败: ${error instanceof Error ? error.message : "未知错误"}`);
+      throw new Error("文件上传失败");
     }
   }
 
@@ -923,21 +923,29 @@ class SupabaseDataStore implements DataStore {
       return;
     }
 
-    const reset = await this.supabase
-      .from("memory_profiles")
-      .update({ is_active: false })
-      .eq("user_id", ownerId);
-    if (reset.error) {
-      throw reset.error;
-    }
+    // Atomic activation: deactivate all then activate target in a single RPC
+    const { error } = await this.supabase.rpc("activate_memory_profile", {
+      p_profile_id: profile.id,
+      p_user_id: ownerId,
+    });
+    if (error) {
+      // Fallback to non-atomic if RPC doesn't exist yet
+      const reset = await this.supabase
+        .from("memory_profiles")
+        .update({ is_active: false })
+        .eq("user_id", ownerId);
+      if (reset.error) {
+        throw reset.error;
+      }
 
-    const activate = await this.supabase
-      .from("memory_profiles")
-      .update({ is_active: true })
-      .eq("id", profile.id)
-      .eq("user_id", ownerId);
-    if (activate.error) {
-      throw activate.error;
+      const activate = await this.supabase
+        .from("memory_profiles")
+        .update({ is_active: true })
+        .eq("id", profile.id)
+        .eq("user_id", ownerId);
+      if (activate.error) {
+        throw activate.error;
+      }
     }
   }
 
@@ -1062,7 +1070,8 @@ class SupabaseDataStore implements DataStore {
       .select("*")
       .eq("thread_id", threadId)
       .eq("user_id", thread.userId)
-      .order("created_at", { ascending: true });
+      .order("created_at", { ascending: true })
+      .limit(50);
 
     if (error) {
       throw error;
@@ -1210,7 +1219,11 @@ export async function getDataStore(options?: {
       const displayName = options?.viewer?.displayName ?? "演示候选人";
       const preferredRolePack = options?.viewer?.preferredRolePack ?? "engineering";
       return getSqliteStore({ userId, displayName, preferredRolePack });
-    } catch {
+    } catch (error) {
+      console.error(
+        "[MOBIUS] SQLite 初始化失败，回退到内存存储。所有数据将在重启后丢失！",
+        error,
+      );
       if (!globalThis.__mobiusFallbackStore) {
         globalThis.__mobiusFallbackStore = new MemoryDataStore();
       }

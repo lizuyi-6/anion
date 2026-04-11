@@ -95,7 +95,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json(
-      { error: "上传失败", message: error instanceof Error ? error.message : "未知错误" },
+      { error: "上传失败", message: "文件上传失败，请稍后重试" },
       { status: 500 }
     );
   }

@@ -6,7 +6,7 @@ import { formatRolePackLabel } from "@/lib/domain";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/", label: "概览" },
+  { href: "/journey", label: "概览" },
   { href: "/simulator/new", label: "模拟器" },
   { href: "/hub/copilot", label: "副驾" },
   { href: "/hub/strategy", label: "战略" },
@@ -42,7 +42,7 @@ export function AppFrame({
     <div className={cn("app-shell", `shell-${shellMode}`)} data-shell={shellMode}>
       <header className="topbar">
         <div>
-          <Link href="/" className="wordmark">
+          <Link href="/journey" className="wordmark">
             莫比乌斯计划
           </Link>
           <p className="eyebrow">

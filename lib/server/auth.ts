@@ -1,11 +1,11 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { createClient } from "@supabase/supabase-js";
 
-import { hasSupabase } from "@/lib/env";
+import { hasSupabase, runtimeEnv } from "@/lib/env";
 import type { RolePackId, Viewer } from "@/lib/domain";
 import { rolePackIds, ViewerSchema } from "@/lib/domain";
 import { getDataStore } from "@/lib/server/store/repository";
-import { createSupabaseServerClient } from "@/lib/server/supabase";
 
 function resolveRolePack(value: string | undefined | null): RolePackId {
   return rolePackIds.includes(value as RolePackId)
@@ -24,17 +24,38 @@ export async function getViewer(): Promise<Viewer | null> {
     return store.getDemoViewer(preferredRolePack);
   }
 
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    return null;
+  // Read session cookie → validate JWT via Supabase Auth API
+  const cookie = cookieStore.get("sb-host-auth-token");
+  let accessToken: string | undefined;
+  if (cookie?.value) {
+    try {
+      const raw = cookie.value.startsWith("base64-") ? cookie.value.slice(7) : cookie.value;
+      const session = JSON.parse(Buffer.from(raw, "base64").toString()) as Record<string, unknown>;
+      accessToken = session.access_token as string | undefined;
+    } catch {
+      // invalid cookie — treat as logged out
+    }
   }
 
-  const { data: profile } = await supabase
+  if (!accessToken) return null;
+
+  // Validate JWT signature server-side (prevents forgery)
+  const admin = createClient(
+    runtimeEnv.supabaseUrl!,
+    runtimeEnv.supabaseServiceRoleKey!,
+    { auth: { autoRefreshToken: false, persistSession: false } },
+  );
+
+  const { data: { user: authUser }, error: authError } = await admin.auth.getUser(accessToken);
+  if (authError || !authUser) return null;
+
+  const user = {
+    id: authUser.id,
+    email: authUser.email ?? undefined,
+    user_metadata: authUser.user_metadata as Record<string, unknown> | undefined,
+  };
+
+  const { data: profile } = await admin
     .from("profiles")
     .select("*")
     .eq("user_id", user.id)
@@ -45,7 +66,7 @@ export async function getViewer(): Promise<Viewer | null> {
     id: user.id,
     displayName:
       profile?.full_name ??
-      user.user_metadata?.full_name ??
+      (user.user_metadata?.full_name as string) ??
       user.email?.split("@")[0] ??
       "Mobius User",
     email: user.email ?? undefined,
@@ -54,7 +75,7 @@ export async function getViewer(): Promise<Viewer | null> {
     preferredRolePack: resolveRolePack(profile?.preferred_role_pack ?? preferredRolePack),
   });
 
-  await supabase.from("profiles").upsert(
+  await admin.from("profiles").upsert(
     {
       user_id: viewer.id,
       full_name: viewer.displayName,

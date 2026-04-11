@@ -20,7 +20,7 @@ export function SessionShell({
   children,
 }: {
   viewer: Viewer;
-  activeHref: "/" | "/simulator/new" | "/hub";
+  activeHref: "/journey" | "/simulator/new" | "/hub";
   stage: JourneyStage;
   eyebrow: string;
   title: string;
@@ -35,7 +35,7 @@ export function SessionShell({
       <section className="session-hero">
         <div className="session-hero-copy">
           <div className="session-breadcrumb">
-            <Link href="/">我的旅程</Link>
+            <Link href="/journey">我的旅程</Link>
             <span>/</span>
             <span>{formatJourneyStage(stage)}</span>
           </div>

@@ -6,6 +6,7 @@ import { getViewer } from "@/lib/server/auth";
 import { handleError } from "@/lib/server/route-errors";
 import { getDataStore } from "@/lib/server/store/repository";
 import { generateNextInterviewBeat } from "@/lib/server/services/interview";
+import { acquireSessionLock } from "@/lib/server/session-lock";
 import { encodeSseEvent } from "@/lib/utils";
 
 export async function POST(
@@ -18,7 +19,10 @@ export async function POST(
     return NextResponse.json({ error: "未授权" }, { status: 401 });
   }
 
+  let release: (() => void) | undefined;
   try {
+    release = await acquireSessionLock(sessionId);
+
     const store = await getDataStore({ viewer });
     const session = await store.getSession(sessionId);
 
@@ -69,5 +73,7 @@ export async function POST(
     });
   } catch (error) {
     return handleError(error, resolveAiProvider());
+  } finally {
+    release?.();
   }
 }

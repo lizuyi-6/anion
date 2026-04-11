@@ -10,7 +10,7 @@ export default async function SignInPage() {
   const viewer = await getViewer();
 
   if (viewer && !viewer.isDemo) {
-    redirect("/");
+    redirect("/journey");
   }
 
   const authConfigured = hasSupabase();
@@ -19,7 +19,7 @@ export default async function SignInPage() {
     <PublicShell
       viewer={viewer}
       actions={
-        <Link href="/landing#journey" className="public-link-button secondary">
+        <Link href="/#journey" className="public-link-button secondary">
           了解更多
         </Link>
       }
@@ -56,7 +56,7 @@ export default async function SignInPage() {
             <p className="muted-copy">
               不需要账号，直接感受完整的面试模拟和分析流程。
             </p>
-            <Link href="/" className="primary-button">
+            <Link href="/journey" className="primary-button">
               进入演示
             </Link>
           </article>
@@ -66,7 +66,7 @@ export default async function SignInPage() {
             <h2>建立个人空间</h2>
             {authConfigured ? (
               <AuthPanel
-                supabaseUrl={runtimeEnv.supabaseUrl ?? ""}
+                supabaseUrl={runtimeEnv.supabaseBrowserUrl ?? ""}
                 supabaseAnonKey={runtimeEnv.supabaseAnonKey ?? ""}
                 appUrl={runtimeEnv.appUrl}
               />

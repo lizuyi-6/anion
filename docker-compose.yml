@@ -7,7 +7,7 @@ services:
       - OPENCLAW_GATEWAY_URL=ws://openclaw:18789
       - OPENCLAW_WEBHOOK_URL=http://openclaw:18789/hooks/wake
       - OPENCLAW_ENABLED=${OPENCLAW_ENABLED:-true}
-      - OPENAI_BASE_URL=http://ark-proxy:18792
+      - OPENAI_BASE_URL=http://ark-proxy:18792/v1
     depends_on:
       ark-proxy:
         condition: service_started
@@ -15,6 +15,24 @@ services:
         condition: service_healthy
     env_file:
       - .env.local
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: "1.0"
 
   ark-proxy:
     build:
@@ -27,6 +45,7 @@ services:
       - ARK_BASE_URL=${OPENAI_BASE_URL:-https://ark.cn-beijing.volces.com/api/coding/v1}
       - ARK_MODEL=${OPENAI_MODEL:-ark-code-latest}
       - PROXY_PORT=18792
+    restart: unless-stopped
 
   openclaw:
     image: openclaw/gateway:latest

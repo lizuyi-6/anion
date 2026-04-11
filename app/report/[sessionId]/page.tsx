@@ -46,7 +46,7 @@ export default async function ReportPage({
   return (
     <SessionShell
       viewer={viewer}
-      activeHref="/"
+      activeHref="/journey"
       stage="debrief"
       eyebrow="复盘洞察"
       title="把这一轮训练真正读懂"

@@ -1,37 +1,38 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createServerClient } from "@supabase/ssr";
 
-import { hasSupabase, runtimeEnv } from "@/lib/env";
+import { hasSupabase } from "@/lib/env";
+import { checkRateLimit, RATE_LIMITS } from "@/lib/server/rate-limit";
+
+function getClientIp(request: NextRequest): string {
+  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+    ?? request.headers.get("x-real-ip")
+    ?? "unknown";
+}
 
 export async function middleware(request: NextRequest) {
   if (!hasSupabase()) {
     return NextResponse.next();
   }
 
-  const response = NextResponse.next({
-    request,
-  });
+  // Rate limiting for sensitive endpoints
+  const { pathname } = request.nextUrl;
+  for (const { pattern, limit, windowMs } of RATE_LIMITS) {
+    if (pattern.test(pathname)) {
+      const ip = getClientIp(request);
+      const result = checkRateLimit(ip, limit, windowMs);
+      if (!result.allowed) {
+        return new NextResponse("Too Many Requests", {
+          status: 429,
+          headers: {
+            "Retry-After": String(Math.ceil((result.resetAt - Date.now()) / 1000)),
+          },
+        });
+      }
+      break;
+    }
+  }
 
-  const supabase = createServerClient(
-    runtimeEnv.supabaseUrl!,
-    runtimeEnv.supabaseAnonKey!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            request.cookies.set(name, value);
-            response.cookies.set(name, value, options);
-          });
-        },
-      },
-    },
-  );
-
-  await supabase.auth.getUser();
-  return response;
+  return NextResponse.next({ request });
 }
 
 export const config = {

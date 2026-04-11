@@ -7,4 +7,14 @@ coverage
 *.tsbuildinfo
 output-playwright-*.png
 output/playwright
+output/triz
 .vercel
+tests/
+scripts/
+*.md
+.vscode/
+.idea/
+playwright/
+.claude/
+supabase/.branches/
+supabase/.temp/

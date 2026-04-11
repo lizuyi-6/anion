@@ -1,148 +1,145 @@
 import Link from "next/link";
 
-import { JourneyShell } from "@/components/journey-shell";
-import { formatRolePackLabel } from "@/lib/domain";
-import {
-  formatAudienceSessionStatus,
-  formatJourneyStage,
-  getJourneyStageFromStatus,
-  getJourneySteps,
-  getNextRecommendedAction,
-  getPrimarySession,
-} from "@/lib/journey";
-import { requireViewer } from "@/lib/server/auth";
-import { getDataStore } from "@/lib/server/store/repository";
-import { formatDate } from "@/lib/utils";
+import { PublicShell } from "@/components/public-shell";
+import { hasSupabase } from "@/lib/env";
+import { getViewer } from "@/lib/server/auth";
 
-export const dynamic = "force-dynamic";
+const journeyCards = [
+  {
+    id: "goal",
+    label: "目标设定",
+    title: "先把这轮准备要拿下什么说清楚",
+    description: "明确岗位、材料和关注重点，避免一上来就掉进杂乱的工具选择。",
+  },
+  {
+    id: "practice",
+    label: "模拟训练",
+    title: "在真实压力里练一次",
+    description: "围绕岗位目标和材料进入高压模拟，把表达、判断和证据都拉到真实场景里。",
+  },
+  {
+    id: "debrief",
+    label: "复盘洞察",
+    title: "把一次训练变成看得懂的复盘",
+    description: "不是只给分，而是告诉你亮点来自哪里、短板卡在哪一步、下一周先修什么。",
+  },
+  {
+    id: "action",
+    label: "行动计划",
+    title: "把复盘转成持续提升的动作",
+    description: "围绕高风险回答、下周计划和关键沟通场景继续推进，而不是把复盘留在报告里。",
+  },
+];
 
-export default async function Home() {
-  const viewer = await requireViewer();
-  const store = await getDataStore({ viewer });
-  const sessions = ((await store.listSessions(viewer.id)) ?? []).sort((left, right) =>
-    right.updatedAt.localeCompare(left.updatedAt),
-  );
-
-  const latestSession = getPrimarySession(sessions);
-  const nextAction = getNextRecommendedAction(viewer, sessions);
-  const currentStage = latestSession
-    ? getJourneyStageFromStatus(latestSession.status)
-    : nextAction.stage;
-  const journeySteps = getJourneySteps();
+export default async function LandingPage() {
+  const viewer = await getViewer();
+  const hasAccountViewer = viewer && !viewer.isDemo;
+  const primaryHref = hasAccountViewer ? "/journey" : hasSupabase() ? "/auth/sign-in" : "/journey";
 
   return (
-    <JourneyShell viewer={viewer} activeHref="/">
-      <section className="journey-hero-card">
-        <div className="journey-hero-copy">
-          <span className="landing-kicker">我的旅程</span>
+    <PublicShell
+      viewer={viewer}
+      actions={
+        hasAccountViewer ? (
+          <Link href="/journey" className="public-link-button">
+            进入我的旅程
+          </Link>
+        ) : hasSupabase() ? (
+          <Link href="/auth/sign-in" className="public-link-button">
+            开始准备
+          </Link>
+        ) : (
+          <Link href="/journey" className="public-link-button">
+            进入演示
+          </Link>
+        )
+      }
+    >
+      <section className="landing-hero">
+        <div className="landing-hero-copy">
+          <span className="landing-kicker">工程候选人的职业陪跑平台</span>
           <h1>从一次准备，走到持续提升。</h1>
           <p>
-            这里不会把功能堆成工具箱，而是根据你当前阶段，只给你最该做的下一步。
+            Mobius 帮你先明确目标，再把模拟训练、复盘洞察和行动计划串成一条连续旅程。
+            你看到的不是一堆工具，而是下一步该怎么走。
           </p>
-
-          <div className="journey-next-card">
-            <div className="chip-row">
-              <span className="workspace-pill primary">{formatJourneyStage(nextAction.stage)}</span>
-              {latestSession ? (
-                <span className="workspace-pill">
-                  {formatAudienceSessionStatus(latestSession.status)}
-                </span>
-              ) : null}
-            </div>
-            <h2>{nextAction.label}</h2>
-            <p>{nextAction.description}</p>
-            <div className="journey-hero-actions">
-              <Link href={nextAction.href} className="primary-button">
-                {nextAction.label}
-              </Link>
-              <Link href="/landing#journey" className="secondary-button">
-                查看陪跑方式
-              </Link>
-            </div>
+          <div className="landing-hero-actions">
+            <Link href={primaryHref} className="primary-button">
+              {hasAccountViewer ? "进入我的旅程" : hasSupabase() ? "开始准备" : "进入演示"}
+            </Link>
+            <a href="#journey" className="secondary-button">
+              查看陪跑方式
+            </a>
           </div>
         </div>
 
-        <aside className="journey-summary-card">
-          <span className="panel-label">当前概览</span>
-          <h2>{latestSession ? "你已经在旅程中" : "你还没开始第一轮准备"}</h2>
-          <div className="journey-summary-list">
-            <div className="journey-summary-item">
-              <strong>默认受众</strong>
-              <span>{formatRolePackLabel(viewer.preferredRolePack)}岗位</span>
-            </div>
-            <div className="journey-summary-item">
-              <strong>当前阶段</strong>
-              <span>{formatJourneyStage(currentStage)}</span>
-            </div>
-            <div className="journey-summary-item">
-              <strong>最近更新</strong>
-              <span>{latestSession ? formatDate(latestSession.updatedAt) : "还没有记录"}</span>
-            </div>
+        <div className="landing-hero-card">
+          <span className="panel-label">核心旅程</span>
+          <h2>目标设定 → 模拟训练 → 复盘洞察 → 行动计划</h2>
+          <p className="muted-copy">
+            默认先服务工程候选人，把一次面试准备真正做成持续提升的闭环。
+          </p>
+          <div className="landing-stage-mini-list">
+            {journeyCards.map((card) => (
+              <div key={card.id} className="landing-stage-mini-item">
+                <strong>{card.label}</strong>
+                <span>{card.title}</span>
+              </div>
+            ))}
           </div>
-        </aside>
+        </div>
       </section>
 
-      <section className="journey-stage-grid">
-        {journeySteps.map((step) => {
-          const latestIndex = journeySteps.findIndex((item) => item.id === currentStage);
-          const stepIndex = journeySteps.findIndex((item) => item.id === step.id);
-          const state =
-            stepIndex < latestIndex ? "done" : stepIndex === latestIndex ? "active" : "upcoming";
+      <section id="journey" className="landing-section">
+        <div className="landing-section-head">
+          <span className="panel-label">陪跑方式</span>
+          <h2>每一页都只服务当前阶段，不让用户在流程里迷路</h2>
+          <p>
+            这套界面不再把功能并列摆出来，而是根据你所处的阶段，只显示最该做的下一步。
+          </p>
+        </div>
 
-          return (
-            <article key={step.id} className={`journey-stage-card ${state}`}>
-              <span className="journey-stage-tag">{step.label}</span>
-              <h3>{step.description}</h3>
+        <div className="landing-journey-grid">
+          {journeyCards.map((card) => (
+            <article key={card.id} className="landing-journey-card">
+              <span className="landing-journey-index">{card.label}</span>
+              <h3>{card.title}</h3>
+              <p>{card.description}</p>
             </article>
-          );
-        })}
+          ))}
+        </div>
       </section>
 
-      <section className="journey-support-grid">
-        <article className="workspace-card">
-          <div className="section-head">
-            <div>
-              <p className="panel-label">最近进展</p>
-              <h3>最近几次训练记录</h3>
-            </div>
-          </div>
-          <div className="overview-session-list">
-            {sessions.length === 0 ? (
-              <p className="muted-copy">
-                还没有开始第一轮训练。先创建准备目标，后面的模拟、复盘和行动计划会自动接上。
-              </p>
-            ) : (
-              sessions.slice(0, 4).map((session) => (
-                <Link key={session.id} href={`/report/${session.id}`} className="list-row">
-                  <div>
-                    <strong>{session.config.targetCompany}</strong>
-                    <p className="muted-copy">
-                      {session.config.level} · {formatAudienceSessionStatus(session.status)}
-                    </p>
-                  </div>
-                  <small>{formatDate(session.updatedAt)}</small>
-                </Link>
-              ))
-            )}
-          </div>
+      <section className="landing-proof-grid">
+        <article className="landing-proof-card">
+          <span className="panel-label">为什么不是工具箱</span>
+          <h3>首页不会先问你要不要开 Copilot，而是先告诉你该做哪一步。</h3>
+          <p className="muted-copy">
+            工具能力依然都在，但它们会藏在任务背后。用户先看到任务，再看到完成任务的方法。
+          </p>
         </article>
 
-        <article className="workspace-card workspace-highlight-card">
-          <div className="section-head">
-            <div>
-              <p className="panel-label">下一步提醒</p>
-              <h3>始终只做当前阶段最重要的一件事</h3>
-            </div>
-          </div>
-          <p className="hero-copy">
-            {latestSession
-              ? `你最近一次准备停留在“${formatJourneyStage(
-                  currentStage,
-                )}”阶段。先完成这一环，再进入下一步，体验会最连贯。`
-              : "如果你是第一次进入，先创建目标岗位和材料。先把目标说清楚，比先开工具更重要。"}
+        <article className="landing-proof-card accent">
+          <span className="panel-label">默认受众</span>
+          <h3>先把工程候选人的旅程打磨清楚，再扩展到其他赛道。</h3>
+          <p className="muted-copy">
+            产品、运营和管理不会消失，但这一版不会再把四条赛道并列当成首页主卖点。
           </p>
         </article>
       </section>
-    </JourneyShell>
+
+      <section className="landing-cta-band">
+        <div>
+          <span className="panel-label">开始进入旅程</span>
+          <h2>先创建这轮准备目标，再让系统陪你走完整条路径。</h2>
+          <p>
+            你只需要先说清楚目标岗位和已有材料，后面的模拟、复盘和行动计划会自动接上。
+          </p>
+        </div>
+        <Link href={primaryHref} className="primary-button">
+          {hasAccountViewer ? "继续我的旅程" : hasSupabase() ? "开始准备" : "进入演示"}
+        </Link>
+      </section>
+    </PublicShell>
   );
 }

@@ -84,13 +84,13 @@ async function main() {
   const goto = (path) => page.goto(`${baseUrl}${path}`);
 
   try {
-    // ─── Step 1: Home Dashboard ──────────────────────
-    console.log("\n━━━ 步骤 1/5: 首页仪表盘 ━━━");
+    // ─── Step 1: Landing Page ──────────────────────
+    console.log("\n━━━ 步骤 1/5: 落地页 ━━━");
     await goto("/");
-    await page.waitForSelector(".journey-shell", { timeout: 15_000 });
-    await snap(1, "home");
+    await page.waitForSelector(".public-shell", { timeout: 15_000 });
+    await snap(1, "landing");
 
-    // Navigate directly to setup (avoids dependency on CTA state)
+    // Navigate directly to setup
     await goto("/simulator/new");
     await page.waitForSelector('[data-testid="interview-setup-form"]', { timeout: 10_000 });
     console.log("  ✓ 已进入面试设置页");

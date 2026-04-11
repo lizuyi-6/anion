@@ -16,7 +16,7 @@ export function PublicShell({
     <div className="public-shell">
       <header className="public-topbar">
         <div className="public-brand-row">
-          <Link href="/landing" className="public-brand">
+          <Link href="/" className="public-brand">
             Mobius
           </Link>
           <span className="public-brand-copy">工程候选人的职业陪跑平台</span>
@@ -26,7 +26,7 @@ export function PublicShell({
           <ThemeToggle />
           {actions ??
             (viewer && !viewer.isDemo ? (
-              <Link href="/" className="public-link-button">
+              <Link href="/journey" className="public-link-button">
                 进入我的旅程
               </Link>
             ) : (

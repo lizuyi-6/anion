@@ -4,7 +4,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import type { Viewer } from "@/lib/domain";
 
 const navItems = [
-  { href: "/", label: "我的旅程" },
+  { href: "/journey", label: "我的旅程" },
   { href: "/simulator/new", label: "实战演练" },
   { href: "/hub", label: "工作台" },
 ];
@@ -15,7 +15,7 @@ export function JourneyShell({
   children,
 }: {
   viewer: Viewer;
-  activeHref: "/" | "/simulator/new" | "/hub";
+  activeHref: "/journey" | "/simulator/new" | "/hub";
   children: React.ReactNode;
 }) {
   const initial = viewer.displayName.trim().charAt(0).toUpperCase() || "M";
@@ -24,7 +24,7 @@ export function JourneyShell({
     <div className="journey-shell">
       <header className="journey-topbar">
         <div className="journey-brand-row">
-          <Link href="/" className="journey-brand">
+          <Link href="/journey" className="journey-brand">
             Mobius
           </Link>
           <span className="journey-brand-copy">工程候选人的职业陪跑平台</span>
