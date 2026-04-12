@@ -1,13 +1,12 @@
 import { z } from "zod";
 
-export const runtimeModes = ["demo", "supabase"] as const;
 export const rolePackIds = [
   "engineering",
   "product",
   "operations",
   "management",
 ] as const;
-export const sessionStatuses = [
+const sessionStatuses = [
   "draft",
   "live",
   "analyzing",
@@ -16,27 +15,26 @@ export const sessionStatuses = [
   "accepted",
   "hub_active",
 ] as const;
-export const interviewPressurePhases = [
+const interviewPressurePhases = [
   "calibrate",
   "surround",
   "crossfire",
 ] as const;
-export const interviewTimerOutcomes = [
+const interviewTimerOutcomes = [
   "within_window",
   "expired",
 ] as const;
 export const commandModes = ["copilot", "strategy", "sandbox"] as const;
-export const chatAutoMode = "auto" as const;
 export type ChatMode = CommandMode | "auto";
-export const eventKinds = [
+const eventKinds = [
   "question",
   "follow_up",
   "interrupt",
   "conflict",
   "system",
 ] as const;
-export const artifactProviders = ["memory", "supabase"] as const;
-export const artifactKinds = [
+const artifactProviders = ["memory", "supabase"] as const;
+const artifactKinds = [
   "resume",
   "portfolio",
   "job_description",
@@ -44,14 +42,14 @@ export const artifactKinds = [
   "document",
   "attachment",
 ] as const;
-export const memoryEvidenceKinds = [
+const memoryEvidenceKinds = [
   "skill",
   "gap",
   "behavior",
   "win",
 ] as const;
 
-export type RuntimeMode = (typeof runtimeModes)[number];
+export type RuntimeMode = "demo" | "supabase";
 export type RolePackId = (typeof rolePackIds)[number];
 export type SessionStatus = (typeof sessionStatuses)[number];
 export type InterviewPressurePhase = (typeof interviewPressurePhases)[number];

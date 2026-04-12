@@ -6,12 +6,6 @@ export function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
-export function titleCase(value: string) {
-  return value
-    .replace(/[-_]/g, " ")
-    .replace(/\b\w/g, (match) => match.toUpperCase());
-}
-
 export function formatDate(iso: string) {
   return new Intl.DateTimeFormat("zh-CN", {
     dateStyle: "medium",
@@ -23,12 +17,8 @@ export function toId(prefix: string) {
   return `${prefix}_${crypto.randomUUID()}`;
 }
 
-export function safeJsonParse<T>(value: string, fallback: T) {
-  try {
-    return JSON.parse(value) as T;
-  } catch {
-    return fallback;
-  }
+export function uuid() {
+  return crypto.randomUUID();
 }
 
 export function summarizeText(value: string, maxLength = 220) {
