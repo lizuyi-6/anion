@@ -16,7 +16,6 @@ interface PendingRequest {
 }
 
 const REQUEST_TIMEOUT_MS = 30_000;
-const RECONNECT_DELAY_MS = 3_000;
 const HEARTBEAT_INTERVAL_MS = 30_000;
 
 /**
@@ -41,6 +40,7 @@ class GatewayClient implements OpenClawClient {
   private handlers = new Map<string, Set<EventHandler>>();
   private heartbeatTimer: ReturnType<typeof setInterval> | null = null;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  private reconnectDelay = 1000;
   private _connected = false;
   private readonly url: string;
 
@@ -62,15 +62,22 @@ class GatewayClient implements OpenClawClient {
 
       ws.addEventListener("open", () => {
         this._connected = true;
+        this.reconnectDelay = 1000;
         this.ws = ws;
         this.startHeartbeat();
         resolve();
       });
 
       ws.addEventListener("message", (event) => {
-        const frame = JSON.parse(String(event.data)) as
-          | OpenClawResponse
-          | OpenClawEvent;
+        let frame: OpenClawResponse | OpenClawEvent;
+        try {
+          frame = JSON.parse(String(event.data)) as
+            | OpenClawResponse
+            | OpenClawEvent;
+        } catch {
+          console.warn("[OPENCLAW] Received non-JSON message, skipping");
+          return;
+        }
 
         if (frame.type === "res") {
           const pending = this.pending.get(frame.id);
@@ -176,12 +183,14 @@ class GatewayClient implements OpenClawClient {
   }
 
   private scheduleReconnect(): void {
+    const delay = this.reconnectDelay;
+    this.reconnectDelay = Math.min(this.reconnectDelay * 2, 30000);
+
     this.reconnectTimer = setTimeout(() => {
       this.connect().catch(() => {
-        // Reconnect failed; schedule another attempt
         this.scheduleReconnect();
       });
-    }, RECONNECT_DELAY_MS);
+    }, delay);
   }
 
   private rejectAllPending(error: Error): void {

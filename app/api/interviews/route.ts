@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 
 import { CreateSessionInputSchema } from "@/lib/domain";
-import { resolveAiProvider } from "@/lib/env";
 import { getViewer } from "@/lib/server/auth";
 import { handleError } from "@/lib/server/route-errors";
 import { createInterviewSession } from "@/lib/server/services/interview";
@@ -19,6 +18,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ sessionId: session.id });
   } catch (error) {
-    return handleError(error, resolveAiProvider());
+    return handleError(error);
   }
 }

@@ -539,30 +539,55 @@ class OpenAiProvider implements AiProviderAdapter {
 
   private extractJson(content: string): string {
     const trimmed = content.trim();
-    // Find JSON object or array
-    const match = trimmed.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
-    if (match) {
-      // Validate it's actually JSON by finding proper closing bracket
-      const jsonStr = match[1];
-      try {
-        JSON.parse(jsonStr);
-        return jsonStr;
-      } catch {
-        // Invalid JSON, return as-is
-        return trimmed;
+
+    try {
+      JSON.parse(trimmed);
+      return trimmed;
+    } catch {}
+
+    const openers = ["{", "["];
+    const closers: Record<string, string> = { "{": "}", "[": "]" };
+
+    for (let i = 0; i < trimmed.length; i++) {
+      const ch = trimmed[i];
+      if (openers.includes(ch)) {
+        const openChar = ch;
+        const closeChar = closers[openChar];
+        let depth = 0;
+        let inString = false;
+        let escape = false;
+
+        for (let j = i; j < trimmed.length; j++) {
+          const c = trimmed[j];
+          if (escape) { escape = false; continue; }
+          if (c === "\\") { escape = true; continue; }
+          if (c === '"') { inString = !inString; continue; }
+          if (inString) continue;
+          if (c === openChar) depth++;
+          if (c === closeChar) depth--;
+          if (depth === 0) {
+            const candidate = trimmed.slice(i, j + 1);
+            try {
+              JSON.parse(candidate);
+              return candidate;
+            } catch {
+              break;
+            }
+          }
+        }
       }
     }
+
     return trimmed;
   }
 
   private mapFieldsToSchema<T>(parsed: Record<string, unknown>, schema: z.ZodType<T>): T {
-    // Try to extract field values even if field names don't match exactly
-    const result: Record<string, unknown> = {};
-    const shape = (schema as z.ZodObject<z.ZodRawShape>).shape;
-
-    if (!shape) {
-      return parsed as T;
+    if (!(schema instanceof z.ZodObject)) {
+      throw new Error("mapFieldsToSchema requires a ZodObject schema");
     }
+    const zodObject = schema as z.ZodObject<z.ZodRawShape>;
+    const shape = zodObject.shape;
+    const result: Record<string, unknown> = {};
 
     // Build a mapping of common field variations
     const fieldMappings: Record<string, string[]> = {
@@ -597,9 +622,9 @@ class OpenAiProvider implements AiProviderAdapter {
     }
 
     // Try to parse the result
-    const parseResult = schema.safeParse(result);
+    const parseResult = zodObject.safeParse(result);
     if (parseResult.success) {
-      return parseResult.data;
+      return parseResult.data as T;
     }
 
     // Last resort: fill missing array fields with [] so callers don't crash on .length
@@ -620,8 +645,12 @@ class OpenAiProvider implements AiProviderAdapter {
       }
     }
 
-    console.warn("[AI_MAP] Using partial data, some fields may be missing");
-    return result as T;
+    const finalResult = zodObject.safeParse(result);
+    if (finalResult.success) {
+      return finalResult.data as T;
+    }
+    console.error("[AI_MAP] Relaxed validation also failed:", finalResult.error.issues.slice(0, 3));
+    throw new Error(`AI 返回数据结构不匹配，缺失字段：${finalResult.error.issues.map(i => i.path.join(".")).join(", ")}`);
   }
 
   async generateInterviewEvent(input: InterviewGenerationInput) {

@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
 import { hasSupabase, runtimeEnv } from "@/lib/env";
-
-const COOKIE_NAME = "sb-host-auth-token";
+import { AUTH_COOKIE_NAME, AUTH_COOKIE_MAX_AGE } from "@/lib/server/constants";
 
 /** Return a 303 redirect (See Other) — browser follows with GET. */
 function seeOther(path: string) {
@@ -44,27 +43,42 @@ export async function POST(request: NextRequest) {
   }
 
   // Manually set the session cookie, matching the format @supabase/ssr uses
+  const sessionData = data.session;
+  if (!sessionData) {
+    return seeOther("/auth/sign-in?error=no_session");
+  }
+
   const sessionJson = JSON.stringify({
-    access_token: data.session!.access_token,
-    token_type: data.session!.token_type,
-    expires_in: data.session!.expires_in,
-    expires_at: data.session!.expires_at,
-    refresh_token: data.session!.refresh_token,
-    user: data.session!.user,
+    access_token: sessionData.access_token,
+    token_type: sessionData.token_type,
+    expires_in: sessionData.expires_in,
+    expires_at: sessionData.expires_at,
+    refresh_token: sessionData.refresh_token,
+    user: sessionData.user,
   });
   const cookieValue = `base64-${Buffer.from(sessionJson).toString("base64")}`;
 
   const url = new URL("/journey", runtimeEnv.appUrl);
+  const isSecure = runtimeEnv.appUrl.startsWith("https://");
+
+  const cookieParts = [
+    `${AUTH_COOKIE_NAME}=${cookieValue}`,
+    "path=/",
+    `max-age=${AUTH_COOKIE_MAX_AGE}`,
+    "samesite=lax",
+    "httponly",
+    isSecure ? "secure" : "",
+  ].filter(Boolean);
+
+  const setCookieHeader = cookieParts.join("; ");
+  console.log("[LOGIN] Setting cookie:", `${AUTH_COOKIE_NAME}=[value hidden], parts: [${cookieParts.join(", ")}]`);
+
   const response = new NextResponse(null, {
     status: 303,
-    headers: { Location: url.toString() },
-  });
-  response.cookies.set(COOKIE_NAME, cookieValue, {
-    path: "/",
-    maxAge: 34560000,
-    sameSite: "lax",
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    headers: {
+      Location: url.toString(),
+      "Set-Cookie": setCookieHeader,
+    },
   });
 
   return response;

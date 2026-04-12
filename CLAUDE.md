@@ -179,4 +179,7 @@ Runs on Node.js runtime only. At startup: calls `validateEnv()` (warns about mis
 | `lib/openclaw/client.ts` | OpenClaw WebSocket client |
 | `lib/openclaw/bridge.ts` | Memory context → OpenClaw state conversion |
 | `lib/command-artifacts.ts` | Command input builder + Markdown artifact exporter |
+| `lib/server/services/career-summary.ts` | Career overview aggregation (milestones, skill trends, growth trajectory) |
+| `lib/client/api.ts` | Client-side API wrapper for all fetch calls |
+| `lib/utils.ts` | Shared utilities (ID generation, formatting) |
 | `services/ark-proxy/index.ts` | OpenAI→ARK API proxy for Volcengine deployments |

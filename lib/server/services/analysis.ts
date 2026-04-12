@@ -8,7 +8,7 @@ import type {
   MemoryEvidence,
   MemoryProfile,
 } from "@/lib/domain";
-import { toId } from "@/lib/utils";
+import { toId, uuid } from "@/lib/utils";
 import type { DataStore } from "@/lib/server/store/repository";
 import { getDataStore } from "@/lib/server/store/repository";
 import { isAnalysisRetryable } from "@/lib/server/services/session-state";
@@ -20,7 +20,7 @@ function normalizeMemoryEntries(params: {
   nodes: MemoryProfile["skills"];
 }) {
   return params.nodes.map((node) => ({
-    id: toId("memory_evidence"),
+    id: uuid(),
     memoryProfileId: params.profile.id,
     userId: params.userId,
     label: node.label,

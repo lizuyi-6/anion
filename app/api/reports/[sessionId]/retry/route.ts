@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 
-import { resolveAiProvider } from "@/lib/env";
 import { getViewer } from "@/lib/server/auth";
 import { handleError } from "@/lib/server/route-errors";
 import { getDataStore } from "@/lib/server/store/repository";
@@ -30,6 +29,6 @@ export async function POST(
       memoryProfileId: result.memoryProfile?.id ?? null,
     });
   } catch (error) {
-    return handleError(error, resolveAiProvider());
+    return handleError(error);
   }
 }

@@ -210,7 +210,15 @@ const server = createServer(async (req, res) => {
   if (req.method === "OPTIONS") { res.writeHead(204); res.end(); return; }
 
   const parsedUrl = parse(req.url || "", true);
-  if (req.method !== "POST" || parsedUrl.pathname !== "/v1/chat/completions") {
+  if (req.method !== "POST") {
+    res.writeHead(405);
+    res.end(JSON.stringify({ error: "Method not allowed" }));
+    return;
+  }
+
+  // Accept both /v1/chat/completions and /chat/completions
+  const path = parsedUrl.pathname ?? "";
+  if (path !== "/v1/chat/completions" && path !== "/chat/completions") {
     res.writeHead(404);
     res.end(JSON.stringify({ error: "Not found" }));
     return;

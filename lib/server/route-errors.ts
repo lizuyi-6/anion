@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 
 import { AiProviderFailure, getAiErrorPayload, toAiProviderFailure } from "@/lib/ai/errors";
+import { resolveAiProvider } from "@/lib/env";
 import type { AiProvider } from "@/lib/env";
 
 export function createAiErrorResponse(error: unknown, provider: AiProvider) {
@@ -25,6 +26,15 @@ export function createUnexpectedErrorResponse(error: unknown) {
 }
 
 export function handleError(error: unknown, provider?: AiProvider) {
+  let resolvedProvider = provider;
+  if (!resolvedProvider) {
+    try {
+      resolvedProvider = resolveAiProvider();
+    } catch {
+      // Provider not configured — will fall through to unexpected error
+    }
+  }
+
   if (error instanceof AiProviderFailure) {
     return createAiErrorResponse(error, error.provider);
   }
@@ -39,7 +49,7 @@ export function handleError(error: unknown, provider?: AiProvider) {
     );
   }
   if (error instanceof Error && error.name === "AiProviderFailure") {
-    return createAiErrorResponse(error, provider ?? "openai");
+    return createAiErrorResponse(error, resolvedProvider ?? "openai");
   }
   return createUnexpectedErrorResponse(error);
 }

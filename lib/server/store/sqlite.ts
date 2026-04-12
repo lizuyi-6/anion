@@ -754,9 +754,9 @@ export function getSqliteStore(options?: {
 
 /** Close the SQLite database connection. Called during graceful shutdown. */
 export function closeSqliteStore(): void {
-  _store = null;
   if (_db) {
     _db.close();
-    _db = null;
   }
+  _db = null;
+  _store = null;
 }

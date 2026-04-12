@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 
 import { TurnRequestSchema } from "@/lib/domain";
-import { resolveAiProvider } from "@/lib/env";
 import { getViewer } from "@/lib/server/auth";
 import { handleError } from "@/lib/server/route-errors";
 import { getDataStore } from "@/lib/server/store/repository";
@@ -72,7 +71,7 @@ export async function POST(
       },
     });
   } catch (error) {
-    return handleError(error, resolveAiProvider());
+    return handleError(error);
   } finally {
     release?.();
   }

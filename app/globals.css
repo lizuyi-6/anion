@@ -190,11 +190,11 @@ textarea:focus {
 .sidebar,
 .content,
 .stack-lg {
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .stack-md {
-  gap: 0.85rem;
+  gap: 1rem;
 }
 
 .stack-sm {
@@ -1078,7 +1078,7 @@ textarea:focus {
   flex-direction: column;
   gap: 0.95rem;
   min-height: 190px;
-  padding: 1.5rem;
+  padding: 1.75rem;
   border-radius: 20px;
   background: var(--bg-elevated);
   box-shadow: var(--shadow-soft);
@@ -1872,9 +1872,9 @@ select:focus {
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  width: min(var(--max-width), calc(100% - 2.2rem));
+  width: min(var(--max-width), calc(100% - 3.6rem));
   margin: 0 auto;
-  padding: 1.1rem 0;
+  padding: 1.35rem 0;
   background: color-mix(in srgb, var(--bg) 86%, transparent);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
@@ -1882,9 +1882,9 @@ select:focus {
 
 .public-main,
 .journey-main {
-  width: min(var(--max-width), calc(100% - 2.2rem));
+  width: min(var(--max-width), calc(100% - 3.6rem));
   margin: 0 auto;
-  padding: 1.25rem 0 3rem;
+  padding: 2rem 0 4rem;
 }
 
 .public-brand-row,
@@ -1996,7 +1996,7 @@ select:focus {
 .auth-entry-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
-  gap: 1.2rem;
+  gap: 1.5rem;
   align-items: stretch;
 }
 
@@ -2121,7 +2121,7 @@ select:focus {
 .journey-action-grid,
 .journey-task-grid,
 .session-meta-row {
-  margin-top: 1.2rem;
+  margin-top: 2rem;
 }
 
 .landing-section-head {
@@ -2203,7 +2203,7 @@ select:focus {
 }
 
 .journey-hero-card {
-  margin-bottom: 1.2rem;
+  margin-bottom: 2rem;
 }
 
 .journey-next-card h2,
@@ -2446,7 +2446,7 @@ select:focus {
 .journey-console-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
-  gap: 1rem;
+  gap: 1.25rem;
 }
 
 .journey-wizard-track {
@@ -2619,7 +2619,7 @@ select:focus {
   .journey-main,
   .public-topbar,
   .journey-topbar {
-    width: min(var(--max-width), calc(100% - 1.6rem));
+    width: min(var(--max-width), calc(100% - 2rem));
   }
 
   .landing-hero-copy h1,

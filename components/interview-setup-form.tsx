@@ -6,6 +6,7 @@ import { startTransition, useMemo, useState } from "react";
 import { createSession, uploadFiles } from "@/lib/client/api";
 import type { RolePackId, SessionConfig, UploadReference } from "@/lib/domain";
 import { rolePacks } from "@/lib/domain";
+import { ROLE_PACK_COOKIE_NAME, ROLE_PACK_COOKIE_MAX_AGE } from "@/lib/server/constants";
 
 type FormState = Omit<SessionConfig, "materials"> & {
   materials: UploadReference[];
@@ -128,7 +129,7 @@ export function InterviewSetupForm({
       rolePack,
       interviewers: rolePacks[rolePack].interviewers.map((item) => item.id),
     }));
-    document.cookie = `mobius-role-pack=${rolePack}; path=/; max-age=31536000`;
+    document.cookie = `${ROLE_PACK_COOKIE_NAME}=${rolePack}; path=/; max-age=${ROLE_PACK_COOKIE_MAX_AGE}`;
   };
 
   const onUpload = async (files: FileList | null) => {

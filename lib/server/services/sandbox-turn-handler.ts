@@ -7,7 +7,7 @@ import { getDataStore } from "@/lib/server/store/repository";
 import { generateSandboxBeat } from "@/lib/server/services/command-center";
 import { encodeSseEvent } from "@/lib/utils";
 
-export async function POST(request: Request) {
+export async function handleSandboxTurn(request: Request) {
   const viewer = await getViewer();
   if (!viewer) {
     return NextResponse.json({ error: "未授权" }, { status: 401 });

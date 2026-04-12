@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { getViewer } from "@/lib/server/auth";
-import { createUnexpectedErrorResponse } from "@/lib/server/route-errors";
+import { handleError } from "@/lib/server/route-errors";
 import { getDataStore } from "@/lib/server/store/repository";
 import { canAcceptOffer } from "@/lib/server/services/session-state";
 
@@ -37,6 +37,6 @@ export async function POST(
 
     return NextResponse.json({ ok: true, nextStatus: "accepted" });
   } catch (error) {
-    return createUnexpectedErrorResponse(error);
+    return handleError(error);
   }
 }
